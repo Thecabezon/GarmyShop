@@ -36,7 +36,19 @@ class Marca(models.Model):
     def __str__(self):
         return self.nombre    
 
-    
+
+class Talla(models.Model):
+    nombre = models.CharField(max_length=20, verbose_name="Talla")
+
+    def __str__(self):
+        return self.nombre
+
+class Color(models.Model):
+    nombre = models.CharField(max_length=30, verbose_name="Color")
+    codigo_hex = models.CharField(max_length=7, null=True, blank=True, verbose_name="Código HEX")  # Opcional, para mostrar el color
+
+    def __str__(self):
+        return self.nombre    
     
 class Producto(models.Model):
     nombre = models.CharField(max_length=200, verbose_name="Nombre")
@@ -49,7 +61,6 @@ class Producto(models.Model):
     precio_oferta = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Precio en Oferta")
     activo = models.BooleanField(default=True, verbose_name="Activo")
     es_destacado = models.BooleanField(default=False, verbose_name="Es Destacado")
-    stock = models.IntegerField(default=0, verbose_name="Stock")
     creado = models.DateTimeField(auto_now_add=True, verbose_name="Creado")
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
 
@@ -64,7 +75,8 @@ class Producto(models.Model):
     @property
     def imagen_principal(self):
         """Retorna la imagen principal del producto"""
-        return self.imagenes.filter(es_principal=True).first()   
+        return self.imagenes.filter(es_principal=True).first()
+    
     
 # Modelo para representar imágenes de productos
 class ImagenProducto(models.Model):
@@ -83,6 +95,21 @@ class ImagenProducto(models.Model):
     def __str__(self):
         return f"Imagen de {self.producto.nombre}"
     
+
+class CombinacionProducto(models.Model):
+    producto = models.ForeignKey('Producto', on_delete=models.CASCADE, related_name='combinaciones', verbose_name="Producto")
+    talla = models.ForeignKey(Talla, on_delete=models.CASCADE, verbose_name="Talla")
+    color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name="Color")
+    stock = models.PositiveIntegerField(default=0, verbose_name="Stock")
+    sku = models.CharField(max_length=50, unique=True, verbose_name="SKU de Combinación")
+
+    class Meta:
+        unique_together = ('producto', 'talla', 'color')
+        verbose_name = "Combinación de Producto"
+        verbose_name_plural = "Combinaciones de Producto"
+
+    def __str__(self):
+        return f"{self.producto.nombre} - {self.talla.nombre} - {self.color.nombre}"    
     
     
 class Direccion(models.Model):
@@ -140,7 +167,7 @@ class Orden(models.Model):
 
 class OrdenItem(models.Model):
     orden = models.ForeignKey('Orden', on_delete=models.CASCADE, related_name='items', verbose_name="Orden")
-    producto = models.ForeignKey('Producto', on_delete=models.PROTECT, verbose_name="Producto")
+    combinacion = models.ForeignKey('CombinacionProducto', on_delete=models.PROTECT, verbose_name="Combinación de Producto")
     cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio Unitario")
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Subtotal")
@@ -157,4 +184,4 @@ class OrdenItem(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.cantidad} x {self.producto.nombre} en Orden #{self.orden.pk}"
+        return f"{self.cantidad} x {self.combinacion} en Orden #{self.orden.pk}"
