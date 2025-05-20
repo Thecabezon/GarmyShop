@@ -40,7 +40,7 @@ const ropas = [
     descripcion: "pijamas de algodón",
     categoria: "Unisex",
     precio: 60.0,
-    imagen: "https://i5.walmartimages.com/asr/ae390723-46c9-49be-afd7-9a0ab5b7b3c1.fb9af89af471fab6a363e4c6af60d28b.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"
+    imagen: "https://i5.walmartimages.com/asr/0045ee17-0bb6-4e9f-95b6-656bd3fa3c13.1d9536f7e1ce704368299c19bfe6adde.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"
   },
   {
     cod: 6,
@@ -78,23 +78,31 @@ const ropas = [
 
 
     return(
-        <div>
-            <h1>Tienda</h1>
-            <section className="ropa-lista">
-                {ropas.map((ropa) => (
-                    <RopaComponente 
-                        key={ropa.cod}
-                        nombre={ropa.nombre}
-                        descripcion={ropa.descripcion}
-                        categoria={ropa.categoria}
-                        precio={ropa.precio}
-                        imagen={ropa.imagen}
-                    />
-                ))}
-            </section>
-        </div>
-    )
+      <div className="productos-container">
+      <h2 className="productos-titulo">Nuestros Productos</h2>
+      <div className="ropa-lista">
+        {ropas.map((ropa) => (
+          <div key={ropa.cod} className="ropa-card">
+            <div className="ropa-imagen">
+              <img src={ropa.imagen} alt={ropa.nombre} />
+            </div>
+            <div className="ropa-info">
+              <h5>{ropa.nombre}</h5>
+              <p className="producto-categoria">{ropa.categoria}</p>
+              <div className="ropa-precio">
+                <span className="precio-actual">S/. {ropa.precio.toFixed(2)}</span>
+              </div>
+              <button 
+                onClick={() => window.location.href = `/tienda/${ropa.cod}`}
+                className="ver-detalle-btn"
+              >
+                Ver Detalle
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
     
-}
-
-export default TiendaPage;

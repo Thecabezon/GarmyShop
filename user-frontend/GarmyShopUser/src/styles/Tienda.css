@@ -1,3 +1,41 @@
+.productos-container {
+  padding: 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.productos-titulo {
+  font-size: 2.5rem; /* Título más grande */
+  color: #000000;
+  margin-bottom: 2.5rem; /* Más espacio debajo del título */
+  position: relative;
+  display: inline-block; /* Para que el subrayado tenga el ancho del texto */
+  padding-bottom: 0.5rem; 
+  /* Espacio para el subrayado */
+}
+
+/* Añade un subrayado decorativo */
+.productos-titulo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%; /* El subrayado es un poco más ancho que el texto */
+  height: 3px;
+  background:#6F7F8C; /* Color que coincida con tus botones */
+  border-radius: 2px;
+}
+
+.ropa-lista {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  justify-items: center;
+  background-color: white;
+}
 
 .ropa-card {
   width: 280px;
@@ -14,7 +52,6 @@
   transform: translateY(-5px);
 }
 
-/* Etiqueta "NEW" similar a la imagen */
 .etiqueta-new {
   position: absolute;
   top: 10px;
@@ -29,7 +66,6 @@
   text-transform: uppercase;
 }
 
-/* Etiqueta de descuento */
 .etiqueta-descuento {
   position: absolute;
   bottom: 110px;
@@ -91,21 +127,20 @@
   text-decoration: line-through;
 }
 
-/* Eliminar botón y reemplazarlo con un diseño similar a la imagen */
-.ropa-info button {
-  display: none; /* Ocultamos el botón original */
+.ver-detalle-btn {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background-color: #6F7F8C;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-/* Lista de productos - 4 por fila */
-.ropa-lista {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  padding: 1.5rem 1rem;
-  justify-items: center;
-  max-width: 1280px;
-  margin: auto;
-  background-color: white;
+.ver-detalle-btn:hover {
+  background-color: #5a6978;
 }
 
 /* Responsive */
@@ -131,4 +166,3 @@
     max-width: 330px;
   }
 }
-

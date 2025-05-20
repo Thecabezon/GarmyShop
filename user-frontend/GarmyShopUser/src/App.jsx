@@ -1,8 +1,10 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import { InicioPage } from './page/InicioPage';
 import { MainLayout } from './layout/MainLayout';
-import { TiendaPage } from './page/TiendaPage';
+import {TiendaPage} from './page/TiendaPage';
 import { RopaDetalle } from './components/RopaDetalle';
+import  CategoriasPage from './page/CategoriasPage';
+
 function App() {
 
   return (
@@ -14,6 +16,7 @@ function App() {
         <Route path="/" element={<InicioPage />} />
         <Route path='/tienda' element={<TiendaPage />} />
         <Route path='/tienda/:cod' element={<RopaDetalle />} />
+        <Route path="/categoria" element={<CategoriasPage />} />
       </Routes>
     </BrowserRouter>
   )
