@@ -1,20 +1,20 @@
 import NavLinksComponent from '../components/Header/NavLinksComponent';
 import { LogoComponent } from '../components/Header/LogoComponent';
+import { TopBarComponent } from '../components/Header/TopBarComponent';
+import IconsComponent from '../components/Header/IconsComponent';
 import '../styles/header.css';
 
 export const MainLayout = () => {
+  
   return (
     <header>
-      <div className="top-bar">
-        <p>Envíos gratis a todo el país</p>
-      </div>
+      <TopBarComponent />
       <div className="main-header">
-        <div className="logo-container">
-          <h1 className="logo">GarmyShop</h1>
-          <p className="logo-description">Your Style, No Label</p>
-        </div>
+        <LogoComponent />
         <NavLinksComponent />
+        <IconsComponent />
       </div>
     </header>
   );
+  
 };

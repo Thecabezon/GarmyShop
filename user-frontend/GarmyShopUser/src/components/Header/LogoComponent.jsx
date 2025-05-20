@@ -8,3 +8,5 @@ export function LogoComponent() {
     
   );
 }
+
+export default LogoComponent;

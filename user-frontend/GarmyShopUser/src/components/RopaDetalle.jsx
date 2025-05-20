@@ -9,3 +9,4 @@ export function RopaDetalle(props) {
         </div>
     )
 }
+export default RopaDetalle;
