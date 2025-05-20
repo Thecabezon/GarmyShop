@@ -10,3 +10,4 @@ export function IconsComponent() {
     </div>
    )
 }
+export default IconsComponent;
