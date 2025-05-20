@@ -23,11 +23,11 @@ Luego, sigue estos pasos para instalar las dependencias y ejecutar el proyecto:
 cd user-frontend/GarmyShopUser
 npm install
 npm install react-router-dom
-
+```
 ▶️ Ejecutar en modo desarrollo
 Para iniciar el servidor de desarrollo, ejecuta:
-
+```bash
 npm run dev
-
+```
 Esto levantará la aplicación en modo desarrollo.
 Por defecto, estará disponible en http://localhost:5173.
