@@ -1,0 +1,59 @@
+.top-bar {
+  background-color: #6F7F8C;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 14px;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-family: 'League Spartan', sans-serif;
+  font-size: 20px;              /* Más pequeño */
+  font-weight: 600;             /* Un poco menos bold */
+  color: #6F7F8C;
+  margin: 0;
+}
+
+.logo-description {
+  font-family: 'League Spartan', sans-serif;
+  font-size: 10px;
+  color: #666;
+  align-items: center;
+  margin: 0;
+}
+
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: #6F7F8C;
+}
+
+.icons {
+  display: flex;
+  gap: 16px;
+  font-size: 20px;
+  color: #666;
+}
+
+.icons i:hover {
+  color: #6F7F8C;
+}

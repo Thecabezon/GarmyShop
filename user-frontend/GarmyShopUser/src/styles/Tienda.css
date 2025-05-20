@@ -1,0 +1,134 @@
+
+.ropa-card {
+  width: 280px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.5rem;
+  transition: transform 0.2s;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ropa-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Etiqueta "NEW" similar a la imagen */
+.etiqueta-new {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #7bbd2c;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 3px;
+  z-index: 10;
+  text-transform: uppercase;
+}
+
+/* Etiqueta de descuento */
+.etiqueta-descuento {
+  position: absolute;
+  bottom: 110px;
+  right: 10px;
+  background-color: #7bbd2c;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  z-index: 10;
+}
+
+.ropa-imagen {
+  position: relative;
+  background-color: #eeeeee;
+}
+
+.ropa-imagen img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  display: block;
+}
+
+.ropa-info {
+  padding: 0.8rem 0.8rem 1rem;
+  text-align: left;
+  color: #333;
+  font-family: 'Arial', sans-serif;
+}
+
+.ropa-info h5 {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ropa-precio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.3rem;
+}
+
+.precio-actual {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.precio-anterior {
+  font-size: 0.9rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+/* Eliminar botón y reemplazarlo con un diseño similar a la imagen */
+.ropa-info button {
+  display: none; /* Ocultamos el botón original */
+}
+
+/* Lista de productos - 4 por fila */
+.ropa-lista {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  justify-items: center;
+  max-width: 1280px;
+  margin: auto;
+  background-color: white;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .ropa-lista {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .ropa-lista {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ropa-lista {
+    grid-template-columns: 1fr;
+  }
+  
+  .ropa-card {
+    width: 90%;
+    max-width: 330px;
+  }
+}
+
