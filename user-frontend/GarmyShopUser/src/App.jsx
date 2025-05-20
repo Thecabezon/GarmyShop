@@ -1,4 +1,5 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
+
 import { InicioPage } from './page/InicioPage';
 import { MainLayout } from './layout/MainLayout';
 import {TiendaPage} from './page/TiendaPage';
