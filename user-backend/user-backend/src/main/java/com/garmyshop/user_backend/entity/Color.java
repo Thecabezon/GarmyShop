@@ -10,14 +10,16 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Color {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(length = 30, nullable = false)
+    @Column(name = "nombre",length = 30, nullable = false)
     private String nombre;
 
-    @Column(length = 7)
+    @Column(name = "codigo_hex",length = 7)
     private String codigoHex;
 }

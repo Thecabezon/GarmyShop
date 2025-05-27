@@ -1,11 +1,8 @@
 package com.garmyshop.user_backend.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 import lombok.*;
+import java.time.LocalDateTime;
 
 
 
@@ -14,25 +11,29 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id") // explícito, aunque no es obligatorio si el nombre es igual
+    private Integer id;
 
-    @Column(length = 100, nullable = false)
+    @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 
-    @Column(length = 100, unique = true, nullable = false)
+    @Column(name = "slug", length = 100, unique = true, nullable = false)
     private String slug;
 
+    @Column(name = "imagen")
     private String imagen;
 
+    @Column(name = "activo")
     private Boolean activo = true;
 
-    @CreationTimestamp
+    @Column(name = "creado")
     private LocalDateTime creado;
 
-    @UpdateTimestamp
+    @Column(name = "actualizado")
     private LocalDateTime actualizado;
 
 

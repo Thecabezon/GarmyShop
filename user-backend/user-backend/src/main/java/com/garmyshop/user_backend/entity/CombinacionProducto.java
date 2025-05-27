@@ -13,10 +13,12 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CombinacionProducto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
@@ -31,10 +33,10 @@ public class CombinacionProducto {
     @JoinColumn(name = "color_id", nullable = false)
     private Color color;
 
-    @Column(nullable = false)
+    @Column(name = "stock",nullable = false)
     private Integer stock = 0;
 
-    @Column(length = 50, unique = true, nullable = false)
+    @Column(name = "sku", length = 50, unique = true, nullable = false)
     private String sku;
 
 

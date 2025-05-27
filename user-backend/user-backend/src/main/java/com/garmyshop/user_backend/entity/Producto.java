@@ -1,8 +1,6 @@
 package com.garmyshop.user_backend.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -16,18 +14,19 @@ import java.time.LocalDateTime;
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(length = 200, nullable = false)
+    @Column(name = "nombre", length = 200, nullable = false)
     private String nombre;
 
-    @Column(length = 200, unique = true, nullable = false)
+    @Column(name = "slug", length = 200, unique = true, nullable = false)
     private String slug;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(length = 50, unique = true, nullable = false)
+    @Column(name = "sku", length = 50, unique = true, nullable = false)
     private String sku;
 
     @ManyToOne
@@ -38,20 +37,22 @@ public class Producto {
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
-    @Column(precision = 10, scale = 2, nullable = false)
+    @Column(name = "precio", precision = 10, scale = 2, nullable = false)
     private BigDecimal precio;
 
-    @Column(precision = 10, scale = 2)
+    @Column(name = "precio_oferta", precision = 10, scale = 2, nullable = true)
     private BigDecimal precioOferta;
 
+    @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 
+    @Column(name = "es_destacado", nullable = false)
     private Boolean esDestacado = false;
 
-    @CreationTimestamp
+    @Column(name = "creado")
     private LocalDateTime creado;
 
-    @UpdateTimestamp
+    @Column(name = "actualizado")
     private LocalDateTime actualizado;
 
 }
