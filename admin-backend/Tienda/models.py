@@ -12,6 +12,7 @@ class Categoria(models.Model):
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
 
     class Meta:
+        db_table = 'categoria'  # <--- Así la tabla se llamará 'categoria'
         verbose_name = "Categoría"
         verbose_name_plural = "Categorías"
         ordering = ['nombre']
@@ -29,34 +30,47 @@ class Marca(models.Model):
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
 
     class Meta:
+        db_table = 'marca'  # Así la tabla se llamará 'marca'
         verbose_name = "Marca"
         verbose_name_plural = "Marcas"
         ordering = ['nombre']
 
     def __str__(self):
-        return self.nombre    
+        return self.nombre 
 
 
 class Talla(models.Model):
     nombre = models.CharField(max_length=20, verbose_name="Talla")
 
+    class Meta:
+        db_table = 'talla'
+        verbose_name = "Talla"
+        verbose_name_plural = "Tallas"
+
     def __str__(self):
         return self.nombre
+    
 
 class Color(models.Model):
     nombre = models.CharField(max_length=30, verbose_name="Color")
-    codigo_hex = models.CharField(max_length=7, null=True, blank=True, verbose_name="Código HEX")  # Opcional, para mostrar el color
+    codigo_hex = models.CharField(max_length=7, null=True, blank=True, verbose_name="Código HEX")
+
+    class Meta:
+        db_table = 'color'
+        verbose_name = "Color"
+        verbose_name_plural = "Colores"
 
     def __str__(self):
-        return self.nombre    
+        return self.nombre
     
+       
 class Producto(models.Model):
     nombre = models.CharField(max_length=200, verbose_name="Nombre")
     slug = models.SlugField(max_length=200, unique=True, verbose_name="Slug")
     descripcion = models.TextField(verbose_name="Descripción")
     sku = models.CharField(max_length=50, unique=True, verbose_name="SKU")
-    marca = models.ForeignKey(Marca, on_delete=models.CASCADE, verbose_name="Marca")
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, verbose_name="Categoría")
+    marca = models.ForeignKey('Marca', on_delete=models.CASCADE, verbose_name="Marca")
+    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, verbose_name="Categoría")
     precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
     precio_oferta = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Precio en Oferta")
     activo = models.BooleanField(default=True, verbose_name="Activo")
@@ -65,6 +79,7 @@ class Producto(models.Model):
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
 
     class Meta:
+        db_table = 'producto'
         verbose_name = "Producto"
         verbose_name_plural = "Productos"
         ordering = ['nombre']
@@ -74,13 +89,17 @@ class Producto(models.Model):
 
     @property
     def imagen_principal(self):
-        """Retorna la imagen principal del producto"""
         return self.imagenes.filter(es_principal=True).first()
     
     
 # Modelo para representar imágenes de productos
 class ImagenProducto(models.Model):
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='imagenes', verbose_name="Producto")
+    producto = models.ForeignKey(
+        'Producto',
+        on_delete=models.CASCADE,
+        related_name='imagenes',
+        verbose_name="Producto"
+    )
     imagen = models.ImageField(upload_to='productos/', verbose_name="Imagen")
     es_principal = models.BooleanField(default=False, verbose_name="¿Es imagen principal?")
     orden = models.IntegerField(default=0, verbose_name="Orden")
@@ -88,6 +107,7 @@ class ImagenProducto(models.Model):
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
 
     class Meta:
+        db_table = 'imagen_producto'
         verbose_name = "Imagen de Producto"
         verbose_name_plural = "Imágenes de Productos"
         ordering = ['orden', 'creado']
@@ -97,23 +117,43 @@ class ImagenProducto(models.Model):
     
 
 class CombinacionProducto(models.Model):
-    producto = models.ForeignKey('Producto', on_delete=models.CASCADE, related_name='combinaciones', verbose_name="Producto")
-    talla = models.ForeignKey(Talla, on_delete=models.CASCADE, verbose_name="Talla")
-    color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name="Color")
+    producto = models.ForeignKey(
+        'Producto',
+        on_delete=models.CASCADE,
+        related_name='combinaciones',
+        verbose_name="Producto"
+    )
+    talla = models.ForeignKey(
+        'Talla',
+        on_delete=models.CASCADE,
+        verbose_name="Talla"
+    )
+    color = models.ForeignKey(
+        'Color',
+        on_delete=models.CASCADE,
+        verbose_name="Color"
+    )
     stock = models.PositiveIntegerField(default=0, verbose_name="Stock")
     sku = models.CharField(max_length=50, unique=True, verbose_name="SKU de Combinación")
 
     class Meta:
+        db_table = 'combinacion_producto'
         unique_together = ('producto', 'talla', 'color')
         verbose_name = "Combinación de Producto"
         verbose_name_plural = "Combinaciones de Producto"
 
     def __str__(self):
-        return f"{self.producto.nombre} - {self.talla.nombre} - {self.color.nombre}"    
+        return f"{self.producto.nombre} - {self.talla.nombre} - {self.color.nombre}"
+    
     
     
 class Direccion(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='direcciones', verbose_name="Usuario")
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='direcciones',
+        verbose_name="Usuario"
+    )
     nombre = models.CharField(max_length=100, verbose_name="Nombre")
     apellido = models.CharField(max_length=100, verbose_name="Apellido")
     departamento = models.CharField(max_length=100, verbose_name="Departamento")
@@ -127,18 +167,27 @@ class Direccion(models.Model):
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
 
     class Meta:
+        db_table = 'direccion'
         verbose_name = "Dirección"
         verbose_name_plural = "Direcciones"
         ordering = ['-creado']
 
     def __str__(self):
         return f"{self.nombre} {self.apellido} - {self.calle}, {self.distrito}, {self.provincia}, {self.departamento}"
-
+    
     
 
 class Orden(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuario")
-    direccion_envio = models.ForeignKey(Direccion, on_delete=models.PROTECT, verbose_name="Dirección de Envío")
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Usuario"
+    )
+    direccion_envio = models.ForeignKey(
+        'Direccion',
+        on_delete=models.PROTECT,
+        verbose_name="Dirección de Envío"
+    )
     total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total")
     metodo_pago = models.CharField(max_length=50, verbose_name="Método de Pago")
     estado_pago = models.CharField(max_length=30, default='pendiente', verbose_name="Estado de Pago")
@@ -154,20 +203,31 @@ class Orden(models.Model):
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
 
     class Meta:
+        db_table = 'orden'
         verbose_name = "Orden"
         verbose_name_plural = "Órdenes"
         ordering = ['-fecha_creacion']
 
     def __str__(self):
-        return f"Orden #{self.pk} de {self.usuario.username}"      
+        return f"Orden #{self.pk} de {self.usuario.username}"
+         
     
     
 
 
 
 class OrdenItem(models.Model):
-    orden = models.ForeignKey('Orden', on_delete=models.CASCADE, related_name='items', verbose_name="Orden")
-    combinacion = models.ForeignKey('CombinacionProducto', on_delete=models.PROTECT, verbose_name="Combinación de Producto")
+    orden = models.ForeignKey(
+        'Orden',
+        on_delete=models.CASCADE,
+        related_name='items',
+        verbose_name="Orden"
+    )
+    combinacion = models.ForeignKey(
+        'CombinacionProducto',
+        on_delete=models.PROTECT,
+        verbose_name="Combinación de Producto"
+    )
     cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio Unitario")
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Subtotal")
@@ -175,6 +235,7 @@ class OrdenItem(models.Model):
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
 
     class Meta:
+        db_table = 'orden_item'
         verbose_name = "Item de Orden"
         verbose_name_plural = "Items de Orden"
         ordering = ['-creado']

@@ -75,8 +75,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'railway',  # El nombre de tu base de datos
+        'USER': 'root',  # El usuario que usas en DBeaver
+        'PASSWORD': 'HEAkjarZUbYZpkfeTruzoHPNQGiAixGr',  # La contraseña de ese usuario
+        'HOST': 'shinkansen.proxy.rlwy.net',  # El host que ves en DBeaver
+        'PORT': '30740',  # El puerto que ves en DBeaver
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
