@@ -14,35 +14,37 @@ public class AuthUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
-    @Column(nullable = false)
+    @Column(name = "is_superuser", nullable = false)
     private boolean isSuperuser;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "is_staff", nullable = false)
     private boolean isStaff;
 
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @Column(nullable = false)
+    @Column(name = "date_joined", nullable = false)
     private LocalDateTime dateJoined;
 
 }

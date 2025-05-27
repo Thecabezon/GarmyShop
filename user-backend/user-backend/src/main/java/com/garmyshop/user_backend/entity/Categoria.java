@@ -24,7 +24,7 @@ public class Categoria {
     @Column(name = "slug", length = 100, unique = true, nullable = false)
     private String slug;
 
-    @Column(name = "imagen")
+    @Column(name = "imagen", nullable = true)
     private String imagen;
 
     @Column(name = "activo")

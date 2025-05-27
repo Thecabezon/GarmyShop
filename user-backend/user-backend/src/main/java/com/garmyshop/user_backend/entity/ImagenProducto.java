@@ -19,7 +19,7 @@ public class ImagenProducto {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
     @Column(name = "imagen", nullable = false)
