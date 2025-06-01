@@ -1,12 +1,19 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from cloudinary.models import CloudinaryField
 
 User = get_user_model()
 # Modelo para representar las categorías de productos 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre")
     slug = models.SlugField(max_length=100, unique=True, verbose_name="Slug")
-    imagen = models.ImageField(upload_to='categorias/', null=True, blank=True, verbose_name="Imagen")
+    # Sintaxis correcta para CloudinaryField
+    imagen = CloudinaryField(
+        folder='categorias',
+        null=True,
+        blank=True,
+        verbose_name="Imagen",
+    )
     activo = models.BooleanField(default=True, verbose_name="Activo")
     creado = models.DateTimeField(auto_now_add=True, verbose_name="Creado")
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
@@ -24,7 +31,13 @@ class Categoria(models.Model):
 class Marca(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre")
     slug = models.SlugField(max_length=100, unique=True, verbose_name="Slug")
-    imagen = models.ImageField(upload_to='marcas/', null=True, blank=True, verbose_name="Imagen")
+    # Sintaxis correcta para CloudinaryField
+    imagen = CloudinaryField(
+        folder='marcas',
+        null=True,
+        blank=True,
+        verbose_name="Imagen",
+    )
     activo = models.BooleanField(default=True, verbose_name="Activo")
     creado = models.DateTimeField(auto_now_add=True, verbose_name="Creado")
     actualizado = models.DateTimeField(auto_now=True, verbose_name="Actualizado")
@@ -100,7 +113,11 @@ class ImagenProducto(models.Model):
         related_name='imagenes',
         verbose_name="Producto"
     )
-    imagen = models.ImageField(upload_to='productos/', verbose_name="Imagen")
+    # Sintaxis correcta para CloudinaryField
+    imagen = CloudinaryField(
+        folder='productos',
+        verbose_name="Imagen",
+    )
     es_principal = models.BooleanField(default=False, verbose_name="¿Es imagen principal?")
     orden = models.IntegerField(default=0, verbose_name="Orden")
     creado = models.DateTimeField(auto_now_add=True, verbose_name="Creado")
