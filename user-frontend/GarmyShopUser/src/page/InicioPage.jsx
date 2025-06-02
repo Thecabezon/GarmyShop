@@ -24,33 +24,36 @@ export function InicioPage() {
         </div>
       </section>
 
-      {/* Categorías Destacadas */}
-      <section className="featured-categories">
-        <h2>Categorías Populares</h2>
-        <div className="categories-grid">
-          <div className="category-card">
-            <img 
-              src="https://tissini.com/blog/wp-content/uploads/2022/07/vestidos-de-verano-para-mujer-disenos-en-tendencia.jpg" 
-              alt="Vestidos" 
-            />
-            <h3>Vestidos</h3>
-          </div>
-          <div className="category-card">
-            <img 
-              src="https://m.media-amazon.com/images/S/aplus-media-library-service-media/6ac8df30-8015-480e-8529-6f917715753c.__CR0,0,970,600_PT0_SX970_V1___.jpg" 
-              alt="Pantalones" 
-            />
-            <h3>Pantalones</h3>
-          </div>
-          <div className="category-card">
-            <img 
-              src="https://elricostore.com/wp-content/uploads/2022/05/manga-larga-blanco.png" 
-              alt="Polos" 
-            />
-            <h3>Polos</h3>
-          </div>
+    {/* Categorías Destacadas */}
+    <section className="featured-categories">
+      <h2>Categorías Populares</h2>
+      <div className="categories-grid">
+        <div className="category-card">
+          <img 
+            className="categoria-imagen"
+            src="https://tissini.com/blog/wp-content/uploads/2022/07/vestidos-de-verano-para-mujer-disenos-en-tendencia.jpg" 
+            alt="Vestidos" 
+          />
+          <a href="#" className="categoria-boton">Vestidos</a>
         </div>
-      </section>
+        <div className="category-card">
+          <img 
+            className="categoria-imagen"
+            src="https://m.media-amazon.com/images/S/aplus-media-library-service-media/6ac8df30-8015-480e-8529-6f917715753c.__CR0,0,970,600_PT0_SX970_V1___.jpg" 
+            alt="Pantalones" 
+          />
+          <a href="#" className="categoria-boton">Pantalones</a>
+        </div>
+        <div className="category-card">
+          <img 
+            className="categoria-imagen"
+            src="https://elricostore.com/wp-content/uploads/2022/05/manga-larga-blanco.png" 
+            alt="Polos" 
+          />
+          <a href="#" className="categoria-boton">Polos</a>
+        </div>
+      </div>
+    </section>
 
       {/* Productos Destacados */}
       <section className="featured-products">
@@ -58,7 +61,7 @@ export function InicioPage() {
         <div className="products-grid">
           <div className="product-card">
             <img 
-              src="https://falabella.scene7.com/is/image/FalabellaPE/882597667_1" 
+              src="https://img.kwcdn.com/product/1e78ea3018/b84a3b4f-9a36-46d0-9590-7baeb555912a_1340x1785.jpeg?imageMogr2/auto-orient%7CimageView2/2/w/800/q/70/format/webp" 
               alt="Vestido Floral" 
             />
             <div className="product-info">
@@ -80,7 +83,7 @@ export function InicioPage() {
           </div>
           <div className="product-card">
             <img 
-              src="https://oechsle.vteximg.com.br/arquivos/ids/13470770-1000-1000/2290197_1.jpg" 
+              src="https://static-abcblogs.abc.es/wp-content/uploads/sites/203/2017/10/botones-diferencia.jpg" 
               alt="Camisa Elegante" 
             />
             <div className="product-info">
@@ -91,7 +94,7 @@ export function InicioPage() {
           </div>
           <div className="product-card">
             <img 
-              src="https://oechsle.vteximg.com.br/arquivos/ids/13470770-1000-1000/2290197_1.jpg" 
+              src="https://www.taisprincess.com.pe/wp-content/uploads/2024/01/1691131300ef57a879a01fe3b30da143c95e21c735_thumbnail_600x.jpg"
               alt="Vestido Casual" 
             />
             <div className="product-info">
@@ -105,7 +108,7 @@ export function InicioPage() {
 
       {/* Newsletter */}
       <section className="newsletter">
-        <h2>Únete a Nuestra Newsletter</h2>
+        <h2>No te pierdas nuestras promociones!</h2>
         <p>Recibe las últimas novedades y ofertas exclusivas</p>
         <form className="newsletter-form">
           <input type="email" placeholder="Tu correo electrónico" />

@@ -1,26 +1,34 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 
-import { InicioPage } from './page/InicioPage';
+// Importaciones corregidas según tu estructura actual
+import { InicioPage } from './page/InicioPage';  // Cambiado de 'pages' a 'page'
 import { MainLayout } from './layout/MainLayout';
-import {TiendaPage} from './page/TiendaPage';
+import {TiendaPage} from './page/TiendaPage';    // Cambiado de 'pages' a 'page'
 import { RopaDetalle } from './components/RopaDetalle';
-import CategoriasPage from './page/CategoriasPage';
-import { BuscadorPage } from './page/BuscadorPage'; // Asegúrate de que la ruta sea correcta
+import CategoriasPage from './page/CategoriasPage';  // Cambiado de 'pages' a 'page'
+import { BuscadorPage } from './page/BuscadorPage';  // Cambiado de 'pages' a 'page'
+
+// Importaciones de autenticación - crear estas páginas en page/Auth/
+import LoginPage from './page/Auth/LoginPage';
+import RegisterPage from './page/Auth/RegisterPage';
+import ForgotPasswordPage from './page/Auth/ForgotPasswordPage';
 
 function App() {
   return (
     <BrowserRouter>
-      {/* MainLayout ahora envuelve a las Routes para que el layout se aplique a todas las páginas */}
-      <MainLayout>
-        <Routes>
-          <Route path="/" element={<InicioPage />} />
-          <Route path='/tienda' element={<TiendaPage />} />
-          <Route path='/tienda/:cod' element={<RopaDetalle />} />
-          <Route path="/categoria" element={<CategoriasPage />} />
-          {/* Nueva ruta para el Buscador */}
-          <Route path="/buscar" element={<BuscadorPage />} />
-        </Routes>
-      </MainLayout>
+    <Routes>
+      {/* Rutas con MainLayout */}
+      <Route path="/" element={<MainLayout><InicioPage /></MainLayout>} />
+      <Route path='/tienda' element={<MainLayout><TiendaPage /></MainLayout>} />
+      <Route path='/tienda/:cod' element={<MainLayout><RopaDetalle /></MainLayout>} />
+      <Route path="/categoria" element={<MainLayout><CategoriasPage /></MainLayout>} />
+      <Route path="/buscar" element={<MainLayout><BuscadorPage /></MainLayout>} />
+      
+      {/* Rutas de autenticación sin MainLayout */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/registro" element={<RegisterPage />} />
+      <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
+    </Routes>
     </BrowserRouter>
   )
 }
