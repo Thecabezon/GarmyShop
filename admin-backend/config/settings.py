@@ -77,14 +77,15 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'railway',  # El nombre de tu base de datos
         'USER': 'root',  # El usuario que usas en DBeaver
-        'PASSWORD': 'sFtCxHaXqPdhtHixpZFUOyWOejwkeChW',  # La contraseña de ese usuario
+        'PASSWORD': 'sFtCxHaXqPdhtHixpZFUOyWOejwkeChW',  # La contraseña de ese usuario 
         'HOST': 'shortline.proxy.rlwy.net',  # El host que ves en DBeaver
-        'PORT': '22085',  # El puerto que ves en DBeaver
+        'PORT': '22085',  # El puerto que ves en DBeaver #22085
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
+
 
 
 # Password validation

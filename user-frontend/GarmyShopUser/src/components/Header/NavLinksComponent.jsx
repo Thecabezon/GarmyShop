@@ -11,7 +11,7 @@ const NavLinksComponent = () => {
       <NavLink to="/nosotros" className="hover:text-blue-600 transition duration-200">Nosotros</NavLink>
       <NavLink to="/contacto" className="hover:text-blue-600 transition duration-200">Contacto</NavLink>
       {/* Nuevo enlace para el buscador */}
-      <NavLink to="/buscar" className="hover:text-blue-600 transition duration-200">Buscador</NavLink>
+      {/* <NavLink to="/buscar" className="hover:text-blue-600 transition duration-200">Buscador</NavLink> */}
     </nav>
   );
 };

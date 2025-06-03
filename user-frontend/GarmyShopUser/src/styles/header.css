@@ -13,14 +13,18 @@
   padding: 1rem 4rem;
   background-color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 1400px; /* Añadir un ancho máximo */
-  margin: 0 auto; /* Centrar el header */ 
+  max-width: 1400px;
+  /* Añadir un ancho máximo */
+  margin: 0 auto;
+  /* Centrar el header */
 }
 
 .logo {
   font-family: 'League Spartan', sans-serif;
-  font-size: 24px;              /* Más pequeño */
-  font-weight: 600;             /* Un poco menos bold */
+  font-size: 24px;
+  /* Más pequeño */
+  font-weight: 600;
+  /* Un poco menos bold */
   color: #6F7F8C;
   margin: 0;
 }
@@ -46,9 +50,12 @@
   text-decoration: none;
   color: #333;
   font-weight: 500;
-  font-size: 20px; /* Añadido tamaño de fuente */
-  padding: 8px 12px; /* Añadido padding para hacer los enlaces más grandes */
-  transition: color 0.3s ease; /* Añadida transición suave */
+  font-size: 20px;
+  /* Añadido tamaño de fuente */
+  padding: 8px 12px;
+  /* Añadido padding para hacer los enlaces más grandes */
+  transition: color 0.3s ease;
+  /* Añadida transición suave */
 }
 
 .nav-links a.active {
@@ -56,6 +63,7 @@
   font-weight: 600;
   position: relative;
 }
+
 .nav-links a:hover {
   color: #6F7F8C;
 }
@@ -87,6 +95,180 @@
 }
 
 .logo-container {
-  min-width: 200px; /* Asegurar un ancho mínimo para el logo */
+  min-width: 200px;
 }
 
+.icons-container {
+  position: relative;
+}
+
+.icons {
+  display: flex;
+  gap: 16px;
+  font-size: 20px;
+  color: #666;
+  align-items: center;
+}
+
+.search-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.search-icon:hover {
+  color: #6F7F8C;
+  background-color: rgba(111, 127, 140, 0.1);
+}
+
+.search-icon.active {
+  color: #6F7F8C;
+  background-color: rgba(111, 127, 140, 0.15);
+}
+
+.search-container {
+  position: absolute;
+  left: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border: 2px solid #e1e5e9;
+  border-radius: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-container.visible {
+  width: 350px;
+  opacity: 1;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 20px;
+  padding: 2px;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  color: #333;
+}
+
+.search-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.search-button {
+  background: #6F7F8C;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 2px;
+}
+
+.search-button:hover:not(:disabled) {
+  background: #5a6a75;
+  transform: scale(1.05);
+}
+
+.search-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+}
+
+.close-button:hover {
+  color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+}
+
+.icon {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.icon:hover {
+  color: #6F7F8C;
+  background-color: rgba(111, 127, 140, 0.1);
+}
+
+.cart-wrapper {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ff4757;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .search-container.visible {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container.visible {
+    width: 250px;
+  }
+
+  .search-container {
+    left: -200px;
+  }
+}
