@@ -79,30 +79,30 @@ const ropas = [
 
     return(
       <div className="productos-container">
-      <h2 className="productos-titulo">Nuestros Productos</h2>
-      <div className="ropa-lista">
-        {ropas.map((ropa) => (
-          <div key={ropa.cod} className="ropa-card">
-            <div className="ropa-imagen">
-              <img src={ropa.imagen} alt={ropa.nombre} />
-            </div>
-            <div className="ropa-info">
-              <h5>{ropa.nombre}</h5>
-              <p className="producto-categoria">{ropa.categoria}</p>
-              <div className="ropa-precio">
-                <span className="precio-actual">S/. {ropa.precio.toFixed(2)}</span>
+        <h2 className="productos-titulo">Nuestros Productos</h2>
+        <div className="ropa-lista">
+          {ropas.map((ropa) => (
+            <div key={ropa.cod} className="ropa-card">
+              <div className="ropa-imagen">
+                <img src={ropa.imagen} alt={ropa.nombre} />
               </div>
-              <button 
-                onClick={() => window.location.href = `/tienda/${ropa.cod}`}
-                className="ver-detalle-btn"
-              >
-                Ver Detalle
-              </button>
+              <div className="ropa-info">
+                <h5>{ropa.nombre}</h5>
+                <p className="producto-categoria">{ropa.categoria}</p>
+                <div className="ropa-precio">
+                  <span className="precio-actual">S/. {ropa.precio.toFixed(2)}</span>
+                </div>
+                <button 
+                  onClick={() => window.location.href = `/tienda/${ropa.cod}`}
+                  className="ver-detalle-btn"
+                >
+                  Ver Detalle
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
   );
 };
     

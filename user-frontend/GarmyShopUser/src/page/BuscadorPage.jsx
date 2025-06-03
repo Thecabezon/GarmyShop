@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Buscador.css';
+import { useLocation } from 'react-router-dom';
 
 const BuscadorPage = () => {
+  const location = useLocation();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  
-  // Datos de categorías (del componente CategoriasPage)
+
+  // Datos de categorías
   const categorias = [
     {
       id: 1,
@@ -72,7 +75,7 @@ const BuscadorPage = () => {
     }
   ];
 
-  // Datos de productos (del componente TiendaPage)
+  // Datos de productos
   const productos = [
     {
       id: 1,
@@ -157,40 +160,40 @@ const BuscadorPage = () => {
     }
   ];
 
-  const handleInputChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  useEffect(() => {
+    // Extraer query param "query" usando useLocation
+    const params = new URLSearchParams(location.search);
+    const query = params.get('query') || '';
 
-  const handleSearch = () => {
-    if (!searchTerm.trim()) {
+    setSearchTerm(query);
+
+    if (query.trim()) {
+      handleSearchTerm(query);
+    } else {
+      setSearchResults([]);
+    }
+  }, [location.search]); // Se ejecuta cada vez que cambie la URL
+
+  const handleSearchTerm = (term) => {
+    if (!term.trim()) {
       setSearchResults([]);
       return;
     }
 
-    const term = searchTerm.toLowerCase();
-    
-    // Buscar en categorías
-    const categoriasResults = categorias.filter(categoria => 
-      categoria.nombre.toLowerCase().includes(term) || 
-      categoria.descripcion.toLowerCase().includes(term)
-    );
-    
-    // Buscar en productos
-    const productosResults = productos.filter(producto => 
-      producto.nombre.toLowerCase().includes(term) || 
-      producto.descripcion.toLowerCase().includes(term) ||
-      producto.categoria.toLowerCase().includes(term)
-    );
-    
-    // Combinar resultados
-    const combinedResults = [...categoriasResults, ...productosResults];
-    setSearchResults(combinedResults);
-  };
+    const lowerTerm = term.toLowerCase();
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
+    const categoriasResults = categorias.filter(categoria =>
+      categoria.nombre.toLowerCase().includes(lowerTerm) ||
+      categoria.descripcion.toLowerCase().includes(lowerTerm)
+    );
+
+    const productosResults = productos.filter(producto =>
+      producto.nombre.toLowerCase().includes(lowerTerm) ||
+      producto.descripcion.toLowerCase().includes(lowerTerm) ||
+      producto.categoria.toLowerCase().includes(lowerTerm)
+    );
+
+    setSearchResults([...categoriasResults, ...productosResults]);
   };
 
   const handleVerDetalle = (item) => {
@@ -210,27 +213,6 @@ const BuscadorPage = () => {
 
       {/* Contenedor principal */}
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold text-center text-slate-800 mb-8">
-          Buscador de Productos y Categorías
-        </h1>
-
-        {/* Buscador */}
-        <div className="flex max-w-2xl mx-auto bg-white border border-slate-300 rounded-full shadow-md overflow-hidden focus-within:ring-2 focus-within:ring-slate-400 transition duration-300">
-          <input
-            type="text"
-            placeholder="Buscar productos o categorías..."
-            value={searchTerm}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            className="flex-grow px-6 py-3 text-lg focus:outline-none rounded-l-full"
-          />
-          <button
-            onClick={handleSearch}
-            className="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 font-semibold transition-colors duration-300 rounded-r-full"
-          >
-            Buscar
-          </button>
-        </div>
 
         {/* Resultados o mensajes */}
         <div className="mt-10 space-y-6">
