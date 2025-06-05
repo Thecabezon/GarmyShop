@@ -171,7 +171,7 @@ import { useNavigate } from 'react-router-dom';
                             <button  onClick={(e) => {e.stopPropagation(); removeFromCart(item.cod);}} className="remove-item" >
                               ✕
                             </button>
-                            <div className="item-price">$ {item.precio}</div>
+                            <div className="item-price">S/.  {item.precio}</div>
                           </div>
                         </div>
                       </div>
