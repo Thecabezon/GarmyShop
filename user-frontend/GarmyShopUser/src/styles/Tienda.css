@@ -127,20 +127,62 @@
   text-decoration: line-through;
 }
 
+.botones-fila {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+
 .ver-detalle-btn {
-  width: 100%;
-  padding: 0.8rem;
-  margin-top: 1rem;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   background-color: #6F7F8C;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.3s;
 }
 
 .ver-detalle-btn:hover {
   background-color: #5a6978;
+}
+
+.agregar-carrito-btn {
+  flex-grow: 1;
+  padding: 0.8rem;
+  background-color: #c5BAC4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.agregar-carrito-btn:hover {
+  background-color: #c2a2bf;
+}
+
+.agregar-carrito-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+.ver-detalle-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
 }
 
 /* Responsive */
