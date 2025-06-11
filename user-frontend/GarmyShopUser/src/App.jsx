@@ -7,6 +7,7 @@ import {TiendaPage} from './page/TiendaPage';    // Cambiado de 'pages' a 'page'
 import { RopaDetalle } from './components/RopaDetalle';
 import CategoriasPage from './page/CategoriasPage';  // Cambiado de 'pages' a 'page'
 import { BuscadorPage } from './page/BuscadorPage';  // Cambiado de 'pages' a 'page'
+import Footer from './components/Footer';
 
 // Importaciones de autenticación - crear estas páginas en page/Auth/
 import LoginPage from './page/Auth/LoginPage';
@@ -29,6 +30,7 @@ function App() {
       <Route path="/registro" element={<RegisterPage />} />
       <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
     </Routes>
+    <Footer />
     </BrowserRouter>
   )
 }
