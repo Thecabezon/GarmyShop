@@ -1,6 +1,6 @@
 import RopaComponente from "../components/RopaComponente";
 import '../styles/Tienda.css';
-export function TiendaPage() {    
+export function TiendaPage({ handleAddToCart }) {
 const ropas = [
   {
     cod: 1,
@@ -76,33 +76,51 @@ const ropas = [
   }
 ];
 
-
     return(
       <div className="productos-container">
-      <h2 className="productos-titulo">Nuestros Productos</h2>
-      <div className="ropa-lista">
-        {ropas.map((ropa) => (
-          <div key={ropa.cod} className="ropa-card">
-            <div className="ropa-imagen">
-              <img src={ropa.imagen} alt={ropa.nombre} />
-            </div>
-            <div className="ropa-info">
-              <h5>{ropa.nombre}</h5>
-              <p className="producto-categoria">{ropa.categoria}</p>
-              <div className="ropa-precio">
-                <span className="precio-actual">S/. {ropa.precio.toFixed(2)}</span>
+        <h2 className="productos-titulo">Nuestros Productos</h2>
+        <div className="ropa-lista">
+          {ropas.map((ropa) => (
+            <div key={ropa.cod} className="ropa-card">
+              <div className="ropa-imagen">
+                <img src={ropa.imagen} alt={ropa.nombre} />
               </div>
-              <button 
-                onClick={() => window.location.href = `/tienda/${ropa.cod}`}
-                className="ver-detalle-btn"
-              >
-                Ver Detalle
-              </button>
+              <div className="ropa-info">
+                <h5>{ropa.nombre}</h5>
+                <p className="producto-categoria">{ropa.categoria}</p>
+                <div className="ropa-precio">
+                  <span className="precio-actual">S/. {ropa.precio.toFixed(2)}</span>
+                </div>
+                <div className="botones-fila">
+                  <button onClick={() => handleAddToCart(ropa)} className="agregar-carrito-btn" >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20" height="20" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"
+                      style={{ marginRight: '8px' }}
+                    >
+                      <path d="M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                      <path d="M20 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                    Agregar al carrito
+                  </button>
+
+                  <button  onClick={() => window.location.href = `/tienda/${ropa.cod}`} className="ver-detalle-btn"
+                    aria-label="Ver detalle"
+                    title="Ver detalle">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20" height="20"  fill="none" stroke="white"  strokeWidth="2" viewBox="0 0 24 24">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
   );
 };
     
