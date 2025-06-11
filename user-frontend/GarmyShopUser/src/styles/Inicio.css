@@ -1,265 +1,205 @@
+/* Importamos los hooks y componentes necesarios */
+/* Esto es JS/JSX, no CSS - no va aquí */
+
+/* Asegúrate de tener Bootstrap CSS incluido en tu proyecto */
+
+/* CONTENEDOR PRINCIPAL */
 .inicio-container {
-    width: 100%;
-    overflow: hidden;
-  }
-
-  /* Hero Slider */
-  .hero-slider {
-    position: relative;
-    height: 600px;
-    overflow: hidden;
-    margin-top: -20px;
-  }
-  
-  .slide {
-    position: relative;
-    height: 100%;
-  }
-  
-  .slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.8);
-  }
-  
-  .slide-content {
-    position: absolute;
-    top: 50%;
-    left: 50px;
-    transform: translateY(-50%);
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  }
-  
-  .slide-content h2 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-  
-  .slide-content p {
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .cta-button {
-    display: inline-block;
-    padding: 12px 30px;
-    background-color: #6F7F8C;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-  }
-  
-  /* Categorías */
-  .featured-categories {
-    padding: 4rem 2rem;
-
-  }
-  .featured-categories h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 2rem;
-  }
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-  
-  .category-card {
-    position: relative;
-    height: 400px;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 20px;
-
-  }
-  
-  .category-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .category-card h3 {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(80, 80, 80, 0.3);
-  }
-  /* Estilo para las imágenes con efecto hover */
-.categoria-imagen {
   width: 100%;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-  margin-bottom: 20px; /* Añadido margen inferior */
+  overflow: hidden;
 }
 
-.categoria-imagen:hover {
-  transform: scale(1.05);
+/* HERO BANNER (estilos in-line en HTML, pero puedes añadir más aquí si quieres) */
+.hero-banner {
+  position: relative;
+  /* minHeight y background style ya están in-line en el HTML */
 }
 
-/* Estilo para los botones de categoría */
-.categoria-boton {
-  background-color: black;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
+.hero-banner .container {
+  height: 100%; /* Permite que el flexbox en la sección hero funcione correctamente */
+  display: flex;
+  align-items: center;
+}
+
+.hero-banner h1 { /* Ajustamos el selector para h1 dentro del banner */
+  font-size: 3rem; /* Tamaño grande para el título principal */
+  margin-bottom: 1rem;
+  font-weight: bold; /* Asegura que sea negrita */
+}
+
+.hero-banner p.lead { /* Ajustamos el selector para el párrafo */
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* CTA BUTTONS (estilos de Bootstrap btn-outline-light) - Estos sí queremos que sean de Bootstrap */
+
+
+/* SECCIÓN DE CATEGORÍAS POPULARES */
+.featured-categories {
+  padding-top: 4rem; /* Asegura padding si no usas clases de Bootstrap */
+  padding-bottom: 2rem;
+  background-color: #f8f9fa; /* Color de fondo ligero, como Bootstrap bg-light */
+}
+
+.featured-categories h2,
+.featured-products h2 { /* Aplicamos el mismo estilo al título de ambas secciones */
+  text-align: center;
+  font-size: 2.5rem;
+  color: #333; /* Color de texto oscuro */
+  margin-bottom: 2rem;
+}
+
+.categories-grid,
+.products-grid { /* Estilos de grid compartidos para ambas secciones */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* Ajusta minmax según prefieras */
+  gap: 2rem; /* Espacio entre tarjetas */
+  margin-top: 2rem;
+  max-width: 1200px; /* Ancho máximo del grid */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 15px; /* Añade padding horizontal para que no se pegue a los bordes en mobile */
+}
+
+.category-card,
+.product-card { /* Estilos de tarjeta compartidos para ambas secciones */
+  background: white;
+  border-radius: 10px; /* Bordes redondeados */
+  overflow: hidden; /* Esconde partes de la imagen o contenido que salgan del borde */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra profesional */
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave al pasar el ratón */
+  display: flex; /* Usa flexbox para organizar contenido verticalmente */
+  flex-direction: column; /* Apila los elementos verticalmente */
+  /* justify-content: space-between; QUITAR - Lo manejaremos dentro del .*-info */
+  align-items: center; /* Centra el contenido de la tarjeta horizontalmente (la imagen y el div de info) */
+  height: 100%; /* Asegura que las tarjetas en la misma fila tengan la misma altura */
+}
+
+.category-card:hover,
+.product-card:hover { /* Efecto hover compartido */
+  transform: translateY(-5px); /* Efecto ligero de "levantar" la tarjeta */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más grande al pasar el ratón */
+}
+
+.category-card img,
+.product-card img { /* Estilos de imagen compartidos */
+  width: 100%;
+  height: 250px; /* Altura fija para la imagen, ajústala si es necesario */
+  object-fit: cover; /* Cubre el área sin distorsionar la imagen */
+  /* border-radius: 10px 10px 0 0; */ /* Bordes redondeados solo en la parte superior de la imagen si es necesario */
+}
+
+/* Contenedor de Información para Categorías y Productos */
+.category-info,
+.product-info {
+  padding: 1rem; /* Espacio interno consistente */
+  display: flex; /* Usa flexbox para organizar contenido dentro */
+  flex-direction: column;
+  align-items: center; /* Centra texto y botón horizontalmente */
+  flex-grow: 1; /* Permite que este contenedor ocupe el espacio restante */
+  justify-content: flex-start; /* Alinea contenido al principio (nombre, precio, o solo el botón) */
+  width: 100%; /* Asegura que ocupe el ancho disponible (menos padding de la tarjeta) */
+}
+
+/* Estilos de texto para info de producto (categoría no tiene nombre/precio en este div) */
+.product-info h3 {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem 0; /* Espacio debajo del nombre */
+  color: #333; /* Color oscuro para el nombre */
+}
+
+.product-info p {
+  color: #eb83ba; /* Color rosa para el precio */
   font-weight: bold;
-  transition: background-color 0.3s ease;
-  margin-top: auto; /* Añadido para empujar el botón hacia abajo */
+  margin: 0 0 1rem 0; /* Espacio debajo del precio */
 }
 
-.categoria-boton:hover {
-  background-color: #6F7F8C;
+
+/* Estilos de Botón Personalizados (Aplicados a category-button y product-button) */
+/* Fondo blanco, borde rosa, texto negro -> invierte al pasar el ratón */
+/* Aplicamos los estilos base aquí */
+.categoria-button,
+.product-button {
+  display: inline-block; /* Crucial para que el padding y border funcionen como un botón */
+  padding: 10px 20px;
+  /* REMOVER margin-top: 0.5rem; de aquí */
+  background-color: #ffffff; /* Fondo blanco */
+  color: #000000; /* Texto negro */
+  border: 1px solid #eb83ba; /* Borde rosa (usando el mismo rosa de los precios) */
+  border-radius: 5px;
+  text-decoration: none; /* Quita el subrayado por defecto de los enlaces */
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Asegura transición suave */
+  cursor: pointer;
+  width: auto; /* Ancho automático */
+  min-width: 150px; /* Ancho mínimo para que se vea bien */
+  text-align: center;
 }
-  /* Beneficios */
-  .benefits {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    padding: 4rem 2rem;
-    background-color: #f5f5f5;
-  }
-  
-  .benefit-item {
-    text-align: center;
-    padding: 2rem;
-  }
-  
-  .benefit-item i {
-    font-size: 2.5rem;
-    color: #6F7F8C;
-    margin-bottom: 1rem;
-  }
-  
-  
-/* Responsive design */
+
+/* Efecto hover para los botones personalizados */
+.categoria-button:hover,
+.product-button:hover {
+  background-color: #eb83ba; /* Fondo rosa al pasar el ratón */
+  color: #ffffff; /* Texto blanco al pasar el ratón */
+  border-color: #eb83ba; /* Borde rosa al pasar el ratón */
+}
+
+/* Ajuste para empujar el botón hacia abajo dentro del contenedor de info */
+.category-info .categoria-button, /* APLICAR AHORA TAMBIÉN A CATEGORÍAS */
+.product-info .product-button {
+  margin-top: auto; /* Empuja el botón hacia el final del flex container (.category-info o .product-info) */
+  /* No necesitamos repetir los estilos base del botón aquí si la especificidad es correcta */
+}
+
+
+/* BENEFICIOS (no se mostraron en la imagen, pero mantengo los estilos) */
+/* ... tus estilos de .benefits y .benefit-item ... */
+
+
+/* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
-  .categories-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .categories-grid,
+  .products-grid {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajusta minmax para pantallas medianas */
+      gap: 1.5rem; /* Reduce el espacio entre tarjetas */
+  }
+  .category-card img,
+  .product-card img {
+      height: 200px; /* Reduce la altura de las imágenes */
+  }
+  .hero-banner h1 { /* Ajustamos selector */
+      font-size: 2.5rem; /* Reduce tamaño de título en mobile */
+  }
+  .hero-banner p.lead { /* Ajustamos selector */
+      font-size: 1.2rem; /* Reduce tamaño de subtítulo en mobile */
   }
 }
 
 @media (max-width: 480px) {
-  .categories-grid {
-    grid-template-columns: 1fr;
+  .categories-grid,
+  .products-grid {
+      grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
+      gap: 1rem;
+  }
+  .category-card img,
+  .product-card img {
+      height: 200px; /* Mantiene la altura o ajusta más */
+  }
+   .hero-banner h1 { /* Ajustamos selector */
+      font-size: 2rem;
+  }
+  .hero-banner p.lead { /* Ajustamos selector */
+      font-size: 1rem;
+  }
+
+  /* Asegura que el contenido del hero se vea bien en mobile */
+  .hero-banner .container .row .col-12 {
+      padding: 0 15px;
+      text-align: center;
+  }
+  .hero-banner .d-grid.gap-3.d-sm-flex {
+      justify-content: center;
   }
 }
-  /* Newsletter */
-  .newsletter {
-    text-align: center;
-    padding: 4rem 2rem;
-    background-color: #6F7F8C;
-    color: rgb(0, 0, 0);
-  }
-  
-  .newsletter-form {
-    display: flex;
-    gap: 1rem;
-    max-width: 500px;
-    margin: 2rem auto;
-  }
-  
-  .newsletter-form input {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-  }
-  
-  .newsletter-form button {
-    padding: 12px 30px;
-    background-color: #000000;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  /* Estilos para productos destacados */
-.featured-products {
-    padding: 4rem 2rem;
-    background-color: #fff;
-  }
-  
-  .featured-products h2 {
-    text-align: center;
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 2rem;
-  }
-  
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .product-card {
-    border: 1px solid #eee;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  .product-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .product-card img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-  }
-  
-  .product-info {
-    padding: 1rem;
-    text-align: center;
-  }
-  
-  .product-info h3 {
-    font-size: 1.1rem;
-    color: #333;
-    margin-bottom: 0.5rem;
-  }
-  
-  .product-info p {
-    color: #6F7F8C;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-  
-  .product-button {
-    background-color: #6F7F8C;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .product-button:hover {
-    background-color: #5a6978;
-  }
-
-  

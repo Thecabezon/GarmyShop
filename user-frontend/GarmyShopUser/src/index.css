@@ -1,0 +1,11 @@
+.btn-pink {
+    background-color: #e83e8c; /* Color rosa fuerte (puedes cambiarlo) */
+    color: white;
+    border: none;
+  }
+  
+  .btn-pink:hover {
+    background-color: #d63384; /* Un rosa más oscuro para el hover */
+    color: white;
+  }
+  

@@ -16,6 +16,8 @@ import RegisterPage from './page/Auth/RegisterPage';
 import ForgotPasswordPage from './page/Auth/ForgotPasswordPage';
 import Footer from './components/Footer'; // Asegúrate de que Footer esté importado
 
+
+
 function App() {
   const [cartItems, setCartItems] = useState(() => {
     const storedCart = localStorage.getItem('cartItems');

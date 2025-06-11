@@ -1,0 +1,48 @@
+/* Por ejemplo, en src/styles/Footer.css o tu CSS global */
+
+/* Define un color rosa. Puedes ajustar el código HEX (#FF69B4 es un tipo de rosa fuerte) */
+/* Puedes buscar 'html color picker' para encontrar el rosa exacto que te guste */
+:root {
+    --gamyshop-pink: #FF69B4; /* O un rosa diferente como #F08080 (Light Coral) */
+  }
+  
+  .text-pink {
+    color: var(--gamyshop-pink) !important; /* Usamos !important para asegurar que override Bootstrap */
+  }
+  
+  .btn-pink {
+    background-color: var(--gamyshop-pink) !important;
+    border-color: var(--gamyshop-pink) !important;
+    color: white !important;
+  }
+  
+  .btn-pink:hover {
+    background-color: #E0529F !important;
+    border-color: #E0529F !important;
+  }
+  
+  
+  .btn-pink:focus {
+      box-shadow: 0 0 0 0.25rem rgba(255, 105, 180, 0.5); /* Sombra rosa al enfocar */
+  }
+  
+  /* Si necesitas estilos para los links blancos en el footer (aunque text-white debería bastar) */
+  .footer .text-white.text-decoration-none:hover {
+      color: var(--gamyshop-pink) !important; /* Ejemplo: enlaces blancos se vuelven rosa al pasar el mouse */
+  }
+  
+  /* Si necesitas estilos para los inputs en el tema oscuro */
+  .footer .form-control {
+      background-color: #d383bb; /* Un gris oscuro para el fondo del input */
+      color: white; /* Texto blanco dentro del input */
+      border-color: #797b7e; /* Borde gris */
+  }
+  
+  .footer .form-control::placeholder {
+      color: #c3c5c7; /* Color del placeholder (texto de ejemplo) */
+      opacity: 1;
+  }
+  .bg-footer {
+    background-color: #000000; /* negro puro */
+  }
+  

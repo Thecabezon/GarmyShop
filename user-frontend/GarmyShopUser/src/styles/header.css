@@ -1,5 +1,5 @@
 .top-bar {
-  background-color: #6F7F8C;
+  background-color: #000000;
   color: white;
   text-align: center;
   padding: 0.3rem;
@@ -25,14 +25,14 @@
   /* Más pequeño */
   font-weight: 600;
   /* Un poco menos bold */
-  color: #6F7F8C;
+  color: #000000;
   margin: 0;
 }
 
 .logo-description {
   font-family: 'League Spartan', sans-serif;
   font-size: 10px;
-  color: #666;
+  color: #000000;
   align-items: center;
   margin: 0;
 }
@@ -40,6 +40,10 @@
 
 .nav-links {
   display: flex;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 24px;
+  /* Más pequeño */
+  font-weight: 600;
   gap: 30px;
   justify-content: center;
   flex: 1;
@@ -48,7 +52,7 @@
 
 .nav-links a {
   text-decoration: none;
-  color: #333;
+  color: #000000;
   font-weight: 500;
   font-size: 20px;
   /* Añadido tamaño de fuente */
@@ -65,7 +69,7 @@
 }
 
 .nav-links a:hover {
-  color: #6F7F8C;
+  color: #fb82dd;
 }
 
 /*.nav-links a.active::after {
