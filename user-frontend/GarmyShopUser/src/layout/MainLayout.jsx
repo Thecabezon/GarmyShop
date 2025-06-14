@@ -8,12 +8,11 @@ import '../styles/header.css';
 export const MainLayout = ({ children, cartItems, setCartItems }) => {
   return (
     <>
-      <header>
+      <header className="site-header"> {/* Añadimos una clase al header principal */}
         <TopBarComponent />
         <div className="main-header">
           <LogoComponent />
           <NavLinksComponent />
-          {/* Pasa las props aquí */}
           <IconsComponent cartItems={cartItems} setCartItems={setCartItems} />
         </div>
       </header>

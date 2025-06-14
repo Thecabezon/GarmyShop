@@ -1,0 +1,54 @@
+/* src/styles/RecomendacionesCarousel.css */
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  padding: 0 50px; /* Espacio para los botones de navegación */
+  box-sizing: border-box;
+}
+
+.carousel-window {
+  width: 100%;
+  overflow: hidden; /* Esto es clave: oculta los items que no caben */
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out; /* Animación suave del deslizamiento */
+}
+
+.carousel-item {
+  flex: 0 0 25%; /* Cada item ocupa 1/4 del espacio (para mostrar 4) */
+  box-sizing: border-box;
+  padding: 0 10px; /* Espacio entre los items */
+}
+
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-nav-btn.prev {
+  left: 0;
+}
+
+.carousel-nav-btn.next {
+  right: 0;
+}
+
+.carousel-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
