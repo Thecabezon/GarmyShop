@@ -3,6 +3,8 @@ package com.garmyshop.user_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 
 
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // explícito, aunque no es obligatorio si el nombre es igual
+    @Column(name = "id")
     private Integer id;
 
     @Column(name = "nombre", length = 100, nullable = false)
@@ -30,9 +32,11 @@ public class Categoria {
     @Column(name = "activo")
     private Boolean activo = true;
 
-    @Column(name = "creado")
+    @CreationTimestamp
+    @Column(name = "creado", updatable = false)
     private LocalDateTime creado;
 
+    @UpdateTimestamp
     @Column(name = "actualizado")
     private LocalDateTime actualizado;
 

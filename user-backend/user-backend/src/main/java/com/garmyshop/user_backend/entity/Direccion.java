@@ -2,6 +2,8 @@ package com.garmyshop.user_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 
 import java.time.LocalDateTime;
@@ -19,8 +21,8 @@ public class Direccion {
     @Column(name = "id")
     private Integer id;
 
-    // Relación con auth_user
-    @ManyToOne
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private AuthUser usuario;
 
@@ -51,9 +53,11 @@ public class Direccion {
     @Column(name = "telefono", length = 20, nullable = false)
     private String telefono;
 
-    @Column(name = "creado")
+    @CreationTimestamp
+    @Column(name = "creado", updatable = false)
     private LocalDateTime creado;
 
+    @UpdateTimestamp
     @Column(name = "actualizado")
     private LocalDateTime actualizado;
 }

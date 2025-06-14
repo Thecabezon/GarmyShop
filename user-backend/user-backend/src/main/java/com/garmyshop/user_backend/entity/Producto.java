@@ -1,10 +1,13 @@
 package com.garmyshop.user_backend.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "producto")
@@ -15,7 +18,7 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
     @Column(name = "nombre", length = 200, nullable = false)
     private String nombre;
@@ -29,11 +32,11 @@ public class Producto {
     @Column(name = "sku", length = 50, unique = true, nullable = false)
     private String sku;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marca_id", nullable = false)
     private Marca marca;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
@@ -49,10 +52,18 @@ public class Producto {
     @Column(name = "es_destacado", nullable = false)
     private Boolean esDestacado = false;
 
-    @Column(name = "creado")
+    @CreationTimestamp
+    @Column(name = "creado", nullable = false, updatable = false)
     private LocalDateTime creado;
 
-    @Column(name = "actualizado")
+    @UpdateTimestamp
+    @Column(name = "actualizado", nullable = false)
     private LocalDateTime actualizado;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ImagenProducto> imagenes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CombinacionProducto> combinaciones = new ArrayList<>();
 
 }

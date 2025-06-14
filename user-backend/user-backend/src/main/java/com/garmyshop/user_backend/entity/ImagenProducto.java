@@ -2,6 +2,8 @@ package com.garmyshop.user_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -16,9 +18,9 @@ public class ImagenProducto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
@@ -31,9 +33,11 @@ public class ImagenProducto {
     @Column(name = "orden", nullable = false)
     private Integer orden = 0;
 
-    @Column(name = "creado")
+    @CreationTimestamp
+    @Column(name = "creado", updatable = false)
     private LocalDateTime creado;
 
+    @UpdateTimestamp
     @Column(name = "actualizado")
     private LocalDateTime actualizado;
 

@@ -3,6 +3,9 @@ package com.garmyshop.user_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ArrayList;
+
 
 @Entity
 @Table(name = "auth_user")
@@ -46,5 +49,11 @@ public class AuthUser {
 
     @Column(name = "date_joined", nullable = false)
     private LocalDateTime dateJoined;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Direccion> direcciones = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Orden> ordenes = new ArrayList<>();
 
 }
