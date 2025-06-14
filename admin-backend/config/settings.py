@@ -33,15 +33,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Tienda',
+    'corsheaders',
     'rest_framework',
     'cloudinary',
     'cloudinary_storage',
-
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -149,3 +150,12 @@ CLOUDINARY_STORAGE = {
 
 # Usar Cloudinary como storage por defecto para archivos multimedia
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Lista de orígenes que tienen permitido hacer peticiones
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3002', # El origen de tu app de React
+    'http://127.0.0.1:3002',
+]
+
+# Opcionalmente, para desarrollo puedes permitir todos los orígenes (no recomendado para producción)
+# CORS_ALLOW_ALL_ORIGINS = True
