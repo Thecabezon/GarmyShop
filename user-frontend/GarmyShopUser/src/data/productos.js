@@ -12,7 +12,7 @@ export const productos = [
     tipoPrenda: "Blusa",
     marca: "Zara",
     precio: 39.99,
-    imagen: "https://static.zara.net/photos///2024/V/0/1/p/2157/223/800/2/w/429/2157223800_6_1_1.jpg?ts=1708343997637",
+    imagen: "https://m.media-amazon.com/images/I/61TQd-XbnHL._AC_UY1000_.jpg",
     combinaCon: ['Pantalón', 'Jeans', 'Blazer']
   },
   {
@@ -34,7 +34,7 @@ export const productos = [
     tipoPrenda: "Top",
     marca: "Vogue",
     precio: 29.50,
-    imagen: "https://i.pinimg.com/564x/2c/8e/58/2c8e581e2858b14647355e1a166e483e.jpg",
+    imagen: "https://shop.mango.com/assets/rcs/pics/static/T7/fotos/S/77054013_48.jpg?imwidth=2048&imdensity=1&ts=1724348132102",
     combinaCon: ['Pantalón', 'Blazer', 'Maxi falda']
   },
   {
@@ -43,9 +43,9 @@ export const productos = [
     descripcion: "Blusa de estilo bohemio con hombros descubiertos y detalles bordados florales.",
     departamento: "Mujer",
     tipoPrenda: "Blusa",
-    marca: "Free People",
+    marca: "H&M",
     precio: 68.00,
-    imagen: "https://falabella.scene7.com/is/image/FalabellaPE/19082260_1?wid=800&hei=800&qlt=70",
+    imagen: "https://m.media-amazon.com/images/I/61kBS9-MJZL._AC_SL1080_.jpg",
     combinaCon: ['Jeans', 'Shorts', 'Maxi falda']
   },
   {
@@ -56,7 +56,7 @@ export const productos = [
     tipoPrenda: "Cafarena",
     marca: "Uniqlo",
     precio: 25.00,
-    imagen: "https://image.uniqlo.com/UQ/ST3/pe/imagesgoods/461108/item/pegoods_09_461108.jpg?width=750",
+    imagen: "https://ae01.alicdn.com/kf/S11cf505076a548acb262c9db137fa818w.jpg_640x640q90.jpg",
     combinaCon: ['Blazer', 'Cárdigan', 'Pantalón']
   },
   {
@@ -241,16 +241,7 @@ export const productos = [
   // ======================================================
   // --- ACCESORIOS (Unisex / Mujer) ---
   // ======================================================
-  {
-    cod: 501,
-    nombre: "Pashmina de Cashmere",
-    descripcion: "Suave y cálida pashmina de 100% cashmere, el accesorio perfecto para cualquier estación.",
-    departamento: "Unisex",
-    tipoPrenda: "Pashmina",
-    marca: "Accesorios Finos",
-    precio: 45.00,
-    imagen: "https://www.merchantes.com/wp-content/uploads/2021/01/Pashminas-lisas-2.jpg"
-  },
+
   {
     cod: 502,
     nombre: "Lentes de Sol Cat-Eye",
@@ -267,7 +258,7 @@ export const productos = [
     descripcion: "Bolso grande y espacioso, fabricado en cuero genuino, perfecto para el día a día.",
     departamento: "Mujer",
     tipoPrenda: "Bolsos de mano",
-    marca: "Michael Kors",
+    marca: "Uniqlo",
     precio: 250.00,
     imagen: "https://falabella.scene7.com/is/image/FalabellaPE/gsc_118432363_2120038_1?wid=800&hei=800&qlt=70"
   },

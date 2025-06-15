@@ -6,25 +6,24 @@
 }
 
 .productos-titulo {
-  font-size: 2.5rem; /* Título más grande */
+  font-size: 2.5rem;
   color: #000000;
-  margin-bottom: 2.5rem; /* Más espacio debajo del título */
+  margin-bottom: 2.5rem;
   position: relative;
-  display: inline-block; /* Para que el subrayado tenga el ancho del texto */
-  padding-bottom: 0.5rem; 
-  /* Espacio para el subrayado */
+  display: inline-block;
+  padding-bottom: 0.5rem;
+  font-family: 'League Spartan', sans-serif; 
 }
 
-/* Añade un subrayado decorativo */
 .productos-titulo::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 120%; /* El subrayado es un poco más ancho que el texto */
+  width: 120%;
   height: 3px;
-  background:#6F7F8C; /* Color que coincida con tus botones */
+  background:#fd2892;
   border-radius: 2px;
 }
 
@@ -52,33 +51,6 @@
   transform: translateY(-5px);
 }
 
-.etiqueta-new {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: #7bbd2c;
-  color: white;
-  font-size: 0.7rem;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 3px;
-  z-index: 10;
-  text-transform: uppercase;
-}
-
-.etiqueta-descuento {
-  position: absolute;
-  bottom: 110px;
-  right: 10px;
-  background-color: #7bbd2c;
-  color: white;
-  font-size: 0.8rem;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 10px;
-  z-index: 10;
-}
-
 .ropa-imagen {
   position: relative;
   background-color: #eeeeee;
@@ -89,6 +61,12 @@
   height: 380px;
   object-fit: cover;
   display: block;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.ropa-imagen img:hover {
+  filter: brightness(0.95);
 }
 
 .ropa-info {
@@ -121,42 +99,18 @@
   color: #333;
 }
 
-.precio-anterior {
-  font-size: 0.9rem;
-  color: #999;
-  text-decoration: line-through;
-}
-
 .botones-fila {
   display: flex;
   gap: 8px;
   align-items: center;
+  margin-top: 0.7rem;
 }
 
-
-.ver-detalle-btn {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  background-color: #6F7F8C;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
-}
-
-.ver-detalle-btn:hover {
-  background-color: #5a6978;
-}
-
+/* Botón Agregar al carrito */
 .agregar-carrito-btn {
   flex-grow: 1;
   padding: 0.8rem;
-  background-color: #c5BAC4;
+  background-color: #f85cac;
   color: white;
   border: none;
   border-radius: 5px;
@@ -167,21 +121,63 @@
   justify-content: center;
   gap: 8px;
   font-weight: 600;
+  font-family: 'League Spartan', sans-serif; /* <-- Aquí la fuente */
 }
 
 .agregar-carrito-btn:hover {
-  background-color: #c2a2bf;
+  background-color: #000000;
 }
 
-.agregar-carrito-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2;
+/* Botón Me Encanta (corazón) */
+.me-encanta-btn {
+  background: white;
+  border: 2px solid #000;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  padding: 0;
+}
+
+.me-encanta-btn .corazon-icono {
+  fill: white;
+  stroke: #000;
+  stroke-width: 1.5;
+  transition: fill 0.2s, stroke 0.2s;
+}
+
+.me-encanta-btn.liked .corazon-icono {
+  fill: #000;
+  stroke: #000;
+}
+
+/* Botón Ver Detalle (ojo) */
+.ver-detalle-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background-color: #000000;
+  color: rgb(245, 245, 245);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.ver-detalle-btn:hover {
+  background-color: #fc5bb6;
 }
 
 .ver-detalle-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   stroke-width: 2;
 }
 
@@ -202,7 +198,6 @@
   .ropa-lista {
     grid-template-columns: 1fr;
   }
-  
   .ropa-card {
     width: 90%;
     max-width: 330px;

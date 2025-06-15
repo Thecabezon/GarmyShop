@@ -51,7 +51,7 @@ const NavLinksComponent = () => {
 
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter('ropa')}>
         <NavLink to="/tienda" className="nav-link-item">
-          Ropa <DropdownIcon />
+          Productos <DropdownIcon />
         </NavLink>
         {activeMenu === 'ropa' && <MegaMenu columns={menuData.ropa} />}
       </div>
@@ -65,8 +65,8 @@ const NavLinksComponent = () => {
       </div>
 
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
-        <NavLink to="/accesorios" className="nav-link-item">
-          Accesorios
+        <NavLink to="/marcas" className="nav-link-item">
+          Marcas
         </NavLink>
       </div>
     </nav>
