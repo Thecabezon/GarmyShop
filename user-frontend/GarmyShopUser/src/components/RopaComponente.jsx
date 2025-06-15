@@ -9,7 +9,7 @@ export function RopaComponente(props) {
           <img
             src={props.imagen} // <- Usa props.imagen
             alt={props.nombre}  // <- Usa props.nombre
-            onError={(e) => { e.target.src = `https://dummyimage.com/400x250/000/fff&text=${props.nombre}`; }}
+            onError={(e) => { e.target.src = `https://i.pinimg.com/originals/f2/91/88/f29188204ca351f2b0cb604b51fc409a.jpg${props.nombre}`; }}
           />
         </div>
         <div className="ropa-info">

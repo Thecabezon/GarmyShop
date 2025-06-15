@@ -22,11 +22,19 @@
 }
 
 .hero-banner h1 { /* Ajustamos el selector para h1 dentro del banner */
-  font-size: 3rem; /* Tamaño grande para el título principal */
+  font-size: 4rem; /* Tamaño grande para el título principal */
   margin-bottom: 1rem;
   font-weight: bold; /* Asegura que sea negrita */
 }
 
+/* Fuente League Spartan para todos los títulos de sección */
+
+.featured-categories h2,
+.featured-products h2,
+.product-info h3 {
+  font-family: 'League Spartan', sans-serif;
+  letter-spacing: 0.5px;
+}
 .hero-banner p.lead { /* Ajustamos el selector para el párrafo */
   font-size: 1.5rem;
   margin-bottom: 2rem;

@@ -1,0 +1,237 @@
+/* Página principal de marcas */
+.marcas-page {
+    min-height: 100vh;
+    background: #fff;
+  }
+  
+  /* Hero Section */
+  .marcas-hero {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #000000 0%, #000000 100%);
+    overflow: hidden;
+  }
+  
+  .hero-content {
+    text-align: center;
+    color: white;
+    z-index: 2;
+    position: relative;
+  }
+  
+  .hero-title {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+    margin: 0;
+    opacity: 0.9;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+  
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Filtros simplificados */
+  .marcas-filters {
+    padding: 60px 0 40px 0;
+    background: #ffffff;
+    border-bottom: none; /* Quitar línea */
+    box-shadow: none; /* Quitar sombra si hay */
+  }
+  
+  .filters-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Búsqueda mejorada */
+  .search-section {
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  /* Búsqueda mejorada */
+.search-box {
+    position: relative;
+    width: 100%;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 18px 50px 18px 25px; /* Ajustamos padding para la lupa más grande */
+    border: 2px solid #000;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    background: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+    /* Quitar cualquier sombra o línea que cause separación */
+    box-shadow: none;
+    border-bottom: 2px solid #000; /* Solo línea inferior si quieres, o quítala */
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #f180bb;
+    box-shadow: 0 0 0 3px rgba(241, 128, 187, 0.1);
+  }
+  
+  .search-input::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+  
+  /* Lupa sin círculo, más grande */
+  .search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #000;
+    width: 40px;  /* Más grande */
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent; /* Sin fondo */
+    border: none; /* Sin borde */
+    transition: color 0.3s ease;
+  }
+  
+ 
+  
+  .search-icon svg {
+    width: 24px;  /* Más grande */
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 2;
+  }
+  /* Resultados */
+  .marcas-results {
+    padding: 60px 0;
+  }
+  
+  /* Sin resultados */
+  .no-results {
+    text-align: center;
+    padding: 80px 20px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .no-results-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+  }
+  
+  .no-results h3 {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0 0 15px 0;
+  }
+  
+  .no-results p {
+    color: #666;
+    margin: 0 0 30px 0;
+    line-height: 1.6;
+  }
+  
+  .reset-btn {
+    background: #f180bb;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-family: 'League Spartan', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .reset-btn:hover {
+    background: #e06ba3;
+    transform: translateY(-2px);
+  }
+  
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 1rem;
+      padding: 0 20px;
+    }
+    
+    .search-input {
+      padding: 15px 55px 15px 20px;
+      font-size: 1rem;
+    }
+    
+    .search-icon {
+      width: 20px;
+      height: 20px;
+      right: 15px;
+    }
+    
+    .search-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+    
+    .info-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .marcas-hero {
+      height: 300px;
+    }
+    
+    .hero-title {
+      font-size: 2rem;
+    }
+    
+    .marcas-filters {
+      padding: 40px 0 30px 0;
+    }
+    
+    .marcas-results {
+      padding: 40px 0;
+    }
+  }
