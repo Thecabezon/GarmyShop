@@ -46,6 +46,11 @@ class CombinacionProductoSerializer(serializers.ModelSerializer):
         fields = ['id', 'producto', 'talla', 'talla_nombre', 'color', 'color_nombre',
                  'color_hex', 'stock', 'sku']
 
+    def validate_stock(self, value):
+        if value < 0:
+            raise serializers.ValidationError("El stock no puede ser negativo.")
+        return value
+
 class ProductoSerializer(serializers.ModelSerializer):
     marca_nombre = serializers.ReadOnlyField(source='marca.nombre')
     categoria_nombre = serializers.ReadOnlyField(source='categoria.nombre')
@@ -62,6 +67,13 @@ class ProductoSerializer(serializers.ModelSerializer):
         if obj.imagen_principal and obj.imagen_principal.imagen:
             return obj.imagen_principal.imagen.url
         return None
+
+    def validate(self, data):
+        precio = data.get('precio')
+        precio_oferta = data.get('precio_oferta')
+        if precio_oferta and precio_oferta >= precio:
+            raise serializers.ValidationError("El precio en oferta debe ser menor que el precio normal.")
+        return data
 
 class ProductoDetalleSerializer(ProductoSerializer):
     imagenes = ImagenProductoSerializer(many=True, read_only=True)

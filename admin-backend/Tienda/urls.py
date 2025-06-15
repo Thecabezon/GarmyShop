@@ -20,5 +20,5 @@ router.register(r'ordenes', OrdenViewSet)
 router.register(r'orden-items', OrdenItemViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(router.urls)),  # Sin prefijo api/
 ]
