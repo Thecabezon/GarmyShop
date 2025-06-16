@@ -158,3 +158,5 @@ export const OrdenShow = (props) => (
 //         </SimpleForm>
 //     </Create>
 // );
+
+export default OrdenShow;

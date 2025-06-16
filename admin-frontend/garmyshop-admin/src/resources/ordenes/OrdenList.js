@@ -105,3 +105,5 @@ export const OrdenList = (props) => (
     </Datagrid>
   </List>
 );
+
+export default OrdenList;

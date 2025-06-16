@@ -97,3 +97,4 @@ export const OrdenEdit = (props) => (
 //         </SimpleForm>
 //     </Create>
 // );
+export default OrdenEdit;
