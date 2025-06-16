@@ -9,10 +9,15 @@ import {
   FunctionField,
   TabbedShowLayout,
   Tab,
-  ArrayField, // Necesitas ArrayField
-  Datagrid, // Necesitas Datagrid para mostrar items dentro de ArrayField
+  ArrayField,
+  Datagrid,
+  // ✅ Eliminar Box de aquí
+  // Box, // <--- ELIMINA O COMENTA ESTA LÍNEA
 } from 'react-admin';
-import { Typography, Divider, Chip, Box } from '@mui/material'; // Importar Box
+// Importaciones de MUI (donde sí están Box, Typography, Divider, Chip)
+import { Typography, Divider, Chip, Box } from '@mui/material'; // <-- ASEGÚRATE DE QUE LA IMPORTACIÓN DE MUI ESTÁ CORRECTA
+
+// ... (El resto de tu código de OrdenShow.js) ...
 
 // Estados de pago (copiados)
 const estadosPago = [
