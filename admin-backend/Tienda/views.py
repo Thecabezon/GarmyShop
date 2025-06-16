@@ -1,3 +1,5 @@
+
+
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAdminUser
@@ -20,7 +22,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['activo', 'nombre']
     search_fields = ['nombre']
-    ordering_fields = ['nombre', 'creado']
+    ordering_fields = ['nombre', 'creado', 'actualizado']
 
 class MarcaViewSet(viewsets.ModelViewSet):
     queryset = Marca.objects.all()
@@ -50,8 +52,10 @@ class ColorViewSet(viewsets.ModelViewSet):
     ordering_fields = ['nombre']
 
 class ProductoViewSet(viewsets.ModelViewSet):
-    queryset = Producto.objects.all().select_related('marca', 'categoria')
-    serializer_class = ProductoSerializer
+    # MODIFICACIÓN CRUCIAL: Usar prefetch_related para las imágenes
+    # Esto resuelve el problema N+1 al acceder a imagen_principal en el serializador
+    queryset = Producto.objects.all().select_related('marca', 'categoria').prefetch_related('imagenes')
+    serializer_class = ProductoSerializer # Usado para la lista (list) y crear (create)
     permission_classes = [IsAdminUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['marca', 'categoria', 'activo', 'es_destacado']
@@ -59,9 +63,10 @@ class ProductoViewSet(viewsets.ModelViewSet):
     ordering_fields = ['precio', 'nombre', 'creado']
 
     def get_serializer_class(self):
+        # Usamos ProductoDetalleSerializer solo para la vista de detalle (retrieve)
         if self.action == 'retrieve':
             return ProductoDetalleSerializer
-        return ProductoSerializer
+        return ProductoSerializer # Usamos ProductoSerializer para la lista (list) y otros
 
 class ImagenProductoViewSet(viewsets.ModelViewSet):
     queryset = ImagenProducto.objects.all()
@@ -75,7 +80,7 @@ class CombinacionProductoViewSet(viewsets.ModelViewSet):
     queryset = CombinacionProducto.objects.all().select_related('producto', 'talla', 'color')
     serializer_class = CombinacionProductoSerializer
     permission_classes = [IsAdminUser]
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['producto', 'talla', 'color']
     ordering_fields = ['stock', 'sku']
 
