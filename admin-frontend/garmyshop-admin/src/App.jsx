@@ -1,11 +1,12 @@
 import React from 'react';
-import { Admin, Resource, Layout, Loading } from 'react-admin';
+import { Admin, Resource, Loading } from 'react-admin';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { esES } from '@mui/material/locale';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import spanishMessages from 'ra-language-spanish';
-//import simpleRestProvider from 'ra-data-simple-rest';
+
 import dataProvider from "./providers/dataProvider";
+import authProvider from "./providers/authProvider";  // <-- Importa authProvider
 
 // Importar recursos
 import { CategoriaList, CategoriaEdit, CategoriaCreate } from './resources/categorias';
@@ -14,15 +15,6 @@ import { ProductoList, ProductoEdit, ProductoCreate, ProductoShow } from './reso
 import { OrdenList, OrdenEdit, OrdenShow } from './resources/ordenes';
 import Dashboard from './resources/dashboard/index.js';
 
-// Configurar el dataProvider con debugging
-/*
-const dataProvider = simpleRestProvider('http://localhost:8000/api', {
-  // Agregar headers si es necesario
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-*/
 // Wrapper del dataProvider para debugging
 const debugDataProvider = {
   ...dataProvider,
@@ -44,12 +36,8 @@ const debugDataProvider = {
 // Tema personalizado
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
+    primary: { main: '#1976d2' },
+    secondary: { main: '#dc004e' },
   },
 }, esES);
 
@@ -76,7 +64,8 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Admin
-        dataProvider={debugDataProvider}
+        dataProvider={dataProvider} 
+        authProvider={authProvider} 
         i18nProvider={i18nProvider}
         dashboard={Dashboard}
         loading={MyLoading}
