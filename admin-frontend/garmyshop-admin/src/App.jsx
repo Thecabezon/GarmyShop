@@ -6,7 +6,12 @@ import polyglotI18nProvider from 'ra-i18n-polyglot';
 import spanishMessages from 'ra-language-spanish';
 
 import dataProvider from "./providers/dataProvider";
-import authProvider from "./providers/authProvider";  // <-- Importa authProvider
+import authProvider from "./providers/authProvider";  
+// Importar los componentes para Tallas
+import { TallaList, TallaCreate, TallaEdit } from './resources/tallas';
+// Importar los componentes para Colores
+import { ColorList, ColorCreate, ColorEdit } from './resources/colores';
+
 
 // Importar recursos
 import { CategoriaList, CategoriaEdit, CategoriaCreate } from './resources/categorias';
@@ -99,7 +104,19 @@ function App() {
           edit={OrdenEdit}
           show={OrdenShow}
           options={{ label: 'Órdenes' }}
-        />
+          />
+
+             
+        <Resource 
+        name="tallas" 
+        list={TallaList} 
+        create={TallaCreate}
+         edit={TallaEdit} 
+         />
+
+    
+    <Resource name="colores" list={ColorList} create={ColorCreate} edit={ColorEdit} />
+        
       </Admin>
     </ThemeProvider>
   );
