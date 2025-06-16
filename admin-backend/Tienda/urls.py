@@ -6,6 +6,7 @@ from .views import (
     CombinacionProductoViewSet, DireccionViewSet, OrdenViewSet,
     OrdenItemViewSet
 )
+from .views_auth import login_view, logout_view, user_view  # Importa las vistas de auth
 
 router = DefaultRouter()
 router.register(r'categorias', CategoriaViewSet)
@@ -20,5 +21,9 @@ router.register(r'ordenes', OrdenViewSet)
 router.register(r'orden-items', OrdenItemViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(router.urls)),  # Rutas de los ViewSets
+    # Rutas para autenticación por sesión
+    path('auth/login/', login_view),
+    path('auth/logout/', logout_view),
+    path('auth/user/', user_view),
 ]

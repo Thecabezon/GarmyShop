@@ -5,6 +5,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from cloudinary import CloudinaryImage
+from corsheaders.defaults import default_headers
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,18 +38,22 @@ INSTALLED_APPS = [
     'rest_framework',
     'cloudinary',
     'cloudinary_storage',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    
+    'django.middleware.csrf.CsrfViewMiddleware',  
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -68,6 +73,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+
 
 
 # Database
@@ -111,13 +118,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'es-pe'
+TIME_ZONE = 'America/Lima'
 
 USE_I18N = True
+USE_L10N = True
+USE_TZ = True  # Esto deja las fechas en UTC en la base de datos pero ajusta al mostrar
 
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -148,14 +155,44 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': 'WniyC8xnJqbUW_95ncYVarxMQNQ'
 }
 
-# Usar Cloudinary como storage por defecto para archivos multimedia
+
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Lista de orígenes que tienen permitido hacer peticiones
+
+
+# Orígenes permitidos (solo uno debería estar activo entre los dos bloques)
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3002', # El origen de tu app de React
-    'http://127.0.0.1:3002',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+]
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
 ]
 
-# Opcionalmente, para desarrollo puedes permitir todos los orígenes (no recomendado para producción)
-# CORS_ALLOW_ALL_ORIGINS = True
+# ✅ NO permitas todos los orígenes si ya definiste los específicos
+# CORS_ALLOW_ALL_ORIGINS = True  # Comenta o elimina esta línea 
+# Cabeceras permitidas
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'range',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+}

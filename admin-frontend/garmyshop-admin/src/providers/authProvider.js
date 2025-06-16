@@ -1,94 +1,103 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// authProvider.js
 
+// Incluye la función getCookie o impórtala si está en otro archivo
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
 const authProvider = {
-  // Función de login
-  login: async ({ username, password }) => {
-    try {
-      const response = await fetch(`${API_URL}/auth/login/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+  login: ({ username, password }) => {
+    const csrfToken = getCookie('csrftoken'); // <-- OBTENER EL TOKEN
+    const headers = new Headers({ 'Content-Type': 'application/json' });
 
+    if (csrfToken) {
+      headers.set('X-CSRFToken', csrfToken); // <-- AÑADIR LA CABECERA
+    } else {
+      console.warn('CSRF token not found. Login might fail.');
+      // Decide cómo manejar esto: ¿fallar la petición o enviarla y esperar 403?
+      // Lanzar un error aquí puede dar una mejor experiencia de usuario si el token es esencial.
+      // throw new Error('CSRF token not available.');
+    }
+
+    return fetch('/api/auth/login/', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+      headers: headers, // <-- USAR LAS CABECERAS CON EL TOKEN
+      credentials: 'include',
+    }).then(response => {
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Error de autenticación');
+         // Puedes añadir aquí una comprobación más específica si quieres,
+         // por ejemplo, si response.status === 403, es probablemente CSRF
+         // o permisos, si es 400, son credenciales inválidas.
+        throw new Error('Credenciales inválidas');
       }
-
-      const data = await response.json();
-      
-      // Guardar token y datos del usuario
-      localStorage.setItem('auth_token', data.access);
-      localStorage.setItem('refresh_token', data.refresh);
-      localStorage.setItem('user_info', JSON.stringify(data.user));
-      
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    }
+      return response.json();
+    });
   },
 
-  // Función de logout
   logout: () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user_info');
-    return Promise.resolve();
+    const csrfToken = getCookie('csrftoken'); // <-- OBTENER EL TOKEN
+    const headers = new Headers({}); // Empezar con cabeceras vacías o las necesarias
+
+    if (csrfToken) {
+       headers.set('X-CSRFToken', csrfToken); // <-- AÑADIR LA CABECERA
+    } else {
+       console.warn('CSRF token not found. Logout might fail.');
+    }
+
+    return fetch('/api/auth/logout/', {
+      method: 'POST',
+      headers: headers, // <-- USAR LAS CABECERAS CON EL TOKEN
+      credentials: 'include',
+    }).then(() => Promise.resolve());
   },
 
-  // Verificar si el usuario está autenticado
   checkAuth: () => {
-    const token = localStorage.getItem('auth_token');
-    return token ? Promise.resolve() : Promise.reject();
+    // GET request, no necesita CSRF header
+    return fetch('/api/auth/user/', { credentials: 'include' })
+      .then(response => {
+        if (response.ok) {
+          return Promise.resolve();
+        } else {
+          return Promise.reject();
+        }
+      })
+      .catch(() => Promise.reject());
   },
 
-  // Manejar errores de autenticación
   checkError: (error) => {
-    const status = error.status;
-    if (status === 401 || status === 403) {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user_info');
+    // ... (tu código actual está bien aquí)
+    if (error.status === 401 || error.status === 403) {
+      // Nota: Después de arreglar el CSRF, un 403 aquí podría significar permisos.
+      // La lógica de React Admin para redirigir al login está bien.
       return Promise.reject();
     }
     return Promise.resolve();
   },
 
-  // Obtener información del usuario
-  getIdentity: () => {
-    try {
-      const userInfo = localStorage.getItem('user_info');
-      if (userInfo) {
-        const user = JSON.parse(userInfo);
-        return Promise.resolve({
-          id: user.id,
-          fullName: `${user.first_name} ${user.last_name}`.trim() || user.username,
-          avatar: user.avatar || undefined,
-        });
-      }
-      return Promise.reject();
-    } catch (error) {
-      return Promise.reject();
-    }
-  },
+  getPermissions: () => Promise.resolve(), // GET, no necesita CSRF
 
-  // Obtener permisos del usuario
-  getPermissions: () => {
-    try {
-      const userInfo = localStorage.getItem('user_info');
-      if (userInfo) {
-        const user = JSON.parse(userInfo);
-        return Promise.resolve({
-          role: user.is_staff ? 'admin' : 'user',
-          permissions: user.user_permissions || [],
-        });
-      }
-      return Promise.reject();
-    } catch (error) {
-      return Promise.reject();
-    }
+  getUserIdentity: () => {
+     // GET request, no necesita CSRF header
+    return fetch('/api/auth/user/', { credentials: 'include' })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        return Promise.reject();
+      })
+      .catch(() => Promise.reject());
   },
 };
 
