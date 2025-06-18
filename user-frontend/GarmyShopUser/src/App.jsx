@@ -6,9 +6,10 @@ import { InicioPage } from './page/InicioPage';
 import { MainLayout } from './layout/MainLayout';
 import { TiendaPage } from './page/TiendaPage';
 import { ProductoDetallePage } from './page/ProductoDetallePage';
-import CategoriasPage from './page/CategoriasPage';
+
 import { BuscadorPage } from './page/BuscadorPage';
 import FinalizarCompraPage from './page/FinalizarCompraPage';
+import CategoriasPage from './page/CategoriasPage';
 
 // Importaciones de autenticación
 import LoginPage from './page/Auth/LoginPage';
@@ -52,6 +53,15 @@ function App() {
         <Route path="/" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><InicioPage /></MainLayout>} />
         <Route path="/tienda" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><TiendaPage handleAddToCart={handleAddToCart} /></MainLayout>} />
         
+        <Route 
+            path="/categorias" 
+            element={
+                <MainLayout cartItems={cartItems} setCartItems={setCartItems}>
+                    <CategoriasPage /> {/* CategoriasPage va como hijo del layout */}
+                </MainLayout>
+            } 
+        />
+
         {/* RUTA DE MARCAS CORREGIDA */}
         <Route path="/marcas" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><MarcasPage /></MainLayout>} />
         
@@ -64,7 +74,7 @@ function App() {
           } 
         />
         
-        <Route path="/categoria" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><CategoriasPage /></MainLayout>} />
+
         <Route path="/buscar" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><BuscadorPage /></MainLayout>} />
         <Route 
           path="/finalizar_compra" 
