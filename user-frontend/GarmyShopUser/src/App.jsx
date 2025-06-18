@@ -9,6 +9,8 @@ import { ProductoDetallePage } from './page/ProductoDetallePage';
 import CategoriasPage from './page/CategoriasPage';
 import { BuscadorPage } from './page/BuscadorPage';
 import FinalizarCompraPage from './page/FinalizarCompraPage';
+// --> 1. IMPORTAR LA NUEVA PÁGINA DE FAVORITOS
+import { FavoritosPage } from './page/FavoritosPage';
 
 // Importaciones de autenticación
 import LoginPage from './page/Auth/LoginPage';
@@ -19,15 +21,29 @@ import Footer from './components/Footer';
 import MarcasPage from './page/MarcasPage';
 
 function App() {
+  // Estado para el carrito (SIN CAMBIOS)
   const [cartItems, setCartItems] = useState(() => {
     const storedCart = localStorage.getItem('cartItems');
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
+  // --> 2. AÑADIR ESTADO GLOBAL PARA FAVORITOS (igual que el carrito)
+  const [favoriteItems, setFavoriteItems] = useState(() => {
+    const storedFavorites = localStorage.getItem('favoriteItems');
+    return storedFavorites ? JSON.parse(storedFavorites) : [];
+  });
+
+  // useEffect para el carrito (SIN CAMBIOS)
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // --> 3. AÑADIR USEEFFECT PARA GUARDAR FAVORITOS EN LOCALSTORAGE
+  useEffect(() => {
+    localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
+  }, [favoriteItems]);
+
+  // Función para añadir al carrito (SIN CAMBIOS)
   const handleAddToCart = (producto) => {
     setCartItems((prevItems) => {
       const itemIdentifier = producto.idUnicoCarrito || producto.cod;
@@ -45,31 +61,71 @@ function App() {
     });
   };
 
+  // --> 4. AÑADIR FUNCIÓN GLOBAL PARA MANEJAR FAVORITOS
+  const handleToggleFavorite = (producto) => {
+    setFavoriteItems((prevFavorites) => {
+      const isFavorite = prevFavorites.some(item => item.cod === producto.cod);
+      if (isFavorite) {
+        return prevFavorites.filter(item => item.cod !== producto.cod);
+      } else {
+        return [...prevFavorites, producto];
+      }
+    });
+  };
+
   return (
     <BrowserRouter>
+      {/* --> 5. PASAR LOS NUEVOS ESTADOS Y FUNCIONES A LAS RUTAS QUE LO NECESITEN */}
       <Routes>
-        {/* Rutas con MainLayout */}
-        <Route path="/" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><InicioPage /></MainLayout>} />
-        <Route path="/tienda" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><TiendaPage handleAddToCart={handleAddToCart} /></MainLayout>} />
-        
-        {/* RUTA DE MARCAS CORREGIDA */}
-        <Route path="/marcas" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><MarcasPage /></MainLayout>} />
+        <Route path="/" element={<MainLayout cartItems={cartItems} favoriteItems={favoriteItems}><InicioPage /></MainLayout>} />
         
         <Route 
-          path="/tienda/:cod" 
+          path="/tienda" 
           element={
-            <MainLayout cartItems={cartItems} setCartItems={setCartItems}>
-              <ProductoDetallePage handleAddToCart={handleAddToCart} />
+            <MainLayout cartItems={cartItems} favoriteItems={favoriteItems}>
+              <TiendaPage 
+                handleAddToCart={handleAddToCart} 
+                handleToggleFavorite={handleToggleFavorite} 
+                favoriteItems={favoriteItems} 
+              />
             </MainLayout>
           } 
         />
         
-        <Route path="/categoria" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><CategoriasPage /></MainLayout>} />
-        <Route path="/buscar" element={<MainLayout cartItems={cartItems} setCartItems={setCartItems}><BuscadorPage /></MainLayout>} />
+        <Route path="/marcas" element={<MainLayout cartItems={cartItems} favoriteItems={favoriteItems}><MarcasPage /></MainLayout>} />
+        
+        <Route 
+          path="/tienda/:cod" 
+          element={
+            <MainLayout cartItems={cartItems} favoriteItems={favoriteItems}>
+              <ProductoDetallePage 
+                handleAddToCart={handleAddToCart} 
+                handleToggleFavorite={handleToggleFavorite}
+                favoriteItems={favoriteItems}
+              />
+            </MainLayout>
+          } 
+        />
+        
+        {/* --> 6. AÑADIR LA NUEVA RUTA PARA LA PÁGINA DE FAVORITOS */}
+        <Route 
+          path="/favoritos" 
+          element={
+            <MainLayout cartItems={cartItems} favoriteItems={favoriteItems}>
+              <FavoritosPage 
+                favoriteItems={favoriteItems} 
+                handleToggleFavorite={handleToggleFavorite} 
+              />
+            </MainLayout>
+          } 
+        />
+        
+        <Route path="/categoria" element={<MainLayout cartItems={cartItems} favoriteItems={favoriteItems}><CategoriasPage /></MainLayout>} />
+        <Route path="/buscar" element={<MainLayout cartItems={cartItems} favoriteItems={favoriteItems}><BuscadorPage /></MainLayout>} />
         <Route 
           path="/finalizar_compra" 
           element={
-            <MainLayout cartItems={cartItems} setCartItems={setCartItems}>
+            <MainLayout cartItems={cartItems} favoriteItems={favoriteItems}>
               <FinalizarCompraPage cartItems={cartItems} setCartItems={setCartItems} />
             </MainLayout>
           } 

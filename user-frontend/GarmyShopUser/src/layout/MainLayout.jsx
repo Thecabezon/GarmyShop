@@ -5,15 +5,17 @@ import { TopBarComponent } from '../components/Header/TopBarComponent';
 import IconsComponent from '../components/Header/IconsComponent';
 import '../styles/header.css';
 
-export const MainLayout = ({ children, cartItems, setCartItems }) => {
+// --> AHORA RECIBE 'favoriteItems' y lo pasa a IconsComponent
+// He quitado setCartItems porque no se usa aquí, se pasa directo a las páginas.
+export const MainLayout = ({ children, cartItems, favoriteItems }) => {
   return (
     <>
-      <header className="site-header"> {/* Añadimos una clase al header principal */}
+      <header className="site-header">
         <TopBarComponent />
         <div className="main-header">
           <LogoComponent />
           <NavLinksComponent />
-          <IconsComponent cartItems={cartItems} setCartItems={setCartItems} />
+          <IconsComponent cartItems={cartItems} favoriteItems={favoriteItems} />
         </div>
       </header>
       <main className="content-area">{children}</main>
