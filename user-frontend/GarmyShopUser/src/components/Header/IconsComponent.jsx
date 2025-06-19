@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-// --> 1. IMPORTAR 'Link' ADEMÁS DE 'useNavigate' para el ícono de favoritos.
 import { useNavigate, Link } from 'react-router-dom';
+// Importa la configuración de Cloudinary
+import { CLOUDINARY_BASE_URL } from '../../config/cloudinary';
 
-// --> 2. AHORA EL COMPONENTE RECIBE 'favoriteItems'
-export function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
+export default function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
     const [searchVisible, setSearchVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [cartVisible, setCartVisible] = useState(false);
@@ -12,13 +12,12 @@ export function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
     const navigate = useNavigate();
     const cartRef = useRef(null);
 
-    // Lógica del carrito (SIN CAMBIOS)
+    // Lógica del carrito (sin cambios)
     const toggleCart = () => {
       setCartVisible(!cartVisible);
     };
 
     const removeFromCart = (itemId) => {
-      // Usamos el id único del carrito para evitar errores si un producto está con diferentes tallas/colores
       setCartItems(cartItems.filter(item => item.idUnicoCarrito !== itemId));
     };
 
@@ -26,7 +25,7 @@ export function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
       return cartItems.reduce((total, item) => total + item.quantity, 0);
     };
 
-    // Lógica del buscador (SIN CAMBIOS)
+    // Lógica del buscador (sin cambios)
     const toggleSearch = () => {
       setSearchVisible(!searchVisible);
     };
@@ -71,7 +70,6 @@ export function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
       }
     };
 
-    // Lógica para incrementar/decrementar cantidad en el carrito (SIN CAMBIOS)
     const incrementQuantity = (itemId) => {
       setCartItems((prevItems) =>
         prevItems.map((item) =>
@@ -124,26 +122,18 @@ export function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
           </div>
         </div>
 
-        {/* Ícono de Usuario (sin cambios) */}
         <i className="bi bi-person icon"></i>
 
-        {/* --> 3. ÍCONO DE FAVORITOS ACTUALIZADO <-- */}
-        {/* Envolvemos el ícono en un componente Link de react-router-dom */}
         <Link to="/favoritos" className="icon-wrapper">
           <i className="bi bi-heart icon"></i>
-          {/* Mostramos el contador solo si hay favoritos */}
           {favoriteItems && favoriteItems.length > 0 && (
             <span className="cart-badge">{favoriteItems.length}</span>
           )}
         </Link>
         
-
-        {/* Ícono y panel del Carrito (sin cambios en la lógica interna) */}
         <div className="cart-wrapper" >
-            {/* --> 4. ENVUELTO EN 'icon-wrapper' PARA CONSISTENCIA DE ESTILOS */}
             <div className="icon-wrapper" onClick={toggleCart}>
                 <i className="bi bi-cart icon"></i>
-                {/* Mostramos el contador solo si hay items en el carrito */}
                 {getTotalItems() > 0 && (
                   <span className="cart-badge">{getTotalItems()}</span>
                 )}
@@ -165,29 +155,41 @@ export function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
               ) : (
                 <>
                   <div className="cart-items">
-                    {cartItems.map((item) => (
-                      <div key={item.idUnicoCarrito} className="cart-item">
-                        <div className="item-image">
-                            <img src={item.imagen} alt={item.nombre} />
-                        </div>
-                        <div className="item-details">
-                          <div className="item-info">
-                            <h3>{item.nombre}</h3>
-                            <div className="quantity-controls">
-                              <button onClick={(e) => { e.stopPropagation(); decrementQuantity(item.idUnicoCarrito); }} className="quantity-btn">-</button>
-                              <span className="quantity">{item.quantity}</span>
-                              <button onClick={(e) => { e.stopPropagation(); incrementQuantity(item.idUnicoCarrito); }} className="quantity-btn">+</button>
+                    {cartItems.map((item) => {
+                      const imagePath = item.imagenPrincipalUrl || item.imagen;
+                      const fullImageUrl = imagePath
+                        ? `${CLOUDINARY_BASE_URL}/${imagePath}`
+                        : 'https://dummyimage.com/150x150/f0f0f0/ccc&text=No+Img';
+                        
+                      return (
+                        // --- INICIO DE LA ESTRUCTURA ADAPTADA A LOS ESTILOS ---
+                        <div key={item.idUnicoCarrito} className="cart-item">
+                          <div className="item-image">
+                            <div className="placeholder-image">
+                                <img src={fullImageUrl} alt={item.nombre} />
                             </div>
                           </div>
-                          <div className="item-actions">
-                            <button onClick={(e) => { e.stopPropagation(); removeFromCart(item.idUnicoCarrito); }} className="remove-item">
-                              ✕
-                            </button>
-                            <div className="item-price">S/. {(item.precio * item.quantity).toFixed(2)}</div>
+                          <div className="item-details">
+                            <div className="item-info">
+                              <h3>{item.nombre}</h3>
+                              <p>Talla: {item.talla} / Color: {item.color.nombre}</p>
+                              <div className="quantity-controls">
+                                <button onClick={(e) => { e.stopPropagation(); decrementQuantity(item.idUnicoCarrito); }} className="quantity-btn">-</button>
+                                <span className="quantity">{item.quantity}</span>
+                                <button onClick={(e) => { e.stopPropagation(); incrementQuantity(item.idUnicoCarrito); }} className="quantity-btn">+</button>
+                              </div>
+                            </div>
+                            <div className="item-actions">
+                               <div className="item-price">S/. {(item.precio * item.quantity).toFixed(2)}</div>
+                               <button onClick={(e) => { e.stopPropagation(); removeFromCart(item.idUnicoCarrito); }} className="remove-item">
+                                ✕
+                               </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                        // --- FIN DE LA ESTRUCTURA ADAPTADA ---
+                      );
+                    })}
                   </div>
 
                   <div className="cart-footer">
@@ -213,5 +215,3 @@ export function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
     </div>
   );
 }
-
-export default IconsComponent;
