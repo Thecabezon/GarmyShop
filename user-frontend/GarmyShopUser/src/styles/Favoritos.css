@@ -40,7 +40,7 @@
 
 .boton-explorar {
     display: inline-block;
-    background: #fd2892; /* Usando el color de la marca */
+    background: #fd2892;
     color: white;
     padding: 0.8rem 2rem;
     border-radius: 8px;
@@ -58,8 +58,8 @@
     transform: translateY(-2px);
 }
 
-/* --- Estilo para el botón "Ver Producto" en la tarjeta de favorito --- */
-.ver-producto-btn {
+/* --- NUEVO: Estilo para el botón "Ver Detalles" que ocupa todo el ancho --- */
+.ver-producto-btn-full {
     flex-grow: 1;
     padding: 0.75rem 1rem;
     background: #1a1a1a;
@@ -73,19 +73,10 @@
     font-family: 'Poppins', sans-serif;
     text-decoration: none;
     text-align: center;
+    display: block; /* Asegura que ocupe todo el espacio */
 }
 
-.ver-producto-btn:hover {
+.ver-producto-btn-full:hover {
   background-color: #ffffff;
   color: #1a1a1a;
-}
-
-/* 
-  El botón del corazón (.me-encanta-btn) ya debería tener estilos
-  definidos en tu CSS principal de la tienda. 
-  Aquí solo nos aseguramos de que el estado "liked" se aplique correctamente.
-*/
-.ropa-acciones .me-encanta-btn.liked .corazon-icono {
-    fill: #fd2892; 
-    stroke: #1a1a1a;
 }
