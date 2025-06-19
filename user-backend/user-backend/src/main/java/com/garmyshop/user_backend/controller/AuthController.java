@@ -3,7 +3,7 @@ package com.garmyshop.user_backend.controller;
 import com.garmyshop.user_backend.dto.AuthResponseDTO;
 import com.garmyshop.user_backend.dto.LoginRequestDTO;
 import com.garmyshop.user_backend.dto.RegistroRequestDTO;
-// import com.garmyshop.user_backend.dto.UsuarioDTO; // Si tuviéramos un endpoint de perfil aquí
+import com.garmyshop.user_backend.dto.UsuarioDTO;
 import com.garmyshop.user_backend.entity.AuthUser;
 import com.garmyshop.user_backend.security.JwtTokenProvider;
 import com.garmyshop.user_backend.service.AuthUserService;
@@ -93,19 +93,38 @@ public class AuthController {
         }
     }
 
-    // Podríamos añadir un endpoint para el perfil del usuario autenticado aquí
-    // o en un UsuarioController dedicado.
-    /*
+    /**
+     * Endpoint para obtener el perfil del usuario actualmente autenticado.
+     * GET /api/auth/perfil
+     * Requiere que el usuario esté autenticado (token JWT válido).
+     *
+     * @return ResponseEntity con UsuarioDTO si está autenticado, o 401/404.
+     */
     @GetMapping("/perfil")
+    // @PreAuthorize("isAuthenticated()") // Alternativa para asegurar que esté autenticado (si tienes @EnableMethodSecurity)
     public ResponseEntity<UsuarioDTO> obtenerPerfilUsuarioActual() {
+        // Obtener el objeto Authentication del contexto de seguridad
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+
+        // Verificar si el usuario está autenticado y no es el "anonymousUser"
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal().toString())) {
+            // Esto no debería suceder si el endpoint está correctamente protegido por Spring Security
+            // y el filtro JWT funciona, pero es una buena doble verificación.
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        // El nombre del principal es usualmente el username
         String currentUsername = authentication.getName();
+
         return authUserService.obtenerPerfilUsuario(currentUsername)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok) // Si el DTO se encuentra, devuelve 200 OK con el DTO
+                .orElseGet(() -> {
+                    // Esto sería raro si el usuario está autenticado pero no se encuentra su perfil
+                    // Podría indicar un problema de sincronización o que el usuario fue eliminado
+                    // mientras su token aún era válido (menos probable con JWTs cortos).
+                    // Devolver 404 Not Found tiene sentido aquí.
+                    return ResponseEntity.notFound().build();
+                });
     }
-    */
+
 }
