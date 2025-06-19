@@ -1,90 +1,94 @@
-.categorias-container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center; /* Centra el contenido */
-  }
-  
-  .categorias-container h2 {
-    font-size: 2.5rem; /* Título más grande */
-    color: #000000;
-    margin-bottom: 2.5rem; /* Más espacio debajo del título */
-    position: relative;
-    display: inline-block; /* Para que el subrayado tenga el ancho del texto */
-    padding-bottom: 0.5rem; /* Espacio para el subrayado */
-  }
-  
-  /* Añade el subrayado decorativo */
-  .categorias-container h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120%; /* El subrayado es un poco más ancho que el texto */
-    height: 3px;
-    background:#6F7F8C; /* Color que coincida con tus botones */
-    border-radius: 2px;
-  }
-  
-  .categorias-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    padding: 20px;
-    margin-top: 1rem; /* Espacio adicional después del título */
-  }
-  
-  .categoria-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .categoria-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .categoria-imagen {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-  }
-  
-  .categoria-imagen img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .categoria-contenido {
-    padding: 1.5rem;
-  }
-  
-  .categoria-contenido h3 {
-    margin: 0 0 1rem 0;
-    color: #333;
-  }
-  
-  .categoria-contenido p {
+/* src/styles/Categorias.css */
+
+/* Estilos para la página contenedora */
+.categorias-page-container {
+  padding: 20px;
+  max-width: 1200px; /* O el ancho que prefieras */
+  margin: 0 auto; /* Centrar el contenedor */
+}
+
+.categorias-page-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333; /* O el color de tu tema */
+}
+
+/* Estilos para la lista de categorías (el contenedor de CategoriaItem) */
+.categoria-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Columnas responsivas */
+  gap: 20px; /* Espacio entre ítems */
+  justify-content: center; /* Centrar los ítems si no llenan todo el ancho */
+}
+
+/* Estilos para un solo ítem de categoría */
+.categoria-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  background-color: #fff; /* Fondo blanco */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer; /* Indica que es clickeable (si añades link después) */
+  display: flex; /* Para alinear contenido verticalmente */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.categoria-item:hover {
+  transform: translateY(-5px); /* Pequeño efecto al pasar el mouse */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Estilos para la imagen de la categoría (si la añades) */
+.categoria-imagen {
+  width: 80px; /* Tamaño de la imagen */
+  height: 80px;
+  object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+  border-radius: 50%; /* Imágenes circulares */
+  margin-bottom: 10px;
+}
+
+/* Estilos para el nombre de la categoría */
+.categoria-nombre {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #555; /* O el color de tu tema */
+}
+
+/* Estilos para la descripción (si la añades) */
+.categoria-descripcion {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 5px;
+}
+
+/* Estilos para mensajes de error */
+.error-message {
+    color: #d9534f; /* Rojo de error */
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Estilos para mensaje de no categorías encontradas */
+.categorias-page-container p:not(.error-message) {
+    text-align: center;
     color: #666;
-    margin-bottom: 1rem;
-  }
-  
-  .ver-productos-btn {
-    background-color: #000000;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: 100%;
-  }
-  
-  .ver-productos-btn:hover {
-    background-color: #060606;
-  }
+}
+
+/* src/styles/Categorias.css */
+
+/* ... otros estilos ... */
+
+/* Estilos para la imagen de la categoría */
+.categoria-imagen {
+  width: 80px; /* Tamaño de la imagen */
+  height: 80px;
+  object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+  border-radius: 50%; /* Imágenes circulares (ajústalo si quieres cuadradas) */
+  margin-bottom: 10px; /* Espacio debajo de la imagen */
+}
+
+/* ... otros estilos ... */

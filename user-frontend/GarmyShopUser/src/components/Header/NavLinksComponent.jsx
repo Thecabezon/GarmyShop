@@ -69,6 +69,13 @@ const NavLinksComponent = () => {
           Marcas
         </NavLink>
       </div>
+
+      <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
+        <NavLink to="/categorias" className="nav-link-item">
+          Categorías
+        </NavLink>
+      </div>
+
     </nav>
   );
 };
