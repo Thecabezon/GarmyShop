@@ -1,7 +1,7 @@
 /* Página principal de marcas */
 .marcas-page {
     min-height: 100vh;
-    background: #fff;
+    background: #ffffff59;
   }
   
   /* Hero Section */
@@ -56,134 +56,25 @@
     background: rgba(0, 0, 0, 0.2);
   }
   
-  /* Filtros simplificados */
-  .marcas-filters {
-    padding: 60px 0 40px 0;
-    background: #ffffff;
-    border-bottom: none; /* Quitar línea */
-    box-shadow: none; /* Quitar sombra si hay */
-  }
-  
-  .filters-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* Búsqueda mejorada */
-  .search-section {
-    width: 100%;
-    max-width: 800px;
-  }
-  
-  /* Búsqueda mejorada */
-.search-box {
-    position: relative;
-    width: 100%;
-  }
-  
-  .search-input {
-    width: 100%;
-    padding: 18px 50px 18px 25px; /* Ajustamos padding para la lupa más grande */
-    border: 2px solid #000;
-    border-radius: 30px;
-    font-size: 1.1rem;
-    background: white;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-    font-family: inherit;
-    /* Quitar cualquier sombra o línea que cause separación */
-    box-shadow: none;
-    border-bottom: 2px solid #000; /* Solo línea inferior si quieres, o quítala */
-  }
-  
-  .search-input:focus {
-    outline: none;
-    border-color: #f180bb;
-    box-shadow: 0 0 0 3px rgba(241, 128, 187, 0.1);
-  }
-  
-  .search-input::placeholder {
-    color: #999;
-    font-style: italic;
-  }
-  
-  /* Lupa sin círculo, más grande */
-  .search-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #000;
-    width: 40px;  /* Más grande */
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent; /* Sin fondo */
-    border: none; /* Sin borde */
-    transition: color 0.3s ease;
-  }
-  
- 
-  
-  .search-icon svg {
-    width: 24px;  /* Más grande */
-    height: 24px;
-    stroke: currentColor;
-    stroke-width: 2;
-  }
-  /* Resultados */
   .marcas-results {
-    padding: 60px 0;
+    padding: 80px 20px;
+   
+    color: #666;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+   
   }
-  
-  /* Sin resultados */
+
+
   .no-results {
     text-align: center;
-    padding: 80px 20px;
+    padding: 80px 20px; 
     max-width: 500px;
     margin: 0 auto;
-  }
-  
-  .no-results-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-  }
-  
-  .no-results h3 {
-    font-family: 'League Spartan', sans-serif;
-    font-size: 1.5rem;
-    color: #333;
-    margin: 0 0 15px 0;
-  }
-  
-  .no-results p {
+    font-weight: bold;
     color: #666;
-    margin: 0 0 30px 0;
-    line-height: 1.6;
-  }
-  
-  .reset-btn {
-    background: #f180bb;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
     font-family: 'League Spartan', sans-serif;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    
   }
-  
-  .reset-btn:hover {
-    background: #e06ba3;
-    transform: translateY(-2px);
-  }
-  
 
   /* Responsive */
   @media (max-width: 768px) {
@@ -196,22 +87,9 @@
       padding: 0 20px;
     }
     
-    .search-input {
-      padding: 15px 55px 15px 20px;
-      font-size: 1rem;
-    }
+  
     
-    .search-icon {
-      width: 20px;
-      height: 20px;
-      right: 15px;
-    }
-    
-    .search-icon svg {
-      width: 14px;
-      height: 14px;
-    }
-    
+  
     .info-grid {
       grid-template-columns: 1fr;
       gap: 30px;
@@ -226,12 +104,10 @@
     .hero-title {
       font-size: 2rem;
     }
-    
-    .marcas-filters {
-      padding: 40px 0 30px 0;
-    }
-    
+
     .marcas-results {
       padding: 40px 0;
     }
+    
+
   }

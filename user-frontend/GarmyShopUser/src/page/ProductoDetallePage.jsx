@@ -1,12 +1,11 @@
+// src/page/ProductoDetallePage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-// CAMBIA ESTA IMPORTACIÓN:
 import { productoDetalle, productosRecomendados } from '../data/datosProducto';
 import RecomendacionesCarousel from '../components/RecomendacionesCarousel';
 import '../styles/ProductoDetalle.css';
 
 export const ProductoDetallePage = ({ handleAddToCart }) => {
-  // === ESTADOS ===
   const { cod } = useParams();
   const [productoActual, setProductoActual] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
@@ -15,31 +14,25 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('descripcion');
 
-  // === EFECTO PARA CARGAR EL PRODUCTO ===
   useEffect(() => {
-    // Por ahora usamos el producto estático
-    // Más adelante aquí harás la llamada a tu API de Spring Boot
     const productoCompleto = {
       ...productoDetalle,
       cod: parseInt(cod, 10) || productoDetalle.id
     };
-    
+
     setProductoActual(productoCompleto);
     setSelectedImage(productoCompleto.imagenes[0]);
     setSelectedSize(null);
     setSelectedColor(null);
     setQuantity(1);
     window.scrollTo(0, 0);
-    
-    console.log("🔍 Producto cargado:", productoCompleto);
   }, [cod]);
 
-  // === MANEJADORES ===
   const handleAddToCartClick = () => {
     if (!productoActual) return;
-    if (!selectedSize) { alert("Por favor, selecciona una talla."); return; }
-    if (!selectedColor) { alert("Por favor, selecciona un color."); return; }
-    
+    if (!selectedSize) return alert("Por favor, selecciona una talla.");
+    if (!selectedColor) return alert("Por favor, selecciona un color.");
+
     const itemToAdd = {
       ...productoActual,
       talla: selectedSize,
@@ -47,22 +40,17 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
       cantidad: quantity,
       idUnicoCarrito: `${productoActual.cod}-${selectedSize}-${selectedColor.nombre}`
     };
-    
+
     handleAddToCart(itemToAdd);
     alert(`${productoActual.nombre} (${selectedSize}, ${selectedColor.nombre}) ha sido añadido al carrito.`);
   };
 
-  // === GUARDIA ===
   if (!productoActual) {
-    return <div className="5"><h1>Cargando producto...</h1></div>;
+    return <div><h1>Cargando producto...</h1></div>;
   }
 
-  console.log("🔍 Productos recomendados a enviar:", productosRecomendados);
-
-  // === RENDERIZADO ===
   return (
     <div className="producto-detalle-container">
-      {/* Columna Izquierda: Galería de Imágenes */}
       <div className="product-gallery">
         <img src={selectedImage} alt={productoActual.nombre} className="main-image" />
         <div className="thumbnail-container">
@@ -78,7 +66,6 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
         </div>
       </div>
 
-      {/* Columna Derecha: Información y Acciones */}
       <div className="product-info">
         <h1>{productoActual.nombre}</h1>
         <div className="price-section">
@@ -87,9 +74,8 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
             <span className="old-price">S/. {productoActual.precioAnterior.toFixed(2)}</span>
           )}
         </div>
-        
+
         <div className="options-section">
-          {/* SELECTOR DE TALLA */}
           <div className="size-selector">
             <p>Talla:</p>
             <div className="options-buttons">
@@ -105,8 +91,7 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
               ))}
             </div>
           </div>
-          
-          {/* SELECTOR DE COLOR */}
+
           <div className="color-selector">
             <p>Colores Disponibles:</p>
             <div className="options-buttons">
@@ -114,19 +99,14 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
                 <div 
                   key={color.nombre} 
                   className={`color-swatch ${selectedColor?.nombre === color.nombre ? 'active' : ''}`}
-                  style={{ 
-                    backgroundColor: color.codigoHex, 
-                    border: color.codigoHex === '#ffffff' ? '1px solid #ccc' : 'none' 
-                  }}
+                  style={{ backgroundColor: color.codigoHex, border: color.codigoHex === '#ffffff' ? '1px solid #ccc' : 'none' }}
                   onClick={() => setSelectedColor(color)} 
                   title={color.nombre}
-                >
-                </div>
+                />
               ))}
             </div>
           </div>
-          
-          {/* SELECTOR DE CANTIDAD */}
+
           <div className="quantity-selector">
             <p>Cantidad:</p>
             <div className="quantity-input">
@@ -136,34 +116,18 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
             </div>
           </div>
         </div>
-        
+
         <button className="add-to-cart-btn" onClick={handleAddToCartClick}>
           AGREGAR AL CARRITO
         </button>
-        
+
         <p className="sku-info">SKU: {productoActual.sku}</p>
-        
-        {/* TABS DE INFORMACIÓN */}
+
         <div className="product-description-tabs">
           <div className="tab-headers">
-            <button 
-              className={activeTab === 'descripcion' ? 'active' : ''} 
-              onClick={() => setActiveTab('descripcion')}
-            >
-              DESCRIPCIÓN
-            </button>
-            <button 
-              className={activeTab === 'detalles' ? 'active' : ''} 
-              onClick={() => setActiveTab('detalles')}
-            >
-              DETALLE
-            </button>
-            <button 
-              className={activeTab === 'envio' ? 'active' : ''} 
-              onClick={() => setActiveTab('envio')}
-            >
-              ENVÍO
-            </button>
+            <button className={activeTab === 'descripcion' ? 'active' : ''} onClick={() => setActiveTab('descripcion')}>DESCRIPCIÓN</button>
+            <button className={activeTab === 'detalles' ? 'active' : ''} onClick={() => setActiveTab('detalles')}>DETALLE</button>
+            <button className={activeTab === 'envio' ? 'active' : ''} onClick={() => setActiveTab('envio')}>ENVÍO</button>
           </div>
           <div className="tab-content">
             {activeTab === 'descripcion' && <p>{productoActual.descripcion}</p>}
@@ -173,7 +137,6 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
         </div>
       </div>
 
-      {/* SECCIÓN DE RECOMENDADOS */}
       <div className="recommendations-section">
         <h2>TAMBIÉN TE PODRÍA INTERESAR</h2>
         <RecomendacionesCarousel productos={productosRecomendados} />

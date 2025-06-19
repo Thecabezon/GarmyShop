@@ -1,24 +1,22 @@
+// src/layout/MainLayout.jsx
 import React from 'react';
-import NavLinksComponent from '../components/Header/NavLinksComponent';
-import { LogoComponent } from '../components/Header/LogoComponent';
-import { TopBarComponent } from '../components/Header/TopBarComponent';
-import IconsComponent from '../components/Header/IconsComponent';
-import '../styles/header.css';
+import { useLocation } from 'react-router-dom';
+import '../styles/MainLayout.css';
 
-// --> AHORA RECIBE 'favoriteItems' y lo pasa a IconsComponent
-// He quitado setCartItems porque no se usa aquí, se pasa directo a las páginas.
-export const MainLayout = ({ children, cartItems, favoriteItems }) => {
+function MainLayout({ children }) {
+  const location = useLocation();
+
+  // Rutas que requieren diseño full-width (sin centrado)
+  const fullWidthRoutes = ['/', '/marcas'];
+  const isFullWidth = fullWidthRoutes.includes(location.pathname) || location.pathname.startsWith('/tienda/');
+
   return (
-    <>
-      <header className="site-header">
-        <TopBarComponent />
-        <div className="main-header">
-          <LogoComponent />
-          <NavLinksComponent />
-          <IconsComponent cartItems={cartItems} favoriteItems={favoriteItems} />
-        </div>
-      </header>
-      <main className="content-area">{children}</main>
-    </>
+    <div className="main-layout-container">
+      <main className={isFullWidth ? '' : 'main-content'}>
+        {children}
+      </main>
+    </div>
   );
-};
+}
+
+export default MainLayout;

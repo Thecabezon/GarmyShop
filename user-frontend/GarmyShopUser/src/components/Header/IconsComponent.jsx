@@ -1,215 +1,200 @@
+// src/components/Header/IconsComponent.jsx
+
 import React, { useState, useRef, useEffect } from 'react';
-// --> 1. IMPORTAR 'Link' ADEMÁS DE 'useNavigate' para el ícono de favoritos.
 import { useNavigate, Link } from 'react-router-dom';
+// No necesitas importar Header.css aquí si ya se importa en App.jsx o index.jsx
 
-// --> 2. AHORA EL COMPONENTE RECIBE 'favoriteItems'
-export function IconsComponent({ cartItems, setCartItems, favoriteItems }) {
-    const [searchVisible, setSearchVisible] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [cartVisible, setCartVisible] = useState(false);
-    const searchInputRef = useRef(null);
-    const containerRef = useRef(null);
+
+// IconsComponent recibe props, incluyendo handlers del padre para buscador y dropdowns
+export function IconsComponent({ 
+    cartItems, setCartItems, 
+    favoriteItems, // solo para mostrar el badge, no necesita setter o handler aquí
+    toggleSearch, // Handler del padre para mostrar/ocultar el buscador expandido
+    setActiveDropdown // Handler del padre para cerrar dropdowns de navegación
+}) {
+    // REMOVIDO: estado local searchVisible, searchTerm, searchInputRef, containerRef
+    // Estos se manejarán para el buscador expandido en Header.jsx
+
+    // Estado local para la visibilidad del carrito (ESTE SÍ SE MANTIENE LOCAL)
+    const [cartVisible, setCartVisible] = useState(false); 
+
     const navigate = useNavigate();
-    const cartRef = useRef(null);
+    // Referencia para el panel del carrito para detectar clics fuera
+    const cartPanelRef = useRef(null); 
 
-    // Lógica del carrito (SIN CAMBIOS)
+    // Referencia para el contenedor PRINCIPAL de todos los iconos
+    // Útil para detectar clics fuera de la *barra* de iconos para cerrar paneles (opcional)
+     const iconsContainerRef = useRef(null); 
+
+
+    // Lógica para alternar la visibilidad del carrito
     const toggleCart = () => {
-      setCartVisible(!cartVisible);
+      // Cierra cualquier dropdown de navegación abierto
+      if (typeof setActiveDropdown === 'function') {
+          setActiveDropdown(null);
+      }
+       // Opcional: Cierra el buscador expandido si está abierto (requiere pasar isSearchActive y su setter)
+       // if (typeof toggleSearch === 'function') { toggleSearch(false); } // Asumiendo que toggleSearch puede cerrar
+
+      setCartVisible(prev => !prev); 
     };
 
+    // Lógica para eliminar un ítem del carrito (se mantiene)
     const removeFromCart = (itemId) => {
-      // Usamos el id único del carrito para evitar errores si un producto está con diferentes tallas/colores
       setCartItems(cartItems.filter(item => item.idUnicoCarrito !== itemId));
     };
 
+    // Calcular el total de ítems en el carrito para el badge (se mantiene)
     const getTotalItems = () => {
       return cartItems.reduce((total, item) => total + item.quantity, 0);
     };
 
-    // Lógica del buscador (SIN CAMBIOS)
-    const toggleSearch = () => {
-      setSearchVisible(!searchVisible);
+    // Calcular el total del carrito para mostrar en el footer del panel (se mantiene)
+    const getCartTotal = () => {
+        return cartItems.reduce((total, item) => total + (item.precio || 0) * item.quantity, 0).toFixed(2);
     };
 
+
+    // Efecto para cerrar paneles (carrito) y notificar al padre para cerrar otros (dropdowns, buscador)
     useEffect(() => {
-      if (searchVisible && searchInputRef.current) {
-        searchInputRef.current.focus();
-      }
-    }, [searchVisible]);
+         const handleClickOutside = (event) => {
+            // Si el clic NO fue dentro del icons-container (el div raíz de este componente)
+            // Y tampoco fue dentro del panel del carrito
+            if (iconsContainerRef.current && !iconsContainerRef.current.contains(event.target) &&
+                cartPanelRef.current && !cartPanelRef.current.contains(event.target)
+               ) 
+            {
+              setCartVisible(false); // Cierra carrito localmente
+              // Notifica al padre para cerrar dropdowns si el clic fue fuera de TODO el header (opcional)
+               // if (typeof setActiveDropdown === 'function') { setActiveDropdown(null); }
+            }
+         };
 
-    useEffect(() => {
-      const handleClickOutside = (event) => {
-        if (containerRef.current && !containerRef.current.contains(event.target)) {
-          setSearchVisible(false);
-        }
-        if (cartRef.current && !cartRef.current.contains(event.target)) {
-          setCartVisible(false);
-        }
-      };
-      if (searchVisible || cartVisible) {
-        document.addEventListener('mousedown', handleClickOutside);
-      }
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [searchVisible, cartVisible]);
+         // Añade el listener solo si el panel del carrito está visible
+         if (cartVisible) {
+           document.addEventListener('mousedown', handleClickOutside);
+         } else {
+           document.removeEventListener('mousedown', handleClickOutside);
+         }
 
-    const handleSearch = () => {
-      if (searchTerm.trim()) {
-        navigate(`/buscar?query=${encodeURIComponent(searchTerm.trim())}`);
-        setSearchVisible(false);
-        setSearchTerm('');
-      }
-    };
+         return () => {
+           document.removeEventListener('mousedown', handleClickOutside);
+         };
+    }, [cartVisible, setActiveDropdown]); // Dependencias actualizadas
 
-    const handleKeyPress = (e) => {
-      if (e.key === 'Enter') {
-        handleSearch();
-      } else if (e.key === 'Escape') {
-        setSearchVisible(false);
-        setSearchTerm('');
-      }
-    };
-
-    // Lógica para incrementar/decrementar cantidad en el carrito (SIN CAMBIOS)
-    const incrementQuantity = (itemId) => {
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.idUnicoCarrito === itemId ? { ...item, quantity: item.quantity + 1 } : item
-        )
-      );
-    };
-
-    const decrementQuantity = (itemId) => {
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.idUnicoCarrito === itemId && item.quantity > 1
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        )
-      );
-    };
 
   return (
-    <div className="">
-    <div className="icons-container" ref={containerRef}>
+    // Este es el div raíz con la clase "icons-container"
+    // Es el hijo directo del "header-content-wrap" en Header.jsx
+    <div className="icons-container" ref={iconsContainerRef}> 
+      {/* El div con clase "icons" organiza los iconos individuales horizontalmente */}
       <div className="icons">
-        <div className="search-icon-wrapper">
-          <i 
-            className={`bi bi-search search-icon ${searchVisible ? 'active' : ''}`} 
-            onClick={toggleSearch}
-          ></i>
-          <div className={`search-container ${searchVisible ? 'visible' : ''}`}>
-            <div className="search-input-wrapper">
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="¿Qué estás buscando?"
-                className="search-input"
-              />
-              <button 
-                className="search-button" 
-                onClick={handleSearch}
-                disabled={!searchTerm.trim()}
-              >
-                <i className="bi bi-search"></i>
-              </button>
-            </div>
-            <button className="close-button" onClick={toggleSearch}>
-              <i className="bi bi-x-lg"></i>
-            </button>
-          </div>
+
+        {/* Ícono de Búsqueda (Lupa) */}
+        {/* Este ícono SOLO debe ser visible cuando el buscador expandido NO está activo (controlado por CSS) */}
+        {/* Llama a toggleSearch (handler del padre) al hacer clic */}
+        <div className="icon-wrapper search-icon-wrapper" onClick={toggleSearch}> {/* Usa icon-wrapper para estilos base */}
+             <i className={`bi bi-search icon search-icon`}></i> {/* Usa icon para estilos base */}
         </div>
 
-        {/* Ícono de Usuario (sin cambios) */}
-        <i className="bi bi-person icon"></i>
+        {/* Ícono de Usuario */}
+        {/* Si tienes una página de perfil, envuelve esto en un Link */}
+         <div className="icon-wrapper" onClick={() => setActiveDropdown(null)}> {/* Cierra dropdowns al hacer clic */}
+            <i className="bi bi-person icon"></i>
+         </div>
 
-        {/* --> 3. ÍCONO DE FAVORITOS ACTUALIZADO <-- */}
-        {/* Envolvemos el ícono en un componente Link de react-router-dom */}
-        <Link to="/favoritos" className="icon-wrapper">
+
+        {/* ÍCONO DE FAVORITOS */}
+        {/* Envolvemos en Link y usamos .icon-wrapper */}
+        <Link to="/favoritos" className="icon-wrapper" onClick={() => setActiveDropdown(null)}> {/* Cierra dropdowns al navegar */}
           <i className="bi bi-heart icon"></i>
-          {/* Mostramos el contador solo si hay favoritos */}
+          {/* Badge de favoritos */}
           {favoriteItems && favoriteItems.length > 0 && (
-            <span className="cart-badge">{favoriteItems.length}</span>
+            <span className="cart-badge">{favoriteItems.length}</span> 
           )}
         </Link>
-        
 
-        {/* Ícono y panel del Carrito (sin cambios en la lógica interna) */}
+
+        {/* Ícono y panel del Carrito */}
         <div className="cart-wrapper" >
-            {/* --> 4. ENVUELTO EN 'icon-wrapper' PARA CONSISTENCIA DE ESTILOS */}
-            <div className="icon-wrapper" onClick={toggleCart}>
+            {/* .icon-wrapper para el área de clic del ícono del carrito */}
+            <div className="icon-wrapper" onClick={toggleCart}> {/* Llama a toggleCart */}
                 <i className="bi bi-cart icon"></i>
-                {/* Mostramos el contador solo si hay items en el carrito */}
+                {/* Badge del carrito */}
                 {getTotalItems() > 0 && (
                   <span className="cart-badge">{getTotalItems()}</span>
                 )}
             </div>
 
-          <div className={`cart-panel ${cartVisible ? 'visible' : ''}`} ref={cartRef}>
-            <div className="cart-header">
-              <h2>Tu carrito</h2>
-              <button className="close-cart" onClick={toggleCart}>
-                ✕
-              </button>
-            </div>
-
-            <div className="cart-content">
-              {cartItems.length === 0 ? (
-                <div className="empty-cart">
-                  <p>Tu carrito está vacío</p>
+            {/* Panel del carrito - posicionado fixed/absolute (controlado por CSS) */}
+            {/* Su visibilidad se controla con la clase 'visible' basada en el estado local cartVisible */}
+            <div className={`cart-panel ${cartVisible ? 'visible' : ''}`} ref={cartPanelRef}>
+                <div className="cart-header">
+                  <h2>Tu carrito</h2>
+                  <button className="close-cart" onClick={toggleCart}>
+                    ✕
+                  </button>
                 </div>
-              ) : (
-                <>
-                  <div className="cart-items">
-                    {cartItems.map((item) => (
-                      <div key={item.idUnicoCarrito} className="cart-item">
-                        <div className="item-image">
-                            <img src={item.imagen} alt={item.nombre} />
-                        </div>
-                        <div className="item-details">
-                          <div className="item-info">
-                            <h3>{item.nombre}</h3>
-                            <div className="quantity-controls">
-                              <button onClick={(e) => { e.stopPropagation(); decrementQuantity(item.idUnicoCarrito); }} className="quantity-btn">-</button>
-                              <span className="quantity">{item.quantity}</span>
-                              <button onClick={(e) => { e.stopPropagation(); incrementQuantity(item.idUnicoCarrito); }} className="quantity-btn">+</button>
+
+                <div className="cart-content">
+                  {cartItems.length === 0 ? (
+                    <div className="empty-cart" style={{ textAlign: 'center', padding: '20px', color: '#777' }}>
+                      <p>Tu carrito está vacío</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="cart-items">
+                        {cartItems.map((item) => (
+                          <div key={item.idUnicoCarrito || item.cod} className="cart-item">
+                            <div className="item-image">
+                                <img 
+                                    src={item.imagen || 'placeholder-image-url.jpg'} 
+                                    alt={item.nombre || 'Producto'} 
+                                />
+                            </div>
+                            <div className="item-details">
+                              <div className="item-info">
+                                <h3>{item.nombre}</h3>
+                                <div className="quantity-controls">
+                                  <button onClick={(e) => { e.stopPropagation(); decrementQuantity(item.idUnicoCarrito); }} className="quantity-btn">-</button>
+                                  <span className="quantity">{item.quantity}</span>
+                                  <button onClick={(e) => { e.stopPropagation(); incrementQuantity(item.idUnicoCarrito); }} className="quantity-btn">+</button>
+                                </div>
+                              </div>
+                              <div className="item-actions">
+                                <button onClick={(e) => { e.stopPropagation(); removeFromCart(item.idUnicoCarrito); }} className="remove-item">
+                                  ✕
+                                </button>
+                                <div className="item-price">S/. {((item.precio || 0) * item.quantity).toFixed(2)}</div>
+                              </div>
                             </div>
                           </div>
-                          <div className="item-actions">
-                            <button onClick={(e) => { e.stopPropagation(); removeFromCart(item.idUnicoCarrito); }} className="remove-item">
-                              ✕
-                            </button>
-                            <div className="item-price">S/. {(item.precio * item.quantity).toFixed(2)}</div>
-                          </div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
 
-                  <div className="cart-footer">
-                    <button
-                      className="checkout-btn"
-                      onClick={() => {
-                        setCartVisible(false); 
-                        navigate('/finalizar_compra'); 
-                      }}
-                    >
-                      Finalizar compra
-                    </button>
-                  </div>
-                </>
-              )}
+                      <div className="cart-footer">
+                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', fontWeight: 'bold' }}>
+                             <span>Subtotal:</span>
+                             <span>S/. {getCartTotal()}</span>
+                         </div>
+                        <button
+                          className="checkout-btn"
+                          onClick={() => {
+                            setCartVisible(false); 
+                            navigate('/finalizar_compra'); 
+                          }}
+                        >
+                          Finalizar compra
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
             </div>
-          </div>
         </div>
       </div>
-    </div>
-
-    {cartVisible && <div className="cart-overlay" onClick={() => setCartVisible(false)}></div>}
+      {/* Overlay que aparece cuando el carrito está visible, para cerrar al hacer clic fuera */}
+      {cartVisible && <div className="cart-overlay" onClick={toggleCart}></div>}
     </div>
   );
 }

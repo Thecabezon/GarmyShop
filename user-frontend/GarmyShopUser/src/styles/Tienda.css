@@ -1,10 +1,14 @@
+/* Contenedor general de la sección de productos */
 .productos-container {
-  padding: 2rem;
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
   text-align: center;
 }
 
+/* Título principal con subrayado personalizado */
 .productos-titulo {
   font-size: 2.5rem;
   color: #000000;
@@ -12,7 +16,7 @@
   position: relative;
   display: inline-block;
   padding-bottom: 0.5rem;
-  font-family: 'League Spartan', sans-serif; 
+  font-family: 'League Spartan', sans-serif;
 }
 
 .productos-titulo::after {
@@ -23,25 +27,28 @@
   transform: translateX(-50%);
   width: 120%;
   height: 3px;
-  background:#fd2892;
+  background: #fd2892;
   border-radius: 2px;
 }
 
+/* Lista de productos (grid adaptable) */
 .ropa-lista {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  padding: 1.5rem 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   justify-items: center;
+  align-items: start;
   background-color: white;
+  padding: 1.5rem 0;
 }
 
+/* Tarjeta de producto individual */
 .ropa-card {
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
   background-color: #f5f5f5;
   border-radius: 10px;
   overflow: hidden;
-  margin: 0.5rem;
   transition: transform 0.2s;
   position: relative;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -51,8 +58,8 @@
   transform: translateY(-5px);
 }
 
+/* Imagen principal del producto */
 .ropa-imagen {
-  position: relative;
   background-color: #eeeeee;
 }
 
@@ -69,6 +76,7 @@
   filter: brightness(0.95);
 }
 
+/* Información del producto */
 .ropa-info {
   padding: 0.8rem 0.8rem 1rem;
   text-align: left;
@@ -86,6 +94,12 @@
   text-overflow: ellipsis;
 }
 
+.producto-categoria {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Precio del producto */
 .ropa-precio {
   display: flex;
   align-items: center;
@@ -99,6 +113,7 @@
   color: #333;
 }
 
+/* Fila de botones: agregar, favorito, ver detalle */
 .botones-fila {
   display: flex;
   gap: 8px;
@@ -121,7 +136,7 @@
   justify-content: center;
   gap: 8px;
   font-weight: 600;
-  font-family: 'League Spartan', sans-serif; /* <-- Aquí la fuente */
+  font-family: 'League Spartan', sans-serif;
 }
 
 .agregar-carrito-btn:hover {
@@ -161,7 +176,7 @@
   height: 40px;
   padding: 0;
   background-color: #000000;
-  color: rgb(245, 245, 245);
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -181,25 +196,29 @@
   stroke-width: 2;
 }
 
-/* Responsive */
+/* Responsividad (pantallas medianas y pequeñas) */
 @media (max-width: 1200px) {
   .ropa-lista {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 }
 
-@media (max-width: 900px) {
-  .ropa-lista {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 768px) {
+  .productos-titulo {
+    font-size: 2rem;
+  }
+
+  .ropa-imagen img {
+    height: 320px;
   }
 }
 
-@media (max-width: 600px) {
-  .ropa-lista {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 480px) {
   .ropa-card {
-    width: 90%;
-    max-width: 330px;
+    max-width: 95%;
+  }
+
+  .ropa-imagen img {
+    height: 280px;
   }
 }
