@@ -1,182 +1,159 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-// CAMBIA ESTA IMPORTACIÓN:
-import { productoDetalle, productosRecomendados } from '../data/datosProducto';
 import RecomendacionesCarousel from '../components/RecomendacionesCarousel';
-import '../styles/ProductoDetalle.css';
+import '../styles/ProductoDetalle.css'; // Carga los nuevos estilos profesionales
 
 export const ProductoDetallePage = ({ handleAddToCart }) => {
-  // === ESTADOS ===
   const { cod } = useParams();
   const [productoActual, setProductoActual] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('descripcion');
+  const [recomendaciones, setRecomendaciones] = useState([]);
 
-  // === EFECTO PARA CARGAR EL PRODUCTO ===
   useEffect(() => {
-    // Por ahora usamos el producto estático
-    // Más adelante aquí harás la llamada a tu API de Spring Boot
-    const productoCompleto = {
-      ...productoDetalle,
-      cod: parseInt(cod, 10) || productoDetalle.id
+    const fetchProductoDetalle = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`http://localhost:8085/api/productos/${cod}`);
+        if (!response.ok) throw new Error('Producto no encontrado.');
+        const apiData = await response.json();
+
+        // --- Adaptación de datos ---
+        const imagenPrincipal = apiData.imagenes.find(img => img.esPrincipal)?.imagen || apiData.imagenes[0]?.imagen;
+        const listaImagenes = apiData.imagenes.map(img => img.imagen);
+        const tallasUnicas = [...new Set(apiData.combinacionesDisponibles.map(c => c.talla.nombre))].map(nombre => ({ talla: nombre, disponible: true }));
+        const coloresUnicos = apiData.combinacionesDisponibles.map(c => c.color).filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+        
+        const productoFormateado = {
+          id: apiData.id, cod: apiData.id, nombre: apiData.nombre, precio: apiData.precio,
+          precioAnterior: apiData.precioOferta !== apiData.precio ? apiData.precioOferta : null,
+          sku: apiData.sku, descripcion: apiData.descripcion, imagenes: listaImagenes,
+          tallasDisponibles: tallasUnicas, coloresDisponibles: coloresUnicos,
+          detalles: "Fabricado con materiales de alta calidad para garantizar durabilidad y confort.",
+          infoEnvio: "Envío estándar de 3-5 días hábiles. Devoluciones gratuitas dentro de los 30 días."
+        };
+        setProductoActual(productoFormateado);
+        setSelectedImage(imagenPrincipal);
+
+        // TODO: Cargar recomendaciones reales desde la API
+        // setRecomendaciones(datosRecomendados);
+
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+        window.scrollTo(0, 0);
+      }
     };
-    
-    setProductoActual(productoCompleto);
-    setSelectedImage(productoCompleto.imagenes[0]);
-    setSelectedSize(null);
-    setSelectedColor(null);
-    setQuantity(1);
-    window.scrollTo(0, 0);
-    
-    console.log("🔍 Producto cargado:", productoCompleto);
+    fetchProductoDetalle();
   }, [cod]);
 
-  // === MANEJADORES ===
   const handleAddToCartClick = () => {
-    if (!productoActual) return;
     if (!selectedSize) { alert("Por favor, selecciona una talla."); return; }
     if (!selectedColor) { alert("Por favor, selecciona un color."); return; }
     
     const itemToAdd = {
       ...productoActual,
-      talla: selectedSize,
-      color: selectedColor,
-      cantidad: quantity,
-      idUnicoCarrito: `${productoActual.cod}-${selectedSize}-${selectedColor.nombre}`
+      id: productoActual.id, talla: selectedSize, color: selectedColor, cantidad: quantity,
+      idUnicoCarrito: `${productoActual.id}-${selectedSize}-${selectedColor.nombre}`
     };
-    
     handleAddToCart(itemToAdd);
-    alert(`${productoActual.nombre} (${selectedSize}, ${selectedColor.nombre}) ha sido añadido al carrito.`);
+    alert(`${productoActual.nombre} ha sido añadido al carrito.`);
   };
 
-  // === GUARDIA ===
-  if (!productoActual) {
-    return <div className="5"><h1>Cargando producto...</h1></div>;
-  }
+  if (loading) return <div className="page-status"><h1>Cargando...</h1></div>;
+  if (error) return <div className="page-status"><h1>Error: {error}</h1></div>;
+  if (!productoActual) return <div className="page-status"><h1>Producto no disponible.</h1></div>;
 
-  console.log("🔍 Productos recomendados a enviar:", productosRecomendados);
-
-  // === RENDERIZADO ===
   return (
-    <div className="producto-detalle-container">
-      {/* Columna Izquierda: Galería de Imágenes */}
-      <div className="product-gallery">
-        <img src={selectedImage} alt={productoActual.nombre} className="main-image" />
-        <div className="thumbnail-container">
-          {productoActual.imagenes.map((img, index) => (
-            <img 
-              key={index} 
-              src={img} 
-              alt={`Thumbnail ${index + 1}`}
-              className={selectedImage === img ? 'thumbnail active' : 'thumbnail'}
-              onClick={() => setSelectedImage(img)}
-            />
-          ))}
+    <div className="detalle-page-container">
+      <div className="product-layout">
+        <div className="product-gallery-layout">
+          <div className="thumbnail-list">
+            {productoActual.imagenes.map((img, index) => (
+              <div 
+                key={index}
+                className={`thumbnail-item ${selectedImage === img ? 'active' : ''}`}
+                onClick={() => setSelectedImage(img)}
+              >
+                <img src={img} alt={`Vista previa ${index + 1}`} />
+              </div>
+            ))}
+          </div>
+          <div className="main-image-container">
+            <img src={selectedImage} alt={productoActual.nombre} className="main-image" />
+          </div>
         </div>
-      </div>
 
-      {/* Columna Derecha: Información y Acciones */}
-      <div className="product-info">
-        <h1>{productoActual.nombre}</h1>
-        <div className="price-section">
-          <span className="current-price">S/. {productoActual.precio.toFixed(2)}</span>
-          {productoActual.precioAnterior && (
-            <span className="old-price">S/. {productoActual.precioAnterior.toFixed(2)}</span>
-          )}
-        </div>
-        
-        <div className="options-section">
-          {/* SELECTOR DE TALLA */}
-          <div className="size-selector">
-            <p>Talla:</p>
-            <div className="options-buttons">
-              {productoActual.tallasDisponibles.map(talla => (
-                <button 
-                  key={talla.talla} 
-                  className={`size-btn ${selectedSize === talla.talla ? 'active' : ''}`} 
-                  disabled={!talla.disponible} 
-                  onClick={() => setSelectedSize(talla.talla)}
-                >
-                  {talla.talla}
-                </button>
-              ))}
+        <div className="product-info-layout">
+          <h1>{productoActual.nombre}</h1>
+          <div className="price-section">
+            <span className="current-price">S/. {productoActual.precio.toFixed(2)}</span>
+            {productoActual.precioAnterior && <span className="old-price">S/. {productoActual.precioAnterior.toFixed(2)}</span>}
+          </div>
+          <p className="product-short-description">{productoActual.descripcion.substring(0, 150)}...</p>
+
+          <div className="options-group">
+            <div className="option-block">
+              <label>Color</label>
+              <div className="color-selector">
+                {productoActual.coloresDisponibles.map(color => (
+                  <div key={color.nombre} title={color.nombre}
+                    className={`color-swatch ${selectedColor?.nombre === color.nombre ? 'active' : ''}`}
+                    style={{ backgroundColor: color.codigoHex }}
+                    onClick={() => setSelectedColor(color)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="option-block">
+              <label>Talla</label>
+              <div className="size-selector">
+                {productoActual.tallasDisponibles.map(talla => (
+                  <button key={talla.talla} onClick={() => setSelectedSize(talla.talla)}
+                    className={`size-btn ${selectedSize === talla.talla ? 'active' : ''}`}
+                    disabled={!talla.disponible}
+                  >{talla.talla}</button>
+                ))}
+              </div>
             </div>
           </div>
-          
-          {/* SELECTOR DE COLOR */}
-          <div className="color-selector">
-            <p>Colores Disponibles:</p>
-            <div className="options-buttons">
-              {productoActual.coloresDisponibles.map(color => (
-                <div 
-                  key={color.nombre} 
-                  className={`color-swatch ${selectedColor?.nombre === color.nombre ? 'active' : ''}`}
-                  style={{ 
-                    backgroundColor: color.codigoHex, 
-                    border: color.codigoHex === '#ffffff' ? '1px solid #ccc' : 'none' 
-                  }}
-                  onClick={() => setSelectedColor(color)} 
-                  title={color.nombre}
-                >
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* SELECTOR DE CANTIDAD */}
-          <div className="quantity-selector">
-            <p>Cantidad:</p>
-            <div className="quantity-input">
+
+          <div className="actions-group">
+            <div className="quantity-selector">
               <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
-              <input type="number" value={quantity} readOnly />
+              <input type="text" value={quantity} readOnly />
               <button onClick={() => setQuantity(q => q + 1)}>+</button>
             </div>
-          </div>
-        </div>
-        
-        <button className="add-to-cart-btn" onClick={handleAddToCartClick}>
-          AGREGAR AL CARRITO
-        </button>
-        
-        <p className="sku-info">SKU: {productoActual.sku}</p>
-        
-        {/* TABS DE INFORMACIÓN */}
-        <div className="product-description-tabs">
-          <div className="tab-headers">
-            <button 
-              className={activeTab === 'descripcion' ? 'active' : ''} 
-              onClick={() => setActiveTab('descripcion')}
-            >
-              DESCRIPCIÓN
-            </button>
-            <button 
-              className={activeTab === 'detalles' ? 'active' : ''} 
-              onClick={() => setActiveTab('detalles')}
-            >
-              DETALLE
-            </button>
-            <button 
-              className={activeTab === 'envio' ? 'active' : ''} 
-              onClick={() => setActiveTab('envio')}
-            >
-              ENVÍO
+            <button className="add-to-cart-btn" onClick={handleAddToCartClick}>
+                AGREGAR AL CARRITO
             </button>
           </div>
-          <div className="tab-content">
-            {activeTab === 'descripcion' && <p>{productoActual.descripcion}</p>}
-            {activeTab === 'detalles' && <p>{productoActual.detalles}</p>}
-            {activeTab === 'envio' && <p>{productoActual.infoEnvio}</p>}
+
+          <div className="info-tabs">
+            <div className="tab-headers">
+              <button onClick={() => setActiveTab('descripcion')} className={activeTab === 'descripcion' ? 'active' : ''}>Descripción</button>
+              <button onClick={() => setActiveTab('detalles')} className={activeTab === 'detalles' ? 'active' : ''}>Detalles</button>
+              <button onClick={() => setActiveTab('envio')} className={activeTab === 'envio' ? 'active' : ''}>Envío</button>
+            </div>
+            <div className="tab-content">
+              {activeTab === 'descripcion' && <p>{productoActual.descripcion}</p>}
+              {activeTab === 'detalles' && <p>{productoActual.detalles}</p>}
+              {activeTab === 'envio' && <p>{productoActual.infoEnvio}</p>}
+            </div>
           </div>
         </div>
       </div>
-
-      {/* SECCIÓN DE RECOMENDADOS */}
+      
       <div className="recommendations-section">
         <h2>TAMBIÉN TE PODRÍA INTERESAR</h2>
-        <RecomendacionesCarousel productos={productosRecomendados} />
+        <RecomendacionesCarousel productos={recomendaciones} />
       </div>
     </div>
   );
