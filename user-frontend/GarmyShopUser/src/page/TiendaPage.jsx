@@ -5,34 +5,21 @@ import '../styles/Tienda.css';
 import { ProductModal } from '../components/ProductModal';
 import { RopaComponente } from '../components/RopaComponente';
 
-// Plantilla para detalles (se mantiene sin cambios)
-const detallesPlantilla = {
-  imagenesAdicionales: ["https://gw.alicdn.com/imgextra/i1/2450640915/TB2s5BWcgoQMeJjy1XaXXcSsFXa_!!2450640915.jpg_540x540.jpg", 
-    "https://ae01.alicdn.com/kf/S11cf505076a548acb262c9db137fa818w.jpg_640x640q90.jpg", 
-    "https://ae01.alicdn.com/kf/H2e6eb19804e543c698322c47e2c5533dR.jpg_960x960.jpg"],
-  tallasDisponibles: [
-    { talla: 'XS', disponible: true }, { talla: 'S', disponible: true }, { talla: 'M', disponible: true }, 
-    { talla: 'L', disponible: false }, { talla: 'XL', disponible: true }
-  ],
-  coloresDisponibles: [
-    { nombre: 'Negro', codigoHex: '#000000' }, { nombre: 'Blanco', codigoHex: '#ffffff' }, 
-    { nombre: 'Gris', codigoHex: '#808080' }, { nombre: 'Azul', codigoHex: '#0000ff' }
-  ],
-  detalles: "Composición: 95% Algodón, 5% Elastano. Cuidado: Lavar a máquina con agua fría.",
-  infoEnvio: "Envío estándar de 3 a 5 días hábiles. Devoluciones gratuitas."
-};
+// --- ELIMINAMOS ESTO ---
+// Ya no usaremos la plantilla de datos estáticos.
+// const detallesPlantilla = { ... };
 
 export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorite }) {
-  // --> Estados para guardar productos de la API, estado de carga y errores
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Estados para el modal (sin cambios)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  
+  // --- NUEVO: Estado para gestionar la carga dentro del modal ---
+  const [modalLoading, setModalLoading] = useState(false);
 
-  // --> useEffect para llamar a la API cuando el componente se carga
   useEffect(() => {
     const fetchProductos = async () => {
       try {
@@ -41,7 +28,6 @@ export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorit
           throw new Error('La respuesta de la red no fue correcta. Revisa si la API está encendida.');
         }
         const data = await response.json();
-        // --> Tu API devuelve los productos dentro de la propiedad "content"
         setProductos(data.content); 
       } catch (error) {
         setError(error.message);
@@ -50,31 +36,63 @@ export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorit
         setLoading(false);
       }
     };
-
     fetchProductos();
-  }, []); // El array vacío [] asegura que el efecto se ejecute solo una vez
+  }, []);
 
-  // Adaptamos los datos de la API a lo que el modal espera
-  const handleOpenModal = (producto) => {
-    const productoCompleto = {
-      ...producto,
-      imagen: producto.imagenPrincipalUrl, // Mapeamos el campo
-      imagenes: [producto.imagenPrincipalUrl, ...detallesPlantilla.imagenesAdicionales],
-      tallasDisponibles: detallesPlantilla.tallasDisponibles,
-      coloresDisponibles: detallesPlantilla.coloresDisponibles,
-      detalles: detallesPlantilla.detalles,
-      infoEnvio: detallesPlantilla.infoEnvio,
-    };
-    setSelectedProduct(productoCompleto);
+  // --- ¡LÓGICA ACTUALIZADA! Esta función ahora se conecta a la API ---
+  const handleOpenModal = async (productoDeLista) => {
+    // 1. Mostramos un indicador de carga para el modal
+    setModalLoading(true);
     setIsModalOpen(true);
+    setSelectedProduct({ nombre: "Cargando..." }); // Mensaje temporal
+
+    try {
+      // 2. Hacemos la llamada a la API usando el ID del producto
+      const response = await fetch(`http://localhost:8085/api/productos/${productoDeLista.id}`);
+      if (!response.ok) {
+        throw new Error('No se pudieron cargar los detalles del producto.');
+      }
+      const apiData = await response.json(); // Este es el JSON que me mostraste
+
+      // 3. Adaptamos los datos de la API al formato que el modal necesita
+      const imagenPrincipalPath = apiData.imagenes.find(img => img.esPrincipal)?.imagen || (apiData.imagenes[0]?.imagen);
+      
+      const productoCompleto = {
+        id: apiData.id,
+        nombre: apiData.nombre,
+        precio: apiData.precio,
+        imagen: imagenPrincipalPath, // La RUTA de la imagen principal (ej: "productos/img.png")
+        imagenes: apiData.imagenes.map(img => img.imagen), // Array con las RUTAS de todas las imágenes
+        
+        // Extraemos tallas únicas de las combinaciones
+        tallasDisponibles: [...new Set(apiData.combinacionesDisponibles.map(c => c.talla.nombre))]
+          .map(nombreTalla => ({ talla: nombreTalla, disponible: true })),
+        
+        // Extraemos colores únicos de las combinaciones
+        coloresDisponibles: apiData.combinacionesDisponibles
+          .map(c => c.color)
+          .filter((color, index, self) => 
+            index === self.findIndex((c) => c.id === color.id)
+          ),
+      };
+
+      // 4. Actualizamos el estado con el producto completo y desactivamos la carga
+      setSelectedProduct(productoCompleto);
+      setModalLoading(false);
+
+    } catch (err) {
+      console.error("Error al obtener detalles para el modal:", err);
+      alert('Hubo un error al cargar el producto. Por favor, inténtalo de nuevo.');
+      handleCloseModal(); // Cierra el modal si hay un error
+    }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedProduct(null);
+    setModalLoading(false);
   };
 
-  // --> Manejo de estados de carga y error en la interfaz
   if (loading) {
     return <div className="productos-container"><h2 className="productos-titulo">Cargando productos...</h2></div>;
   }
@@ -88,9 +106,7 @@ export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorit
       <h2 className="productos-titulo">Nuestros Productos</h2>
       <div className="ropa-lista">
         {productos.map((producto) => {
-          // --> Verificamos si es favorito usando el 'id' de la API
           const isLiked = favoriteItems.some(item => item.id === producto.id);
-
           return (
             <RopaComponente
               key={producto.id}
@@ -108,6 +124,8 @@ export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorit
         onClose={handleCloseModal}
         producto={selectedProduct}
         onAddToCart={handleAddToCart}
+        // Pasamos el estado de carga al modal
+        isLoading={modalLoading} 
       />
     </div>
   );

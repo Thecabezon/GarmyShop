@@ -1,7 +1,10 @@
+// src/page/ProductoDetallePage.js
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import RecomendacionesCarousel from '../components/RecomendacionesCarousel';
-import '../styles/ProductoDetalle.css'; // Carga los nuevos estilos profesionales
+import '../styles/ProductoDetalle.css';
+import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 
 export const ProductoDetallePage = ({ handleAddToCart }) => {
   const { cod } = useParams();
@@ -22,27 +25,39 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
       try {
         const response = await fetch(`http://localhost:8085/api/productos/${cod}`);
         if (!response.ok) throw new Error('Producto no encontrado.');
-        const apiData = await response.json();
+        const apiData = await response.json(); // La variable se llama apiData
 
-        // --- Adaptación de datos ---
-        const imagenPrincipal = apiData.imagenes.find(img => img.esPrincipal)?.imagen || apiData.imagenes[0]?.imagen;
-        const listaImagenes = apiData.imagenes.map(img => img.imagen);
+        const imagenPrincipalPath = apiData.imagenes.find(img => img.esPrincipal)?.imagen || apiData.imagenes[0]?.imagen;
+        
+        const fullImagenPrincipal = imagenPrincipalPath 
+            ? `${CLOUDINARY_BASE_URL}/${imagenPrincipalPath}` 
+            : 'https://dummyimage.com/600x600/f0f0f0/ccc&text=No+Imagen';
+            
+        const fullListaImagenes = apiData.imagenes.map(img => `${CLOUDINARY_BASE_URL}/${img.imagen}`);
+        
         const tallasUnicas = [...new Set(apiData.combinacionesDisponibles.map(c => c.talla.nombre))].map(nombre => ({ talla: nombre, disponible: true }));
         const coloresUnicos = apiData.combinacionesDisponibles.map(c => c.color).filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
         
         const productoFormateado = {
-          id: apiData.id, cod: apiData.id, nombre: apiData.nombre, precio: apiData.precio,
+          id: apiData.id, 
+          cod: apiData.id, 
+          nombre: apiData.nombre, 
+          precio: apiData.precio,
+          // --- LÍNEA CORREGIDA ---
+          // Cambiamos 'api_data' por 'apiData'
           precioAnterior: apiData.precioOferta !== apiData.precio ? apiData.precioOferta : null,
-          sku: apiData.sku, descripcion: apiData.descripcion, imagenes: listaImagenes,
-          tallasDisponibles: tallasUnicas, coloresDisponibles: coloresUnicos,
+          // ------------------------
+          sku: apiData.sku, 
+          descripcion: apiData.descripcion, 
+          imagenes: fullListaImagenes,
+          tallasDisponibles: tallasUnicas, 
+          coloresDisponibles: coloresUnicos,
           detalles: "Fabricado con materiales de alta calidad para garantizar durabilidad y confort.",
           infoEnvio: "Envío estándar de 3-5 días hábiles. Devoluciones gratuitas dentro de los 30 días."
         };
+        
         setProductoActual(productoFormateado);
-        setSelectedImage(imagenPrincipal);
-
-        // TODO: Cargar recomendaciones reales desde la API
-        // setRecomendaciones(datosRecomendados);
+        setSelectedImage(fullImagenPrincipal);
 
       } catch (err) {
         setError(err.message);
@@ -54,6 +69,8 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
     fetchProductoDetalle();
   }, [cod]);
 
+  // ... (el resto del componente no cambia)
+  
   const handleAddToCartClick = () => {
     if (!selectedSize) { alert("Por favor, selecciona una talla."); return; }
     if (!selectedColor) { alert("Por favor, selecciona un color."); return; }
@@ -76,13 +93,13 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
       <div className="product-layout">
         <div className="product-gallery-layout">
           <div className="thumbnail-list">
-            {productoActual.imagenes.map((img, index) => (
+            {productoActual.imagenes.map((fullImgUrl, index) => (
               <div 
                 key={index}
-                className={`thumbnail-item ${selectedImage === img ? 'active' : ''}`}
-                onClick={() => setSelectedImage(img)}
+                className={`thumbnail-item ${selectedImage === fullImgUrl ? 'active' : ''}`}
+                onClick={() => setSelectedImage(fullImgUrl)}
               >
-                <img src={img} alt={`Vista previa ${index + 1}`} />
+                <img src={fullImgUrl} alt={`Vista previa ${index + 1}`} />
               </div>
             ))}
           </div>

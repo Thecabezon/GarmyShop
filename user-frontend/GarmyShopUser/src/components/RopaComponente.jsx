@@ -2,19 +2,25 @@
 
 import { Link } from "react-router-dom";
 import React from 'react';
+// --- NUEVO: Importa la configuración de Cloudinary ---
+import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 
-// Este componente ahora es la plantilla para cada tarjeta de producto en la tienda
 export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggleFavorite }) {
   
-  // --> Mapeamos los campos de la API a variables para que el JSX sea más limpio
   const { id, nombre, imagenPrincipalUrl, precio, categoriaNombre } = producto;
+
+  // --- NUEVO: Construye la URL completa de la imagen ---
+  // Si la `imagenPrincipalUrl` existe, le antepone la base. Si no, usa una imagen de reemplazo.
+  const fullImageUrl = imagenPrincipalUrl
+    ? `${CLOUDINARY_BASE_URL}/${imagenPrincipalUrl}`
+    : 'https://dummyimage.com/400x400/f0f0f0/ccc&text=No+Imagen';
 
   return (
     <div className="ropa-card">
       <div className="ropa-imagen">
-        {/* --> El Link ahora usa el 'id' del producto que viene de la API */}
         <Link to={`/tienda/${id}`}>
-          <img src={imagenPrincipalUrl} alt={nombre} />
+          {/* --- CAMBIO: Usa la URL completa que acabamos de construir --- */}
+          <img src={fullImageUrl} alt={nombre} />
         </Link>
       </div>
       <div className="ropa-info">
