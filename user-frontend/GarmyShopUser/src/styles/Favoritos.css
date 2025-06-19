@@ -1,53 +1,91 @@
+/* --- Estilos para la página de Favoritos --- */
+
+/* --- Contenedor cuando no hay favoritos (DISEÑO MEJORADO) --- */
 .no-favoritos {
     text-align: center;
     padding: 4rem 2rem;
     max-width: 600px;
     margin: 2rem auto;
-    background-color: #f9f9f9;
-    border: 1px dashed #ddd;
-    border-radius: 8px;
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.no-favoritos-icono {
+    width: 60px;
+    height: 60px;
+    fill: none;
+    stroke: #e0e0e0;
+    stroke-width: 1.5;
 }
 
 .no-favoritos h3 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 0.5rem;
+    font-family: 'League Spartan', sans-serif;
+    font-size: 1.8rem;
+    color: #1a1a1a;
+    margin: 0;
 }
 
 .no-favoritos p {
     color: #666;
-    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 450px;
+    margin-bottom: 1.5rem;
 }
 
 .boton-explorar {
     display: inline-block;
-    background-color: #333;
+    background: #fd2892; /* Usando el color de la marca */
     color: white;
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
     text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
 }
 
 .boton-explorar:hover {
-    background-color: #555;
+    background: #fff;
+    color: #fd2892;
+    border-color: #fd2892;
+    transform: translateY(-2px);
 }
 
-.ver-detalle-completo-btn {
+/* --- Estilo para el botón "Ver Producto" en la tarjeta de favorito --- */
+.ver-producto-btn {
     flex-grow: 1;
-    text-align: center;
-    background-color: #333;
+    padding: 0.75rem 1rem;
+    background: #1a1a1a;
     color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
+    border: 2px solid #1a1a1a;
+    border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
     text-decoration: none;
-    font-size: 14px;
-    transition: background-color 0.3s;
+    text-align: center;
 }
 
-.ver-detalle-completo-btn:hover {
-    background-color: #555;
+.ver-producto-btn:hover {
+  background-color: #ffffff;
+  color: #1a1a1a;
+}
+
+/* 
+  El botón del corazón (.me-encanta-btn) ya debería tener estilos
+  definidos en tu CSS principal de la tienda. 
+  Aquí solo nos aseguramos de que el estado "liked" se aplique correctamente.
+*/
+.ropa-acciones .me-encanta-btn.liked .corazon-icono {
+    fill: #fd2892; 
+    stroke: #1a1a1a;
 }

@@ -1,18 +1,22 @@
+/* --- Importación de una fuente más moderna y legible (Opcional, pero recomendado) --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=League+Spartan:wght@700&display=swap');
+
+/* --- Contenedor General --- */
 .productos-container {
-  padding: 2rem;
-  max-width: 1280px;
+  padding: 2rem 1rem;
+  max-width: 1320px;
   margin: 0 auto;
   text-align: center;
 }
 
 .productos-titulo {
-  font-size: 2.5rem;
-  color: #000000;
-  margin-bottom: 2.5rem;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 2.8rem;
+  color: #1a1a1a;
+  margin-bottom: 3rem;
   position: relative;
   display: inline-block;
-  padding-bottom: 0.5rem;
-  font-family: 'League Spartan', sans-serif; 
+  padding-bottom: 0.75rem;
 }
 
 .productos-titulo::after {
@@ -21,185 +25,205 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 120%;
-  height: 3px;
-  background:#fd2892;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #fd2892, #ff71b9);
   border-radius: 2px;
 }
 
+/* --- Rejilla de Productos --- */
 .ropa-lista {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  padding: 1.5rem 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
   justify-items: center;
-  background-color: white;
 }
 
+/* --- Tarjeta de Producto Mejorada --- */
 .ropa-card {
-  width: 280px;
-  background-color: #f5f5f5;
-  border-radius: 10px;
+  background-color: #ffffff;
+  border-radius: 16px;
   overflow: hidden;
-  margin: 0.5rem;
-  transition: transform 0.2s;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Poppins', sans-serif;
 }
 
 .ropa-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
+/* --- Imagen del Producto --- */
 .ropa-imagen {
   position: relative;
-  background-color: #eeeeee;
+  aspect-ratio: 3 / 4; 
+  overflow: hidden;
 }
 
 .ropa-imagen img {
   width: 100%;
-  height: 380px;
+  height: 100%;
   object-fit: cover;
   display: block;
-  cursor: pointer;
-  transition: filter 0.2s;
+  transition: transform 0.4s ease;
 }
 
-.ropa-imagen img:hover {
-  filter: brightness(0.95);
+.ropa-card:hover .ropa-imagen img {
+  transform: scale(1.05);
 }
 
-.ropa-info {
-  padding: 0.8rem 0.8rem 1rem;
-  text-align: left;
-  color: #333;
-  font-family: 'Arial', sans-serif;
-}
+/* ===== INICIO DEL ESTILO FINAL (CORAZÓN CON BORDE NEGRO) ===== */
 
-.ropa-info h5 {
-  font-size: 0.9rem;
-  color: #333;
-  margin-bottom: 0.3rem;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ropa-precio {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 0.3rem;
-}
-
-.precio-actual {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.botones-fila {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 0.7rem;
-}
-
-/* Botón Agregar al carrito */
-.agregar-carrito-btn {
-  flex-grow: 1;
-  padding: 0.8rem;
-  background-color: #f85cac;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-weight: 600;
-  font-family: 'League Spartan', sans-serif; /* <-- Aquí la fuente */
-}
-
-.agregar-carrito-btn:hover {
-  background-color: #000000;
-}
-
-/* Botón Me Encanta (corazón) */
+/* --- Botón Me Encanta (Corazón) Minimalista --- */
 .me-encanta-btn {
-  background: white;
-  border: 2px solid #000;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 2;
+  
+  background: transparent;
+  border: none;
+  
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
   padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.me-encanta-btn:hover {
+  transform: scale(1.1);
 }
 
 .me-encanta-btn .corazon-icono {
-  fill: white;
-  stroke: #000;
-  stroke-width: 1.5;
-  transition: fill 0.2s, stroke 0.2s;
+  /* Por defecto: Contorno gris claro */
+  fill: none; 
+  stroke: #bbbbbb; 
+  stroke-width: 2;
+  transition: fill 0.2s, stroke 0.2s, transform 0.2s;
+  width: 28px;
+  height: 28px;
 }
 
 .me-encanta-btn.liked .corazon-icono {
-  fill: #000;
-  stroke: #000;
+  /* Estado "liked": Relleno rosado CON borde negro */
+  fill: #fd2892; 
+  stroke: #1a1a1a; /* ¡CAMBIO! El borde ahora es negro */
+  transform: scale(1.05);
 }
 
-/* Botón Ver Detalle (ojo) */
+/* ===== FIN DEL ESTILO FINAL ===== */
+
+
+/* --- Información del Producto --- */
+.ropa-info {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  color: #333;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-categoria {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.producto-nombre-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.ropa-info h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s;
+}
+
+.producto-nombre-link:hover h5 {
+  color: #fd2892;
+}
+
+.ropa-precio {
+  margin-top: 0.5rem;
+}
+
+.precio-actual {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fd2892;
+}
+
+/* --- Acciones del Producto (Botones) --- */
+.ropa-acciones {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.agregar-carrito-btn {
+  flex-grow: 1;
+  padding: 0.75rem 1rem;
+  background: #1a1a1a;
+  color: white;
+  border: 2px solid #1a1a1a;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.agregar-carrito-btn:hover {
+  background-color: #ffffff;
+  color: #1a1a1a;
+}
+
 .ver-detalle-btn {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   padding: 0;
-  background-color: #000000;
-  color: rgb(245, 245, 245);
-  border: none;
-  border-radius: 5px;
+  background-color: transparent;
+  border: 2px solid #e0e0e0;
+  color: #555;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
 }
 
 .ver-detalle-btn:hover {
-  background-color: #fc5bb6;
+  background-color: #f5f5f5;
+  border-color: #ccc;
+  color: #1a1a1a;
 }
 
-.ver-detalle-btn svg {
-  width: 22px;
-  height: 22px;
-  stroke-width: 2;
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-  .ropa-lista {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 900px) {
-  .ropa-lista {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
+/* --- Responsive --- */
 @media (max-width: 600px) {
-  .ropa-lista {
-    grid-template-columns: 1fr;
+  .productos-titulo {
+    font-size: 2.2rem;
   }
-  .ropa-card {
-    width: 90%;
-    max-width: 330px;
+  .ropa-lista {
+    gap: 1.5rem;
   }
 }
