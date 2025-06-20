@@ -1,100 +1,72 @@
+// Este es el archivo que exporta el carrusel
+// src/components/RecomendacionesCarousel.js (si este es el nombre)
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/RecomendacionesCarousel.css';
+// --- NUEVO: Importa la configuración de Cloudinary ---
+import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 
 const RecomendacionesCarousel = ({ productos }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  console.log("🔍 Productos recibidos:", productos);
-
+  const itemsPerPage = 3;
   if (!productos || productos.length === 0) {
-    return (
-      <div className="no-recommendations">
-        <p>No hay productos recomendados disponibles.</p>
-      </div>
-    );
+    return <p>No hay productos recomendados en este momento.</p>;
   }
+  const totalPages = Math.ceil(productos.length / itemsPerPage);
 
-  // Funciones simples para navegación
-  const goToPrevious = () => {
-    console.log("🔍 Botón anterior clickeado, índice actual:", currentIndex);
-    setCurrentIndex(prevIndex => {
-      const newIndex = prevIndex > 0 ? prevIndex - 1 : productos.length - 1;
-      console.log("🔍 Nuevo índice:", newIndex);
-      return newIndex;
-    });
-  };
-
-  const goToNext = () => {
-    console.log("🔍 Botón siguiente clickeado, índice actual:", currentIndex);
-    setCurrentIndex(prevIndex => {
-      const newIndex = prevIndex < productos.length - 1 ? prevIndex + 1 : 0;
-      console.log("🔍 Nuevo índice:", newIndex);
-      return newIndex;
-    });
-  };
+  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
+  const goToNextPage = () => setCurrentPage((prev) => (prev + 1) % totalPages);
+  const goToPrevPage = () => setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
 
   return (
-    <div className="simple-carousel">
-      {/* BOTÓN ANTERIOR */}
-      <button 
-        className="nav-btn prev-btn" 
-        onClick={goToPrevious}
-        type="button"
-      >
-        &#8249;
-      </button>
-
-      {/* CONTENEDOR DE PRODUCTOS */}
-      <div className="products-container">
-        {productos.map((producto, index) => (
-          <div 
-            key={producto.cod} 
-            className={`product-item ${index === currentIndex ? 'active' : ''}`}
-            style={{
-              transform: `translateX(-${currentIndex * 100}%)`,
-              transition: 'transform 0.3s ease'
-            }}
-          >
-            <Link to={`/producto/${producto.cod}`} className="product-link">
-              <div className="product-image">
-                <img 
-                  src={producto.imagen} 
-                  alt={producto.nombre}
-                  onError={(e) => {
-                    e.target.src = 'https://i.pinimg.com/originals/f2/91/88/f29188204ca351f2b0cb604b51fc409a.jpg';
-                  }}
-                />
-              </div>
-              <div className="product-details">
-                <h4>{producto.nombre}</h4>
-                <p className="category">{producto.categoria}</p>
-                <p className="price">S/. {producto.precio.toFixed(2)}</p>
-              </div>
-            </Link>
+    <div className="carousel-container">
+      <div className="carousel-viewport">
+        <div className="carousel-track" style={{ transform: `translateX(-${currentPage * 100}%)` }}>
+          {Array.from({ length: totalPages }).map((_, pageIndex) => (
+            <div className="carousel-page" key={pageIndex}>
+              {productos.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage).map(producto => {
+                // --- NUEVO: Construye la URL completa para cada producto ---
+                const imagePath = producto.imagen || producto.imagenPrincipalUrl;
+                const fullImageUrl = imagePath
+                  ? `${CLOUDINARY_BASE_URL}/${imagePath}`
+                  : 'https://dummyimage.com/300x300/f0f0f0/ccc&text=...';
+                
+                return (
+                  <div className="carousel-product-card" key={producto.id || producto.cod}>
+                    <Link to={`/tienda/${producto.id || producto.cod}`}>
+                      <div className="card-image-wrapper">
+                        {/* --- CAMBIO: Usa la URL completa --- */}
+                        <img src={fullImageUrl} alt={producto.nombre} />
+                      </div>
+                      <div className="card-info">
+                        <h3>{producto.nombre}</h3>
+                        <p className="card-price">S/. {producto.precio.toFixed(2)}</p>
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {totalPages > 1 && (
+        <>
+          <button className="carousel-nav-btn prev" onClick={goToPrevPage}>‹</button>
+          <button className="carousel-nav-btn next" onClick={goToNextPage}>›</button>
+          <div className="carousel-indicators">
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <button key={index}
+                className={`indicator ${currentPage === index ? 'active' : ''}`}
+                onClick={() => goToPage(index)}
+              />
+            ))}
           </div>
-        ))}
-      </div>
-
-      {/* BOTÓN SIGUIENTE */}
-      <button 
-        className="nav-btn next-btn" 
-        onClick={goToNext}
-        type="button"
-      >
-        &#8250;
-      </button>
-
-      {/* INDICADORES */}
-      <div className="indicators">
-        {productos.map((_, index) => (
-          <button
-            key={index}
-            className={`indicator ${index === currentIndex ? 'active' : ''}`}
-            onClick={() => setCurrentIndex(index)}
-          />
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 };

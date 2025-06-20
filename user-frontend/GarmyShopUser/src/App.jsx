@@ -1,3 +1,5 @@
+// src/App.js
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
@@ -39,12 +41,13 @@ function App() {
 
   const handleAddToCart = (producto) => {
     setCartItems((prevItems) => {
-      const itemIdentifier = producto.idUnicoCarrito || producto.cod;
-      const existingItem = prevItems.find(item => (item.idUnicoCarrito || item.cod) === itemIdentifier);
+      // --> CAMBIO CRÍTICO: Usamos 'id' como identificador principal, ya que viene de la API
+      const itemIdentifier = producto.idUnicoCarrito || producto.id;
+      const existingItem = prevItems.find(item => (item.idUnicoCarrito || item.id) === itemIdentifier);
 
       if (existingItem) {
         return prevItems.map(item =>
-          (item.idUnicoCarrito || item.cod) === itemIdentifier
+          (item.idUnicoCarrito || item.id) === itemIdentifier
             ? { ...item, quantity: item.quantity + (producto.cantidad || 1) }
             : item
         );
@@ -56,9 +59,10 @@ function App() {
 
   const handleToggleFavorite = (producto) => {
     setFavoriteItems((prevFavorites) => {
-      const isFavorite = prevFavorites.some(item => item.cod === producto.cod);
+      // --> CAMBIO CRÍTICO: Comparamos usando 'producto.id' de la API en lugar de 'cod'
+      const isFavorite = prevFavorites.some(item => item.id === producto.id);
       if (isFavorite) {
-        return prevFavorites.filter(item => item.cod !== producto.cod);
+        return prevFavorites.filter(item => item.id !== producto.id);
       } else {
         return [...prevFavorites, producto];
       }
@@ -84,6 +88,7 @@ function App() {
           </MainLayout>
         }/>
 
+        {/* La ruta de detalle usará el 'id' que le pasemos, aunque el parámetro se llame ':cod' */}
         <Route path="/tienda/:cod" element={
           <MainLayout cartItems={cartItems} favoriteItems={favoriteItems}>
             <ProductoDetallePage 

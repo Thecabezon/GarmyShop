@@ -1,100 +1,120 @@
-import React, { useState } from 'react';
+// src/page/TiendaPage.js
+
+import React, { useState, useEffect } from 'react';
 import '../styles/Tienda.css';
-import { productos } from '../data/productos';
-import { Link } from 'react-router-dom';
 import { ProductModal } from '../components/ProductModal';
+import { RopaComponente } from '../components/RopaComponente';
 
-// Plantilla para detalles (sin cambios)
-const detallesPlantilla = {
-  imagenesAdicionales: ["https://gw.alicdn.com/imgextra/i1/2450640915/TB2s5BWcgoQMeJjy1XaXXcSsFXa_!!2450640915.jpg_540x540.jpg", 
-    "https://ae01.alicdn.com/kf/S11cf505076a548acb262c9db137fa818w.jpg_640x640q90.jpg", 
-    "https://ae01.alicdn.com/kf/H2e6eb19804e543c698322c47e2c5533dR.jpg_960x960.jpg"],
-  tallasDisponibles: [
-    { talla: 'XS', disponible: true }, { talla: 'S', disponible: true }, { talla: 'M', disponible: true }, 
-    { talla: 'L', disponible: false }, { talla: 'XL', disponible: true }
-  ],
-  coloresDisponibles: [
-    { nombre: 'Negro', codigoHex: '#000000' }, { nombre: 'Blanco', codigoHex: '#ffffff' }, 
-    { nombre: 'Gris', codigoHex: '#808080' }, { nombre: 'Azul', codigoHex: '#0000ff' }
-  ],
-  detalles: "Composición: 95% Algodón, 5% Elastano. Cuidado: Lavar a máquina con agua fría.",
-  infoEnvio: "Envío estándar de 3 a 5 días hábiles. Devoluciones gratuitas."
-};
+// --- ELIMINAMOS ESTO ---
+// Ya no usaremos la plantilla de datos estáticos.
+// const detallesPlantilla = { ... };
 
-// --> 1. AHORA RECIBE 'favoriteItems' Y 'handleToggleFavorite' DESDE App.js
 export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorite }) {
-  // --> 2. ELIMINAMOS EL ESTADO LOCAL DE FAVORITOS, ya que ahora es global.
-  // const [likedProducts, setLikedProducts] = useState({});
-  
-  // Estados para el modal (sin cambios)
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  
+  // --- NUEVO: Estado para gestionar la carga dentro del modal ---
+  const [modalLoading, setModalLoading] = useState(false);
 
-  // Abrir modal con producto seleccionado (sin cambios)
-  const handleOpenModal = (producto) => {
-    const productoCompleto = {
-      ...producto,
-      imagenes: [producto.imagen, ...detallesPlantilla.imagenesAdicionales],
-      tallasDisponibles: detallesPlantilla.tallasDisponibles,
-      coloresDisponibles: detallesPlantilla.coloresDisponibles,
-      detalles: detallesPlantilla.detalles,
-      infoEnvio: detallesPlantilla.infoEnvio,
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const response = await fetch('http://localhost:8085/api/productos');
+        if (!response.ok) {
+          throw new Error('La respuesta de la red no fue correcta. Revisa si la API está encendida.');
+        }
+        const data = await response.json();
+        setProductos(data.content); 
+      } catch (error) {
+        setError(error.message);
+        console.error("Error al obtener los productos:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    setSelectedProduct(productoCompleto);
+    fetchProductos();
+  }, []);
+
+  // --- ¡LÓGICA ACTUALIZADA! Esta función ahora se conecta a la API ---
+  const handleOpenModal = async (productoDeLista) => {
+    // 1. Mostramos un indicador de carga para el modal
+    setModalLoading(true);
     setIsModalOpen(true);
+    setSelectedProduct({ nombre: "Cargando..." }); // Mensaje temporal
+
+    try {
+      // 2. Hacemos la llamada a la API usando el ID del producto
+      const response = await fetch(`http://localhost:8085/api/productos/${productoDeLista.id}`);
+      if (!response.ok) {
+        throw new Error('No se pudieron cargar los detalles del producto.');
+      }
+      const apiData = await response.json(); // Este es el JSON que me mostraste
+
+      // 3. Adaptamos los datos de la API al formato que el modal necesita
+      const imagenPrincipalPath = apiData.imagenes.find(img => img.esPrincipal)?.imagen || (apiData.imagenes[0]?.imagen);
+      
+      const productoCompleto = {
+        id: apiData.id,
+        nombre: apiData.nombre,
+        precio: apiData.precio,
+        imagen: imagenPrincipalPath, // La RUTA de la imagen principal (ej: "productos/img.png")
+        imagenes: apiData.imagenes.map(img => img.imagen), // Array con las RUTAS de todas las imágenes
+        
+        // Extraemos tallas únicas de las combinaciones
+        tallasDisponibles: [...new Set(apiData.combinacionesDisponibles.map(c => c.talla.nombre))]
+          .map(nombreTalla => ({ talla: nombreTalla, disponible: true })),
+        
+        // Extraemos colores únicos de las combinaciones
+        coloresDisponibles: apiData.combinacionesDisponibles
+          .map(c => c.color)
+          .filter((color, index, self) => 
+            index === self.findIndex((c) => c.id === color.id)
+          ),
+      };
+
+      // 4. Actualizamos el estado con el producto completo y desactivamos la carga
+      setSelectedProduct(productoCompleto);
+      setModalLoading(false);
+
+    } catch (err) {
+      console.error("Error al obtener detalles para el modal:", err);
+      alert('Hubo un error al cargar el producto. Por favor, inténtalo de nuevo.');
+      handleCloseModal(); // Cierra el modal si hay un error
+    }
   };
 
-  // Cerrar modal (sin cambios)
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedProduct(null);
+    setModalLoading(false);
   };
+
+  if (loading) {
+    return <div className="productos-container"><h2 className="productos-titulo">Cargando productos...</h2></div>;
+  }
+
+  if (error) {
+    return <div className="productos-container"><h2 className="productos-titulo" style={{color: 'red'}}>Error: {error}</h2></div>;
+  }
 
   return (
     <div className="productos-container">
       <h2 className="productos-titulo">Nuestros Productos</h2>
       <div className="ropa-lista">
         {productos.map((producto) => {
-          // --> 3. VERIFICAMOS SI EL PRODUCTO ESTÁ EN LA LISTA GLOBAL DE FAVORITOS
-          const isLiked = favoriteItems.some(item => item.cod === producto.cod);
-
+          const isLiked = favoriteItems.some(item => item.id === producto.id);
           return (
-            <div key={producto.cod} className="ropa-card">
-              <div className="ropa-imagen">
-                <Link to={`/tienda/${producto.cod}`}>
-                  <img src={producto.imagen} alt={producto.nombre} />
-                </Link>
-              </div>
-              <div className="ropa-info">
-                <h5>{producto.nombre}</h5>
-                <p className="producto-categoria">{producto.tipoPrenda}</p>
-                <div className="ropa-precio">
-                  <span className="precio-actual">S/. {producto.precio.toFixed(2)}</span>
-                </div>
-                <div className="botones-fila">
-                  <button onClick={() => handleOpenModal(producto)} className="agregar-carrito-btn">
-                    Agregar al carrito
-                  </button>
-                  {/* --> 4. EL BOTÓN AHORA LLAMA A 'handleToggleFavorite' y su clase depende de 'isLiked' */}
-                  <button
-                    onClick={() => handleToggleFavorite(producto)}
-                    className={`me-encanta-btn ${isLiked ? 'liked' : ''}`}
-                    aria-label="Añadir a favoritos"
-                    title="Añadir a favoritos"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="corazon-icono">
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3A5.5 5.5 0 0 1 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
-                  </button>
-                  <Link to={`/tienda/${producto.cod}`} className="ver-detalle-btn" aria-label="Ver detalle" title="Ver detalle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
-                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" fill="none"/>
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <RopaComponente
+              key={producto.id}
+              producto={producto}
+              isLiked={isLiked}
+              handleOpenModal={handleOpenModal}
+              handleToggleFavorite={handleToggleFavorite}
+            />
           );
         })}
       </div>
@@ -104,6 +124,8 @@ export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorit
         onClose={handleCloseModal}
         producto={selectedProduct}
         onAddToCart={handleAddToCart}
+        // Pasamos el estado de carga al modal
+        isLoading={modalLoading} 
       />
     </div>
   );

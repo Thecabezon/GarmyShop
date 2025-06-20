@@ -1,27 +1,21 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/FinalizarCompra.css';
+import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 
-// --- Iconos SVG para un look más profesional ---
-const TrashIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-        <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-    </svg>
-);
+// --- Iconos SVG ---
+const TrashIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg> );
 const YapeLogo = () => <img src="https://www.logo.wine/a/logo/Yape/Yape-Logo.wine.svg" alt="Yape" className="yape-logo"/>;
+const LockIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/></svg> );
 
 // === COMPONENTE PRINCIPAL DEL CHECKOUT ===
 export default function FinalizarCompraPage({ cartItems, setCartItems }) {
     
     const [step, setStep] = useState(1);
-    const [deliveryInfo, setDeliveryInfo] = useState({
-        address: '', city: '', country: 'Perú'
-    });
+    const [deliveryInfo, setDeliveryInfo] = useState({ address: '', city: '', country: 'Perú' });
     const [paymentMethod, setPaymentMethod] = useState('card');
     const [errors, setErrors] = useState({});
 
-    // Lógica de manipulación del carrito (ejemplos)
     const handleUpdateQuantity = (id, newQuantity) => {
         setCartItems(currentItems =>
             currentItems.map(item =>
@@ -33,7 +27,6 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
         setCartItems(currentItems => currentItems.filter(item => item.idUnicoCarrito !== id));
     };
 
-    // --- Validación y Navegación ---
     const validateDeliveryForm = () => {
         const newErrors = {};
         if (!deliveryInfo.address.trim()) newErrors.address = "La dirección es requerida";
@@ -43,17 +36,15 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
     };
 
     const handleNextStep = () => {
-        if (step === 2) {
-            if (validateDeliveryForm()) {
-                setStep(3);
-            }
-        } else {
+        if (step === 2 && validateDeliveryForm()) {
+            setStep(3);
+        } else if (step < 3) {
             setStep(prev => prev + 1);
         }
     };
     const handlePrevStep = () => setStep(prev => prev - 1);
     const goToStep = (stepNumber) => {
-        if (stepNumber < step) { // Permite volver a pasos ya completados
+        if (stepNumber < step) {
             setStep(stepNumber);
         }
     };
@@ -105,14 +96,14 @@ const StepIndicator = ({ currentStep, goToStep }) => (
 const OrderSummary = ({ items }) => {
     const { subtotal, total, envio } = useMemo(() => {
         const subtotal = items.reduce((sum, item) => sum + item.precio * item.quantity, 0);
-        const envio = subtotal > 200 || subtotal === 0 ? 0 : 15; // Envío gratis sobre S/ 200
+        const envio = subtotal > 200 || subtotal === 0 ? 0 : 15;
         const total = subtotal + envio;
         return { subtotal, total, envio };
     }, [items]);
 
     return (
         <div className="order-summary-card sticky-card">
-            <h2>Resumen de la orden</h2>
+            <h2>Resumen de la Orden</h2>
             <div className="total-row">
                 <span>Subtotal</span>
                 <span>S/. {subtotal.toFixed(2)}</span>
@@ -125,7 +116,7 @@ const OrderSummary = ({ items }) => {
                 <span>Total</span>
                 <span>S/. {total.toFixed(2)}</span>
             </div>
-            <p className="security-text">✓ Todas las transacciones son seguras y encriptadas.</p>
+            <p className="security-text"><LockIcon/> Transacción segura y encriptada</p>
         </div>
     );
 };
@@ -140,33 +131,38 @@ const QuantitySelector = ({ quantity, onDecrease, onIncrease }) => (
 
 const CartReviewStep = ({ items, onNext, onUpdateQuantity, onRemoveItem }) => (
     <div className="step-card">
-        <h2>Revisa tu carrito</h2>
+        <h2>Revisa tu Carrito</h2>
         {items.length > 0 ? (
             <>
                 <div className="cart-items-list">
-                    {items.map(item => (
-                        <div key={item.idUnicoCarrito} className="cart-item-row">
-                            <img src={item.imagen} alt={item.nombre} />
-                            <div className="item-details">
-                                <p className="item-name">{item.nombre}</p>
-                                <p className="item-price">S/. {item.precio.toFixed(2)}</p>
+                    {items.map(item => {
+                        const imagePath = item.imagenPrincipalUrl || item.imagen;
+                        const fullImageUrl = imagePath ? `${CLOUDINARY_BASE_URL}/${imagePath}` : 'https://dummyimage.com/100x120/f0f0f0/ccc&text=No+Img';
+                        return (
+                            <div key={item.idUnicoCarrito} className="cart-item-row">
+                                <img src={fullImageUrl} alt={item.nombre} />
+                                <div className="item-info-checkout">
+                                    <p className="item-name">{item.nombre}</p>
+                                    <p className="item-attributes">Talla: {item.talla} / Color: {item.color.nombre}</p>
+                                    <p className="item-price">S/. {item.precio.toFixed(2)}</p>
+                                </div>
+                                <div className="item-actions">
+                                    <QuantitySelector
+                                        quantity={item.quantity}
+                                        onDecrease={() => onUpdateQuantity(item.idUnicoCarrito, item.quantity - 1)}
+                                        onIncrease={() => onUpdateQuantity(item.idUnicoCarrito, item.quantity + 1)}
+                                    />
+                                    <p className="item-total-price">S/. {(item.precio * item.quantity).toFixed(2)}</p>
+                                </div>
+                                <button className="remove-item-button" onClick={() => onRemoveItem(item.idUnicoCarrito)} title="Eliminar producto">
+                                    <TrashIcon />
+                                </button>
                             </div>
-                            <div className="item-actions">
-                                <QuantitySelector
-                                    quantity={item.quantity}
-                                    onDecrease={() => onUpdateQuantity(item.idUnicoCarrito, item.quantity - 1)}
-                                    onIncrease={() => onUpdateQuantity(item.idUnicoCarrito, item.quantity + 1)}
-                                />
-                                <p className="item-total-price">S/. {(item.precio * item.quantity).toFixed(2)}</p>
-                            </div>
-                            <button className="remove-item-button" onClick={() => onRemoveItem(item.idUnicoCarrito)} title="Eliminar producto">
-                                <TrashIcon />
-                            </button>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
                 <div className="navigation-buttons single-button">
-                    <button className="primary-button" onClick={onNext}>Continuar a la Entrega</button>
+                    <button className="primary-button" onClick={onNext}>Continuar a Entrega</button>
                 </div>
             </>
         ) : (
@@ -197,17 +193,13 @@ const DeliveryStep = ({ onBack, onNext, deliveryInfo, setDeliveryInfo, errors })
         <div className="step-card">
             <h2>¿Dónde enviamos tu pedido?</h2>
             <form className="delivery-form" noValidate>
-                <FormField id="address" label="Dirección" value={deliveryInfo.address} onChange={handleInputChange} error={errors.address} placeholder="Ej: Av. La Moda 123" />
+                <FormField id="address" label="Dirección de envío" value={deliveryInfo.address} onChange={handleInputChange} error={errors.address} placeholder="Ej: Av. La Moda 123, San Borja" />
                 <FormField id="city" label="Ciudad" value={deliveryInfo.city} onChange={handleInputChange} error={errors.city} placeholder="Ej: Lima" />
                 <div className={`form-group ${errors.country ? 'invalid' : ''}`}>
                     <label htmlFor="country">País</label>
                     <select id="country" name="country" value={deliveryInfo.country} onChange={handleInputChange}>
                         <option>Perú</option>
-                        <option>Colombia</option>
-                        <option>Chile</option>
-                        <option>México</option>
                     </select>
-                    {errors.country && <span className="error-message">{errors.country}</span>}
                 </div>
             </form>
             <div className="navigation-buttons">
@@ -231,9 +223,10 @@ const PaymentStep = ({ onBack, paymentMethod, setPaymentMethod }) => (
         </div>
         {paymentMethod === 'card' && (
             <div className="card-details-form">
+                <FormField id="cardName" label="Nombre en la Tarjeta" placeholder="Como aparece en la tarjeta" />
                 <FormField id="cardNumber" label="Número de Tarjeta" placeholder="0000 0000 0000 0000" />
                 <div className="form-row">
-                    <FormField id="expiry" label="Fecha de Exp. (MM/AA)" placeholder="MM/AA" />
+                    <FormField id="expiry" label="Fecha de Exp. (MM/AA)" placeholder="MM / AA" />
                     <FormField id="cvv" label="CVV" placeholder="123" />
                 </div>
             </div>
@@ -246,7 +239,7 @@ const PaymentStep = ({ onBack, paymentMethod, setPaymentMethod }) => (
         )}
         <div className="navigation-buttons">
             <button className="secondary-button" onClick={onBack}>Volver a Entrega</button>
-            <button className="primary-button">Pagar Ahora</button>
+            <button className="primary-button">Pagar S/. XX.XX</button>
         </div>
     </div>
 );
