@@ -5,7 +5,8 @@ import com.garmyshop.user_backend.model.enums.EstadoPagoOrden;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;         
-import org.hibernate.annotations.UpdateTimestamp;            
+import org.hibernate.annotations.UpdateTimestamp;
+import com.garmyshop.user_backend.model.enums.MetodoPago; // Asegúrate de que este enum esté definido en tu proyecto            
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,8 +37,9 @@ public class Orden {
     @Column(name = "total", precision = 10, scale = 2, nullable = false)
     private BigDecimal total;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "metodo_pago", length = 50, nullable = false)
-    private String metodoPago;
+    private MetodoPago metodoPago;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_pago", length = 30, nullable = false)
