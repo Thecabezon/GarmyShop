@@ -8,6 +8,7 @@
     background-color: #000000;
     color: white;
     text-align: center;
+<<<<<<< HEAD
     padding: 0.3rem;
     font-size: 12px;
   }
@@ -240,3 +241,8 @@
       .cart-footer { padding: 1rem; }
       .checkout-btn { padding: 0.8rem; font-size: 1rem; }
   }
+=======
+    box-sizing: border-box;
+}
+
+>>>>>>> 483e88cf78232d03d98f4f8eda625afa5a07a4c1
