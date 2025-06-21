@@ -1,361 +1,155 @@
 /* src/styles/ProductoDetalle.css */
 
-.producto-detalle-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  padding: 40px;
-  max-width: 1200px;
-  margin: auto;
-  grid-template-areas:
-    "gallery info"
-    "recommendations recommendations";
+.detalle-page-container {
+  max-width: 1400px;
+  margin: 50px auto;
+  padding: 0 40px;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Galería de Imágenes - Actualizada con estilo del modal */
-.product-gallery {
-  grid-area: gallery;
+.product-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 60px;
+}
+
+/* --- GALERÍA DE IMÁGENES PROFESIONAL --- */
+.product-gallery-layout {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 20px;
+  height: 600px; /* Altura fija para el contenedor */
+}
+.thumbnail-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  max-height: 100%;
+  overflow-y: auto;
 }
-
-.main-image {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-  background-color: #f8f8f8;
-}
-
-.thumbnail-container {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.thumbnail {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 6px;
+.thumbnail-item {
   cursor: pointer;
+  border-radius: 8px;
   border: 2px solid transparent;
-  transition: border-color 0.2s;
+  transition: border-color 0.3s ease;
+  overflow: hidden;
+}
+.thumbnail-item:hover { border-color: #e0e0e0; }
+.thumbnail-item.active { border-color: #f180bb; }
+.thumbnail-item img {
+  width: 100%; height: auto; display: block;
 }
 
-.thumbnail:hover {
-  border-color: #f180bb;
+.main-image-container {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  height: 100%;
+}
+.main-image {
+  width: 100%; height: 100%; object-fit: cover;
 }
 
-.thumbnail.active {
-  border-color: #f180bb;
-}
-
-/* Información del Producto - Actualizada con estilo del modal */
-.product-info {
-  grid-area: info;
+/* --- INFORMACIÓN DE PRODUCTO PROFESIONAL --- */
+.product-info-layout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
-
-.product-info h1 {
-  font-family: 'League Spartan', sans-serif;
-  font-size: 1.8rem;
-  color: #333;
-  margin: 0;
-}
-
-.price-section {
+.product-info-layout h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.2;
   margin-bottom: 10px;
 }
-
+.price-section {
+  display: flex; align-items: baseline; gap: 15px; margin-bottom: 20px;
+}
 .current-price {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #f180bb;
-  margin-right: 15px;
+  font-size: 2rem; font-weight: 500; color: #f180bb;
 }
-
 .old-price {
-  font-size: 18px;
-  color: #999;
-  text-decoration: line-through;
+  font-size: 1.2rem; color: #999; text-decoration: line-through;
+}
+.product-short-description {
+  color: #555; line-height: 1.6; margin-bottom: 30px;
 }
 
-/* Selectores de Opciones - Actualizado con estilo del modal */
-.options-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+/* --- GRUPO DE OPCIONES --- */
+.options-group {
+  display: flex; flex-direction: column; gap: 25px; margin-bottom: 30px;
 }
-
-.size-selector,
-.color-selector,
-.quantity-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.option-block label {
+  display: block; font-size: 0.9rem; font-weight: 500; color: #333; margin-bottom: 12px;
 }
-
-.size-selector p,
-.color-selector p,
-.quantity-selector p {
-  font-weight: 600;
-  color: #333;
-  font-size: 1rem;
-  margin: 0;
-}
-
-.options-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-/* Botones de talla - Estilo del modal */
-.size-btn {
-  padding: 10px 15px;
-  border: 2px solid #ddd;
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-  min-width: 50px;
-}
-
-.size-btn:hover:not(:disabled) {
-  border-color: #f180bb;
-  color: #f180bb;
-}
-
-.size-btn.active {
-  background-color: #000000;
-  border-color: #f180bb;
-  color: white;
-}
-
-.size-btn:disabled {
-  background-color: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* Selector de colores - Estilo del modal */
+.color-selector, .size-selector { display: flex; gap: 12px; flex-wrap: wrap; }
 .color-swatch {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  position: relative;
-  border: 1px solid #333; /* Borde negro para todos los colores */
+  width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+  border: 1px solid #ddd; transition: all 0.2s ease; position: relative;
+}
+.color-swatch:hover { transform: scale(1.1); }
+.color-swatch.active { box-shadow: 0 0 0 2px white, 0 0 0 4px #1a1a1a; }
+.color-swatch.active::after {
+  content: '✔'; color: white; mix-blend-mode: difference;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 1rem; font-weight: bold;
 }
 
-.color-swatch:hover {
-  transform: scale(1.1);
+.size-btn {
+  min-width: 50px; padding: 10px 15px; border-radius: 5px;
+  border: 1px solid #ccc; background-color: white; cursor: pointer;
+  font-weight: 500; transition: all 0.2s ease;
 }
+.size-btn:hover:not(:disabled) { border-color: #1a1a1a; }
+.size-btn.active { background-color: #1a1a1a; color: white; border-color: #1a1a1a; }
+.size-btn:disabled { color: #ccc; cursor: not-allowed; }
 
-.color-swatch.active {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 2px #000000;
-  border: 1px solid #333;
+/* --- GRUPO DE ACCIONES --- */
+.actions-group {
+  display: grid; grid-template-columns: 140px 1fr; gap: 15px; margin-bottom: 40px;
 }
-
-/* Selector de Cantidad - Estilo del modal */
 .quantity-selector {
-  flex-direction: row !important;
-  align-items: center;
-  gap: 15px;
+  display: flex; border: 1px solid #ccc; border-radius: 5px; align-items: center;
 }
-
-.quantity-input {
-  display: flex;
-  align-items: center;
-  gap: 0;
+.quantity-selector button {
+  width: 40px; border: none; background: transparent; cursor: pointer;
+  font-size: 1.2rem; color: #333;
 }
-
-.quantity-input button {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #ddd;
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: bold;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.quantity-selector input {
+  width: 100%; border: none; text-align: center; font-size: 1rem;
+  font-weight: 600; background: transparent; outline: none;
+  
 }
-
-.quantity-input button:hover {
-  border-color: #f180bb;
-  color: #f180bb;
-}
-
-.quantity-input input {
-  width: 50px !important;
-  height: 40px !important;
-  text-align: center !important;
-  border: 2px solid #ddd;
-  border-left: none;
-  border-right: none;
-  padding: 0 !important;
-  margin: 0 !important;
-  font-size: 1.2rem;
-  font-weight: 600;
-  box-sizing: border-box;
-  background: white;
-  outline: none;
-  /* Estas propiedades fuerzan el centrado */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-indent: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-
-}
-
-/* Quita las flechas del input number en Chrome/Safari */
-.quantity-input input::-webkit-outer-spin-button,
-.quantity-input input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-
-/* Botón de Agregar al Carrito - Estilo del modal */
 .add-to-cart-btn {
-  background-color: #000000;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  font-family: 'League Spartan', sans-serif;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 10px;
-  width: 100%;
+  background-color: #1a1a1a; color: white; border: none; border-radius: 5px;
+  font-size: 1rem; font-weight: 600; cursor: pointer;
+  transition: background-color 0.3s ease;
 }
+.add-to-cart-btn:hover { background-color: #f180bb; }
 
-.add-to-cart-btn:hover {
-  background-color: #f988c0;
-}
-
-.sku-info {
-  font-size: 14px;
-  color: #888;
-  margin-top: 10px;
-}
-
-/* Pestañas de Descripción - Mejoradas */
-.product-description-tabs {
-  margin-top: 30px;
-  border-top: 1px solid #eee;
-}
-
+/* --- PESTAÑAS DE INFORMACIÓN --- */
+.info-tabs { border-top: 1px solid #eee; }
 .tab-headers {
-  display: flex;
-  gap: 20px;
-  border-bottom: 1px solid #eee;
+  display: flex; gap: 40px; border-bottom: 1px solid #eee; margin-bottom: 20px;
 }
-
 .tab-headers button {
-  background: none;
-  border: none;
-  padding: 15px 0;
-  cursor: pointer;
-  font-size: 16px;
-  font-family: 'League Spartan', sans-serif;
-  font-weight: 600;
-  color: #888;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
+  padding: 20px 0; background: none; border: none; cursor: pointer;
+  font-size: 1rem; font-weight: 500; color: #888;
+  border-bottom: 2px solid transparent; transition: all 0.3s ease;
 }
+.tab-headers button:hover { color: #1a1a1a; }
+.tab-headers button.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+.tab-content { color: #555; line-height: 1.8; font-size: 0.95rem; }
 
-.tab-headers button:hover {
-  color: #333;
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .product-layout { grid-template-columns: 1fr; }
+  .product-gallery-layout { height: auto; }
 }
-
-.tab-headers button.active {
-  color: #333;
-  border-bottom-color: #f180bb;
-}
-
-.tab-content p {
-  color: #333 !important; /* Fuerza el color negro */
-  margin: 0;
-}
-
-/* Sección de Recomendados */
-/* Sección de recomendaciones */
-/* Sección de recomendaciones */
-.recommendations-section {
-  width: 100%;
-  margin-top: 60px;
-  padding: 40px 0;
-  border-top: 2px solid #f0f0f0;
-  grid-column: 1 / -1; /* Esto hace que ocupe todo el ancho */
-}
-
-.recommendations-section h2 {
-  font-family: 'League Spartan', sans-serif;
-  font-size: 2rem;
-  text-align: center;
-  margin-bottom: 40px;
-  color: #333;
-  letter-spacing: 1px;
-  font-weight: 700;
-}
-
-
-.recommended-products-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-/* Media query para pantallas pequeñas */
 @media (max-width: 768px) {
-  .producto-detalle-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    grid-template-areas:
-      "gallery"
-      "info"
-      "recommendations";
-   
-  }
-  
-  .main-image {
-    height: 300px;
-  }
-  
-  .product-info h1 {
-    font-size: 1.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .producto-detalle-container {
-    padding: 15px;
-  }
-  
-  .main-image {
-    height: 250px;
-  }
+  .product-gallery-layout { grid-template-columns: 1fr; }
+  .thumbnail-list { flex-direction: row; order: 2; }
+  .main-image-container { order: 1; margin-bottom: 20px; }
+  .actions-group { grid-template-columns: 1fr; }
+  .product-info-layout h1 { font-size: 2rem; }
 }

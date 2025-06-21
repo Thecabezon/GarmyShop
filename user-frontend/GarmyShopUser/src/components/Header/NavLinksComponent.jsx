@@ -59,11 +59,7 @@ const NavLinksComponent = ({ onNavLinkHover, activeDropdown }) => {
         <NavLink to="/marcas" className="nav-link-item" onClick={handleLinkClick}>Marcas</NavLink>
       </div>
       
-      {/* Item CATEGORIAS (directo) */}
-      {/* Si este link no tiene dropdown, onMouseEnter(null) */}
-      <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
-        <NavLink to="/categorias" className="nav-link-item" onClick={handleLinkClick}>Categorías</NavLink>
-      </div>
+    
 
 
     </nav>
