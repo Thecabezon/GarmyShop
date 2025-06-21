@@ -1,4 +1,5 @@
-package com.garmyshop.user_backend.model.enums; // O el paquete que elijas
+// En com.garmyshop.user_backend.model.enums.EstadoOrden.java
+package com.garmyshop.user_backend.model.enums;
 
 public enum EstadoOrden {
     PENDIENTE("pendiente"),
@@ -6,23 +7,24 @@ public enum EstadoOrden {
     ENTREGADO("entregado"),
     CANCELADO("cancelado");
 
-    private final String valor;
+    private final String valorEnDb;
 
-    EstadoOrden(String valor) {
-        this.valor = valor;
+    EstadoOrden(String valorEnDb) {
+        this.valorEnDb = valorEnDb;
     }
 
-    public String getValor() {
-        return valor;
+    public String getValorEnDb() {
+        return valorEnDb;
     }
 
-    // Opcional: método para convertir desde el String de la BD al Enum
-    public static EstadoOrden fromValor(String valor) {
-        for (EstadoOrden estado : values()) {
-            if (estado.valor.equalsIgnoreCase(valor)) {
-                return estado;
+    // Método para encontrar el Enum a partir del valor de la BD
+    public static EstadoOrden fromValorEnDb(String valor) {
+        if (valor == null) return null;
+        for (EstadoOrden e : values()) {
+            if (e.valorEnDb.equalsIgnoreCase(valor)) {
+                return e;
             }
         }
-        throw new IllegalArgumentException("Valor de estado de orden desconocido: " + valor);
+        throw new IllegalArgumentException("Valor desconocido para EstadoOrden: " + valor);
     }
 }

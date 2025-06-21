@@ -99,7 +99,7 @@ public class OrdenServiceImpl implements OrdenService {
                 orden.getFechaCreacion(),
                 orden.getFechaActualizacion(),
                 orden.getTotal(),
-                orden.getMetodoPago().name(), // O getDescripcion() si tienes ese método y quieres la descripción
+                orden.getMetodoPago().getValorEnDb(), // O getDescripcion() si tienes ese método y quieres la descripción
                 orden.getEstadoPago(),
                 orden.getEstado(),
                 cantidadTotalItems,
