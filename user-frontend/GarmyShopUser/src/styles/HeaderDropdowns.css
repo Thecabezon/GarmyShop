@@ -1,22 +1,55 @@
 /* src/styles/HeaderDropdowns.css */
 
 /* Estilos para el contenedor del dropdown (SOLO ESTILOS INTERNOS) */
-/* Las reglas de position, top, left, right, z-index, opacity, visibility, transform, transition se mueven a header.css */
+/* Las reglas de position, top, left, right, z-index, opacity, visibility, transform, transition están en header.css */
 .category-dropdown,
 .mega-menu {
     background-color: #fff;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     border-radius: 0 0 8px 8px;
-    padding: 20px;
+    padding: 20px; /* Padding general del contenido del dropdown */
     min-width: 250px;
-    width: auto; /* O el width específico que necesites para el contenido */
+    width: auto;
     display: flex;
     flex-direction: column;
     /* Las propiedades de visibilidad (opacity, visibility, transform, transition) se definen en header.css */
 }
 
+/* NUEVO: Estilos para el CONTENEDOR del título/banner dentro del dropdown */
+.category-dropdown-header {
+    padding-bottom: 15px; /* Espacio debajo del título */
+    margin-bottom: 15px; /* Espacio entre el header interno y la cuadrícula */
+    border-bottom: 1px solid #eee; /* Línea separadora opcional */
+    text-align: center; /* Centra el título */
+    /* Puedes añadir background-color o background-image para un banner visual */
+    /* background-color: #f8f9fa; */
+    /* padding: 20px; */ /* Más padding si quieres que sea un banner más grande */
+}
 
-/* Estilos para la lista de categorías en grid (dentro de .category-dropdown) */
+/* NUEVO: Estilos para el título H3 dentro del dropdown */
+.category-dropdown-title {
+    font-size: 1.5rem; /* Tamaño del título, ajusta */
+    font-weight: bold;
+    color: #333; /* Color del título */
+    margin: 0; /* Elimina márgenes por defecto del h3 */
+    font-family: 'League Spartan', sans-serif; /* Consistencia de fuente */
+}
+
+/* Estilo para el subtítulo si lo añades */
+.category-dropdown-subtitle {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 5px;
+    font-family: 'League Spartan', sans-serif;
+}
+
+/* Estilo para el título de error */
+.category-dropdown-title.error-title {
+    color: #d9534f; /* Rojo para error */
+}
+
+
+/* Estilos para la lista de categorías en grid */
 .category-list-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -59,71 +92,25 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-family: 'League Spartan', sans-serif
 }
 
 /* Estilos para el MegaMenu (si lo usas para Ofertas, etc.) */
-/* El .mega-menu como contenedor principal tendrá estilos de posicionamiento en header.css */
+/* El .mega-menu como contenedor principal: estilos de posicionamiento en header.css */
 
 .mega-menu-content {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-     max-width: 1200px; /* Max width para el contenido interno si no ocupa todo el ancho */
-     margin: 0 auto; /* Centrar el contenido si no ocupa todo el ancho del menú */
+    display: flex; justify-content: center; gap: 30px;
+     max-width: 1200px; /* Max width para el contenido interno */
+     margin: 0 auto; /* Centrar el contenido */
 }
-
-.dropdown-column {
-    flex: 1;
-    min-width: 150px;
-    padding: 0 25px;
-    border-right: 1px solid #f0f0f0;
-}
-
-.dropdown-column:last-child {
-  border-right: none;
-}
-
-.column-title {
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #555;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.dropdown-column ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.dropdown-column li {
-  margin-bottom: 8px;
-}
-
-.dropdown-column li a {
-  text-decoration: none;
-  color: #666;
-  font-size: 0.95rem;
-  transition: color 0.2s ease;
-}
-
-.dropdown-column li a:hover {
-    color: #f180bb;
-}
+.dropdown-column { flex: 1; min-width: 150px; padding: 0 25px; border-right: 1px solid #f0f0f0; }
+.dropdown-column:last-child { border-right: none; }
+.column-title { font-size: 1rem; font-weight: bold; text-transform: uppercase; color: #111; margin: 0 0 1.2rem 0; letter-spacing: 0.5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+.dropdown-column ul { list-style: none; padding: 0; margin: 0; }
+.dropdown-column li { margin-bottom: 8px; }
+.dropdown-column ul li a { display: block; padding: 8px 0; text-decoration: none; color: #555; font-size: 0.95rem; font-family: 'League Spartan', sans-serif; transition: color 0.2s ease, padding-left 0.2s ease; }
+.dropdown-column ul li a:hover { color: #f180bb; }
 
 /* Mensajes de estado dentro del dropdown */
-.category-dropdown p,
-.mega-menu p {
-    text-align: center;
-    margin: 0;
-    padding: 10px;
-    color: #777;
-    font-style: italic;
-}
-
-.category-dropdown p.error-message {
-    color: #d9534f;
-    font-weight: bold;
-}
+.category-dropdown p, .mega-menu p { text-align: center; margin: 0; padding: 10px; color: #777; font-style: italic; }
+.category-dropdown p.error-message { color: #d9534f; font-weight: bold; }

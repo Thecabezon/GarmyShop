@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import RecomendacionesCarousel from '../components/RecomendacionesCarousel';
+import PriceDisplay from '../components/ofertas/PriceDisplay'; // Importa el nuevo componente
 import '../styles/ProductoDetalle.css';
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 
@@ -33,6 +34,12 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
 
         const fullListaImagenes = apiData.imagenes.map(img => `${CLOUDINARY_BASE_URL}/${img.imagen}`);
 
+         // Calcula displayPrice y originalPrice aquí
+        const hasOffer = apiData.precioOferta != null && apiData.precioOferta < apiData.precio;
+        const displayPrice = hasOffer ? apiData.precioOferta : apiData.precio;
+        const originalPrice = hasOffer ? apiData.precio : null;
+
+
         const tallasUnicas = [...new Set(apiData.combinacionesDisponibles.map(c => c.talla.nombre))]
           .map(nombre => ({ talla: nombre, disponible: true }));
 
@@ -44,19 +51,24 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
           id: apiData.id,
           cod: apiData.id,
           nombre: apiData.nombre,
-          precio: apiData.precio,
-          precioAnterior: apiData.precioOferta !== apiData.precio ? apiData.precioOferta : null,
+          precio: apiData.precio, // Precio regular (mantener por si acaso)
+          precioOferta: apiData.precioOferta, // Precio de oferta (mantener)
+          displayPrice: displayPrice, // Precio que se muestra y usa para el carrito
+          originalPrice: originalPrice, // Precio tachado si hay oferta
           sku: apiData.sku,
           descripcion: apiData.descripcion,
-          imagenes: fullListaImagenes,
-          tallasDisponibles: tallasUnicas,
-          coloresDisponibles: coloresUnicos,
+          imagenes: fullListaImagenes, // Asumo que son solo las URLs
+          tallasDisponibles: tallasUnicas, // Asumo que esta estructura es correcta
+          coloresDisponibles: coloresUnicos, // Asumo que esta estructura es correcta
           detalles: "Fabricado con materiales de alta calidad para garantizar durabilidad y confort.",
           infoEnvio: "Envío estándar de 3-5 días hábiles. Devoluciones gratuitas dentro de los 30 días."
         };
 
         setProductoActual(productoFormateado);
         setSelectedImage(fullImagenPrincipal);
+        // Podrías fetch recomendaciones aquí si tu API lo soporta
+        // fetchRecomendaciones(apiData.id);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -67,6 +79,24 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
 
     fetchProductoDetalle();
   }, [cod]);
+
+   // Función dummy para fetch recomendaciones (reemplazar con tu lógica real)
+   /*
+   const fetchRecomendaciones = async (currentProductId) => {
+       try {
+           // Lógica para obtener recomendaciones, quizás por categoría o destacados
+           const response = await fetch(`http://localhost:8085/api/productos/recomendaciones?id=${currentProductId}`);
+           if (!response.ok) throw new Error('No se pudieron cargar recomendaciones.');
+           const data = await response.json();
+           // Formatear data si es necesario (ej: añadir URLs completas de imagen)
+           setRecomendaciones(data);
+       } catch (err) {
+           console.error("Error fetching recommendations:", err);
+           setRecomendaciones([]); // Mostrar vacío en caso de error
+       }
+   };
+   */
+
 
   const handleAddToCartClick = () => {
     if (!selectedSize) {
@@ -82,9 +112,12 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
       ...productoActual,
       id: productoActual.id,
       talla: selectedSize,
-      color: selectedColor,
+      color: selectedColor, // Asegúrate de que selectedColor tiene la estructura correcta { nombre, codigoHex, etc }
       cantidad: quantity,
-      idUnicoCarrito: `${productoActual.id}-${selectedSize}-${selectedColor.nombre}`
+      // Usa el displayPrice calculado para el carrito
+      price: productoActual.displayPrice, 
+      // Usa el ID único incluyendo talla y color para el carrito
+      idUnicoCarrito: `${productoActual.id}-${selectedSize}-${selectedColor.nombre}` 
     };
 
     handleAddToCart(itemToAdd);
@@ -100,6 +133,7 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
       <div className="product-layout">
         <div className="product-gallery-layout">
           <div className="thumbnail-list">
+             {/* Asegúrate de que productoActual.imagenes ya contiene las URLs completas */}
             {productoActual.imagenes.map((fullImgUrl, index) => (
               <div
                 key={index}
@@ -118,18 +152,33 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
         <div className="product-info-layout">
           <h1>{productoActual.nombre}</h1>
           <div className="price-section">
+             {/* Usa el componente PriceDisplay */}
+            <PriceDisplay 
+                regularPrice={productoActual.precio} 
+                offerPrice={productoActual.precioOferta} 
+            />
+             {/* ELIMINA: La lógica manual de precio antiguo y actual */}
+            {/*
             <span className="current-price">S/. {productoActual.precio.toFixed(2)}</span>
             {productoActual.precioAnterior && (
               <span className="old-price">S/. {productoActual.precioAnterior.toFixed(2)}</span>
             )}
+            */}
           </div>
-          <p className="product-short-description">{productoActual.descripcion.substring(0, 150)}...</p>
+          {/* Puedes ajustar la descripción para no cortarla si no es muy larga, o añadir un 'Leer más' */}
+          <p className="product-short-description">
+              {productoActual.descripcion?.length > 150 ?
+                productoActual.descripcion.substring(0, 150) + '...' :
+                productoActual.descripcion
+              }
+          </p>
 
           <div className="options-group">
             <div className="option-block">
               <label>Color</label>
               <div className="color-selector">
-                {productoActual.coloresDisponibles.map(color => (
+                 {/* Asegúrate de que coloresDisponibles es un array y cada item tiene .nombre y .codigoHex */}
+                {productoActual.coloresDisponibles?.map(color => (
                   <div
                     key={color.nombre}
                     title={color.nombre}
@@ -143,12 +192,13 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
             <div className="option-block">
               <label>Talla</label>
               <div className="size-selector">
-                {productoActual.tallasDisponibles.map(talla => (
+                 {/* Asegúrate de que tallasDisponibles es un array y cada item tiene .talla y .disponible */}
+                {productoActual.tallasDisponibles?.map(talla => (
                   <button
                     key={talla.talla}
                     onClick={() => setSelectedSize(talla.talla)}
                     className={`size-btn ${selectedSize === talla.talla ? 'active' : ''}`}
-                    disabled={!talla.disponible}
+                    disabled={!talla.disponible} // Usa la propiedad 'disponible' si viene de la API
                   >
                     {talla.talla}
                   </button>
@@ -160,11 +210,11 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
           <div className="actions-group">
             <div className="quantity-selector">
               <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
-              <input type="text" value={quantity} readOnly />
+              <input type="text" value={quantity} readOnly /> {/* Usar input readOnly o span para mostrar cantidad */}
               <button onClick={() => setQuantity(q => q + 1)}>+</button>
             </div>
 
-            <button className="add-to-cart-btn" onClick={handleAddToCartClick}>
+            <button className="add-to-cart-btn" onClick={handleAddToCartClick} disabled={!selectedSize || !selectedColor}>
               AGREGAR AL CARRITO
             </button>
           </div>
@@ -178,18 +228,21 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
               <button onClick={() => setActiveTab('envio')} className={activeTab === 'envio' ? 'active' : ''}>Envío</button>
             </div>
             <div className="tab-content">
-              {activeTab === 'descripcion' && <p>{productoActual.descripcion}</p>}
-              {activeTab === 'detalles' && <p>{productoActual.detalles}</p>}
-              {activeTab === 'envio' && <p>{productoActual.infoEnvio}</p>}
+              {activeTab === 'descripcion' && <p>{productoActual.descripcion || 'No hay descripción disponible.'}</p>}
+              {activeTab === 'detalles' && <p>{productoActual.detalles || 'No hay detalles adicionales disponibles.'}</p>}
+              {activeTab === 'envio' && <p>{productoActual.infoEnvio || 'Información de envío no disponible.'}</p>}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="recommendations-section">
-        <h2>TAMBIÉN TE PODRÍA INTERESAR</h2>
-        <RecomendacionesCarousel productos={recomendaciones} />
-      </div>
+       {/* Asumo que tienes data de recomendaciones en el estado `recomendaciones` */}
+      {recomendaciones && recomendaciones.length > 0 && (
+           <div className="recommendations-section">
+               <h2>TAMBIÉN TE PODRÍA INTERESAR</h2>
+               <RecomendacionesCarousel productos={recomendaciones} />
+           </div>
+      )}
     </div>
   );
 };

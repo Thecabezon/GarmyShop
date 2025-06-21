@@ -1,66 +1,80 @@
 // src/components/Header/NavLinksComponent.jsx
-import React from 'react'; 
-import { NavLink } from 'react-router-dom';
+import React from 'react';
+// Asegúrate de que 'NavLink' se importa aquí si no está ya
+import { NavLink } from 'react-router-dom'; 
 import DropdownIcon from './DropdownIcon';
-// REMOVIDO: Importaciones de MegaMenu, CategoryDropdown, menuData, HeaderDropdowns.css
-
 
 // NavLinksComponent recibe el handler del padre (Header.jsx) para notificar hover/click
-// También recibe el estado activo para marcar el enlace (opcional pero recomendado)
-const NavLinksComponent = ({ onNavLinkHover, activeDropdown }) => {
+// ELIMINAMOS: ya no necesitamos activeDropdown aquí para la clase 'active' del link
+const NavLinksComponent = ({ onNavLinkHover, activeDropdown }) => { // Mantén activeDropdown si lo usas para otra cosa, pero no para la clase 'active' del link
 
   // Las funciones handleMouseEnter y handleMouseLeave ahora solo llaman al handler del padre
   const handleMouseEnter = (menuName) => {
-    onNavLinkHover(menuName); // Notifica al padre qué menú debe estar activo
+    // Solo activa el dropdown si estamos en desktop (Header.jsx ya debería manejar esto con @media queries en CSS)
+    // Pero la lógica de activeDropdown en Header.jsx ya tiene la condición !isMobileMenuOpen
+     onNavLinkHover(menuName); // Notifica al padre qué menú debe estar activo
   };
 
    // Función para cerrar dropdowns si haces clic en un Link
    const handleLinkClick = () => {
        // Llama al handler del padre para cerrar cualquier dropdown abierto
-       onNavLinkHover(null);
+       // Esto es útil para links *dentro* de dropdowns. Para los links principales
+       // NavLink maneja la navegación, y el efecto de outside click o mouseleave
+       // en Header.jsx debería cerrar el dropdown.
+       onNavLinkHover(null); // Cerrar dropdowns al navegar
    };
 
   return (
-    
-    <nav className="nav-links"> 
+    <nav className="nav-links">
 
       {/* Item Inicio */}
       {/* onMouseEnter(null) notifica al padre que ningún dropdown de nav está activo */}
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
+         {/* NavLink manejará la clase 'active' si la ruta es '/' */}
          <NavLink to="/" className="nav-link-item" onClick={handleLinkClick}>Inicio</NavLink>
       </div>
 
-      {/* Item PRODUCTOS con Dropdown de Categorías */}
-      {/* onMouseLeave de este wrapper no es estrictamente necesario si el onMouseLeave del <header> padre es suficiente */}
+      {/* Item TIENDA con Dropdown de Categorías */}
       <div className="nav-item-wrapper"
-           onMouseEnter={() => handleMouseEnter('productos')}
+           onMouseEnter={() => handleMouseEnter('productos')} // Esto activa el dropdown
+           // onMouseLeave -> lo manejará el header padre
       >
-        {/* Marca el link como activo si el dropdown correspondiente está abierto */}
-        <NavLink to="/tienda" className={`nav-link-item ${activeDropdown === 'productos' ? 'active' : ''}`} onClick={handleLinkClick}> 
-          Productos <DropdownIcon />
+        {/* NavLink manejará la clase 'active' si la ruta es '/tienda' */}
+        {/* ¡ELIMINA la lógica activeDropdown para la clase 'active'! */}
+        <NavLink to="/tienda" className={`nav-link-item`} onClick={handleLinkClick}>
+          Tienda <DropdownIcon />
         </NavLink>
-        {/* REMOVIDO: El componente <CategoryDropdown /> YA NO VA AQUÍ */}
       </div>
 
       {/* Item OFERTAS con MegaMenu */}
-      {/* onMouseLeave de este wrapper es opcional */}
       <div className="nav-item-wrapper"
-           onMouseEnter={() => handleMouseEnter('ofertas')}
+           onMouseEnter={() => handleMouseEnter('ofertas')} // Esto activa el MegaMenu
+           // onMouseLeave -> lo manejará el header padre
       >
-        <NavLink to="/ofertas" className={`nav-link-item ${activeDropdown === 'ofertas' ? 'active' : ''}`} onClick={handleLinkClick}>
-          Ofertas <DropdownIcon />
+        {/* ¡AÑADE la prop 'to'! NavLink manejará la clase 'active' si la ruta es '/ofertas' */}
+        {/* ¡ELIMINA la lógica activeDropdown para la clase 'active'! */}
+        <NavLink to="/ofertas" className={`nav-link-item`} onClick={handleLinkClick}>
+          Ofertas <DropdownIcon /> {/* Opcional: si Ofertas tiene dropdown, mantén DropdownIcon */}
         </NavLink>
-        {/* REMOVIDO: El componente <MegaMenu /> YA NO VA AQUÍ */}
       </div>
 
       {/* Item MARCAS (directo) */}
-      {/* onMouseEnter(null) notifica al padre que ningún dropdown de nav está activo */}
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
+        {/* NavLink manejará la clase 'active' si la ruta es '/marcas' */}
         <NavLink to="/marcas" className="nav-link-item" onClick={handleLinkClick}>Marcas</NavLink>
       </div>
-      
-    
 
+       {/* Item SOBRE NOSOTROS (directo) */}
+      <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
+        {/* NavLink manejará la clase 'active' si la ruta es '/nosotros' */}
+        <NavLink to="/nosotros" className="nav-link-item" onClick={handleLinkClick}>Sobre Nosotros</NavLink>
+      </div>
+
+      {/* Item AYUDA (directo) */}
+      <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
+        {/* NavLink manejará la clase 'active' si la ruta es '/ayuda' */}
+        <NavLink to="/ayuda" className="nav-link-item" onClick={handleLinkClick}>Ayuda</NavLink>
+      </div>
 
     </nav>
   );
