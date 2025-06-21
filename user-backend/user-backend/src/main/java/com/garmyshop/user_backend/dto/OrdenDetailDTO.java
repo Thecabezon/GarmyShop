@@ -2,6 +2,7 @@ package com.garmyshop.user_backend.dto;
 
 import com.garmyshop.user_backend.model.enums.EstadoOrden;
 import com.garmyshop.user_backend.model.enums.EstadoPagoOrden; // Asumiendo que tienes este enum
+import com.garmyshop.user_backend.model.enums.MetodoPago; // Asumiendo que tienes este enum
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -17,16 +18,12 @@ public class OrdenDetailDTO {
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
     private BigDecimal total;
-    private String metodoPago;
+    private MetodoPago metodoPago;
     private EstadoPagoOrden estadoPago;
     private EstadoOrden estado;
-    private Integer cantidadTotalItems; // Suma de las cantidades de todos los OrdenItem
+    private Integer cantidadTotalItems;
 
-    // Información del usuario (podría ser opcional si el contexto ya lo da)
-    // private String nombreUsuario;
-
-    // Dirección de envío
-    private DireccionDTO direccionEnvio; // Necesitarás un DireccionDTO
+    private DireccionDTO direccionEnvio;
 
     private List<OrdenItemDetalleDTO> items;
 }

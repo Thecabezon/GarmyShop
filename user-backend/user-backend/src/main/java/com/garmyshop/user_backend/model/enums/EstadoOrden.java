@@ -1,6 +1,8 @@
 // En com.garmyshop.user_backend.model.enums.EstadoOrden.java
 package com.garmyshop.user_backend.model.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum EstadoOrden {
     PENDIENTE("pendiente"),
     ENVIADO("enviado"),
@@ -12,7 +14,7 @@ public enum EstadoOrden {
     EstadoOrden(String valorEnDb) {
         this.valorEnDb = valorEnDb;
     }
-
+    @JsonValue
     public String getValorEnDb() {
         return valorEnDb;
     }
