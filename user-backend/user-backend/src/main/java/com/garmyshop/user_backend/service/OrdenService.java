@@ -3,6 +3,8 @@ package com.garmyshop.user_backend.service;
 import com.garmyshop.user_backend.dto.CrearOrdenRequestDTO;
 import com.garmyshop.user_backend.dto.OrdenDetailDTO;
 import com.garmyshop.user_backend.dto.OrdenListDTO;
+import com.garmyshop.user_backend.exception.RecursoNoEncontradoException;
+
 // import com.garmyshop.user_backend.dto.CrearOrdenRequestDTO; // Para cuando implementemos la creación
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,5 +58,18 @@ public interface OrdenService {
      * @throws RuntimeException si la orden no se encuentra o la transición de estado no es válida.
      */
     // Optional<OrdenDetailDTO> actualizarEstadoOrden(Integer ordenId, EstadoOrden nuevoEstado, EstadoPagoOrden nuevoEstadoPago);
+
+
+    /**
+     * Confirma un pago para una orden específica y actualiza sus estados.
+     * Este método sería llamado después de verificar un pago exitoso con la pasarela.
+     *
+     * @param ordenId El ID de la orden en tu sistema.
+     * @param sessionId (Opcional) El ID de la sesión de la pasarela de pago, para referencia o logging.
+     * @return El OrdenDetailDTO de la orden actualizada.
+     * @throws RecursoNoEncontradoException si la orden no se encuentra.
+     * @throws IllegalStateException si la orden ya fue pagada o está en un estado que no permite confirmar el pago.
+     */
+    Optional<OrdenDetailDTO> confirmarPagoOrden(Integer ordenId, String sessionId);
 
 }

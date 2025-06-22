@@ -206,4 +206,41 @@ public class OrdenServiceImpl implements OrdenService {
 
         return convertirAOrdenDetailDTO(ordenGuardada);
     }
+
+
+
+    @Override // <<< NUEVO MÉTODO
+    @Transactional // Esta operación modifica la base de datos
+    public Optional<OrdenDetailDTO> confirmarPagoOrden(Integer ordenId, String sessionId) {
+        // Aquí podrías añadir lógica para guardar el sessionId de Stripe en tu Orden si quieres,
+        // para futuras referencias o para evitar procesar el mismo pago dos veces.
+        // Por ejemplo, añadiendo un campo `idTransaccionPasarela` a tu entidad Orden.
+
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Orden no encontrada con ID: " + ordenId));
+
+        // Verificar si la orden ya fue pagada para evitar doble procesamiento (idempotencia básica)
+        if (orden.getEstadoPago() == EstadoPagoOrden.PAGADO) {
+            // La orden ya está pagada, simplemente devuelve sus detalles.
+            // Podrías loguear esto como una confirmación repetida.
+            // logger.info("Intento de confirmar pago para orden ya pagada: {}", ordenId);
+            return Optional.of(convertirAOrdenDetailDTO(orden));
+        }
+
+        // Actualizar estados
+        orden.setEstadoPago(EstadoPagoOrden.PAGADO);
+        orden.setEstado(EstadoOrden.PENDIENTE); // O el estado que siga después de un pago exitoso
+                                                 // (PENDIENTE -> PROCESANDO podría ser uno)
+        // Nota: El campo `fechaActualizacion` de la Orden se actualizará automáticamente
+        // gracias a la anotación @UpdateTimestamp en la entidad Orden.
+
+        Orden ordenActualizada = ordenRepository.save(orden);
+
+        // Aquí podrías disparar otras acciones:
+        // - Enviar un email de confirmación de orden/pago al usuario.
+        // - Notificar a un sistema de inventario/fulfillment.
+        // Por ahora, solo actualizamos la orden.
+
+        return Optional.of(convertirAOrdenDetailDTO(ordenActualizada));
+    }
 }
