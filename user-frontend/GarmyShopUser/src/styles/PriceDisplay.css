@@ -1,0 +1,30 @@
+/* src/styles/PriceDisplay.css */
+
+.price-display {
+    display: flex; /* O inline-flex si prefieres */
+    align-items: center;
+    gap: 10px; /* Espacio entre los precios */
+}
+
+.price-display .old-price {
+    text-decoration: line-through; /* Tacha el precio antiguo */
+    color: #888; /* Color gris para el precio antiguo */
+    font-size: 0.9em; /* Un poco más pequeño que el precio actual */
+}
+
+.price-display .current-price {
+    color: #e74c3c; /* Color rojo o de tu marca para el precio de oferta/actual */
+    font-weight: bold; /* Resalta el precio actual */
+    font-size: 1em; /* Tamaño normal */
+}
+
+/* Estilo específico para cuando NO hay oferta (solo se muestra current-price) */
+.price-display:not(:has(.old-price)) .current-price {
+    color: inherit; /* Vuelve al color de texto normal del contenedor padre */
+    font-weight: normal; /* Vuelve al peso de fuente normal */
+}
+
+/* Nota: :has() es un selector CSS moderno, la compatibilidad varía.
+   Una alternativa es aplicar clases condicionalmente en JSX,
+   ej: <span className={`current-price ${hasOffer ? 'on-offer' : ''}`}>
+   y estilizar .current-price.on-offer */

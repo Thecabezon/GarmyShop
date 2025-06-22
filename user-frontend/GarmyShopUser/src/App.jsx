@@ -11,6 +11,8 @@ import { ProductoDetallePage } from './page/ProductoDetallePage';
 import FinalizarCompraPage from './page/FinalizarCompraPage';
 import { FavoritosPage } from './page/FavoritosPage';
 import MarcasPage from './page/MarcasPage';
+import {OfertasPage} from './page/OfertasPage';
+import SobreNosotrosPage from './page/SobreNosotrosPage';
 
 // Autenticación
 import LoginPage from './page/Auth/LoginPage';
@@ -99,6 +101,8 @@ function App() {
             </MainLayout>
           }
         />
+        <Route path="/ofertas" element={<OfertasPage handleAddToCart={handleAddToCart} />} />
+        <Route path="/nosotros" element={<SobreNosotrosPage />} />
 
         {/* Detalle de producto */}
         <Route
@@ -147,6 +151,8 @@ function App() {
 
         {/* Ruta 404 (opcional) */}
         {/* <Route path="*" element={<NotFoundPage />} /> */}
+        
+
       </Routes>
 
       <Footer />
