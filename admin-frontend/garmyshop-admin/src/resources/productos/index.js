@@ -1,3 +1,5 @@
+// RUTA: frontend/src/resources/productos/index.js (CÓDIGO COMPLETO)
+
 import React from 'react';
 import {
   List,
@@ -19,8 +21,8 @@ import {
   BooleanInput,
   ImageInput,
   ImageField,
-  ArrayInput,
-  SimpleFormIterator,
+  ArrayInput, // Lo mantenemos por si lo usas en otro lado
+  SimpleFormIterator, // Lo mantenemos por si lo usas en otro lado
   required,
   ReferenceField,
   FunctionField,
@@ -32,9 +34,9 @@ import {
 } from 'react-admin';
 import { Box, Chip } from '@mui/material';
 
-import SlugInput from '../../providers/SlugInput'; // Ajusta la ruta si es necesario
+import SlugInput from '../../providers/SlugInput';
 
-// 🟩 LISTA DE PRODUCTOS
+// 🟩 LISTA DE PRODUCTOS (Sin cambios)
 export const ProductoList = (props) => (
   <List {...props} perPage={25} sort={{ field: 'nombre', order: 'ASC' }}>
     <Datagrid rowClick="show">
@@ -42,30 +44,22 @@ export const ProductoList = (props) => (
       <TextField source="nombre" label="Nombre" />
       <TextField source="sku" label="SKU" />
       <ImageField source="imagen_principal_url" label="Imagen Ppal." sx={{ '& img': { maxWidth: 50, maxHeight: 50 } }} />
-
       <ReferenceField source="marca" reference="marcas" label="Marca">
         <TextField source="nombre" />
       </ReferenceField>
       <ReferenceField source="categoria" reference="categorias" label="Categoría">
         <TextField source="nombre" />
       </ReferenceField>
-
       <NumberField source="precio" label="Precio" options={{ style: 'currency', currency: 'PEN' }} />
       <NumberField source="precio_oferta" label="P. Oferta" options={{ style: 'currency', currency: 'PEN' }} />
-
       <FunctionField
         label="Activo"
-        render={record => (
-          <Chip label={record.activo ? 'Activo' : 'Inactivo'} color={record.activo ? 'success' : 'default'} size="small" />
-        )}
+        render={record => (<Chip label={record.activo ? 'Activo' : 'Inactivo'} color={record.activo ? 'success' : 'default'} size="small" />)}
       />
       <FunctionField
         label="Destacado"
-        render={record => (
-          <Chip label={record.es_destacado ? 'Sí' : 'No'} color={record.es_destacado ? 'primary' : 'default'} size="small" variant={record.es_destacado ? 'filled' : 'outlined'} />
-        )}
+        render={record => (<Chip label={record.es_destacado ? 'Sí' : 'No'} color={record.es_destacado ? 'primary' : 'default'} size="small" variant={record.es_destacado ? 'filled' : 'outlined'} />)}
       />
-
       <DateField source="creado" label="Creado" showTime locales="es-PE" />
       <DateField source="actualizado" label="Actualizado" showTime locales="es-PE" />
       <EditButton />
@@ -74,7 +68,7 @@ export const ProductoList = (props) => (
   </List>
 );
 
-// 🟨 FORMULARIO DE CREAR / EDITAR PRODUCTO
+// 🟨 FORMULARIO DE CREAR / EDITAR PRODUCTO (SIMPLIFICADO)
 const ProductoForm = () => (
   <TabbedForm>
     <FormTab label="Información General">
@@ -116,38 +110,27 @@ const ProductoForm = () => (
       </ImageInput>
     </FormTab>
 
-    <FormTab label="Variaciones">
-      <ArrayInput source="combinaciones" label="Variaciones">
-        <SimpleFormIterator>
-          <ReferenceInput source="talla" reference="tallas" label="Talla">
-            <SelectInput optionText="nombre" validate={required()} />
-          </ReferenceInput>
-          <ReferenceInput source="color" reference="colores" label="Color">
-            <SelectInput optionText="nombre" validate={required()} />
-          </ReferenceInput>
-          <NumberInput source="stock" label="Stock" validate={required()} min={0} />
-          <TextInput source="sku" label="SKU Variación" validate={required()} />
-        </SimpleFormIterator>
-      </ArrayInput>
-    </FormTab>
+    {/* LA PESTAÑA DE VARIACIONES HA SIDO ELIMINADA */}
+    
   </TabbedForm>
 );
 
-// 🟦 CREAR PRODUCTO
+// 🟦 CREAR PRODUCTO (Sin cambios)
 export const ProductoCreate = (props) => (
   <Create {...props}>
     <ProductoForm />
   </Create>
 );
 
-// 🟪 EDITAR PRODUCTO
+// 🟪 EDITAR PRODUCTO (Sin cambios)
 export const ProductoEdit = (props) => (
   <Edit {...props}>
     <ProductoForm />
   </Edit>
 );
 
-// 🟫 MOSTRAR PRODUCTO
+// 🟫 MOSTRAR PRODUCTO (Simplificado)
+// He quitado la pestaña de variaciones de aquí también para ser consistentes.
 export const ProductoShow = (props) => (
   <Show {...props}>
     <TabbedShowLayout>
@@ -156,41 +139,24 @@ export const ProductoShow = (props) => (
         <TextField source="nombre" />
         <TextField source="sku" />
         <TextField source="slug" />
-        <ReferenceField source="marca" reference="marcas" link="show">
-          <TextField source="nombre" />
-        </ReferenceField>
-        <ReferenceField source="categoria" reference="categorias" link="show">
-          <TextField source="nombre" />
-        </ReferenceField>
+        <ReferenceField source="marca" reference="marcas" link="show"><TextField source="nombre" /></ReferenceField>
+        <ReferenceField source="categoria" reference="categorias" link="show"><TextField source="nombre" /></ReferenceField>
         <TextField source="descripcion" />
         <BooleanField source="activo" />
         <BooleanField source="es_destacado" />
         <DateField source="creado" label="Creado" showTime locales="es-PE" />
         <DateField source="actualizado" label="Actualizado" showTime locales="es-PE" />
       </Tab>
-
       <Tab label="Precios">
         <NumberField source="precio" label="Precio Regular" options={{ style: 'currency', currency: 'PEN' }} />
         <NumberField source="precio_oferta" label="Precio de Oferta" options={{ style: 'currency', currency: 'PEN' }} />
       </Tab>
-
       <Tab label="Imágenes">
         <ImageField source="imagen_principal_url" label="Imagen Principal" sx={{ '& img': { maxWidth: 100, maxHeight: 100 } }} />
         <ArrayField source="imagenes" label="Imágenes Adicionales">
           <SingleFieldList>
             <ImageField source="imagen_url" sx={{ '& img': { maxWidth: 80, maxHeight: 80 } }} />
           </SingleFieldList>
-        </ArrayField>
-      </Tab>
-
-      <Tab label="Variaciones">
-        <ArrayField source="combinaciones" label="Detalle de Variaciones">
-          <Datagrid isRowSelectable={() => false}>
-            <TextField source="talla_nombre" label="Talla" />
-            <TextField source="color_nombre" label="Color" />
-            <NumberField source="stock" label="Stock" />
-            <TextField source="sku" label="SKU Variación" />
-          </Datagrid>
         </ArrayField>
       </Tab>
     </TabbedShowLayout>
