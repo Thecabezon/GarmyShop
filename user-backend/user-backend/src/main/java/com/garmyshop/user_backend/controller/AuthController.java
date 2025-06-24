@@ -5,6 +5,10 @@ import com.garmyshop.user_backend.entity.AuthUser;
 import com.garmyshop.user_backend.exception.RecursoNoEncontradoException; // Para manejo de excepciones
 import com.garmyshop.user_backend.security.JwtTokenProvider;
 import com.garmyshop.user_backend.service.AuthUserService;
+import com.stripe.model.tax.Registration.CountryOptions.Ma;
+
+import java.util.Map;
+
 import org.slf4j.Logger; // Import para Logger
 import org.slf4j.LoggerFactory; // Import para Logger
 import org.springframework.http.HttpStatus;
@@ -41,9 +45,9 @@ public class AuthController {
     public ResponseEntity<?> registrarUsuario(@RequestBody RegistroRequestDTO registroRequestDTO) {
         try {
             authUserService.registrarUsuario(registroRequestDTO);
-            return ResponseEntity.ok("¡Usuario registrado exitosamente!");
+            return ResponseEntity.ok(Map.of("message", "Usuario registrado exitosamente."));
         } catch (RuntimeException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", "Error al registrar el usuario: " + ex.getMessage()));
         }
     }
 
