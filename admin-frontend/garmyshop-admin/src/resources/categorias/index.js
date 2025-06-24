@@ -107,14 +107,14 @@ const CategoriaForm = () => (
 
 // ✅ CREAR CATEGORÍA
 export const CategoriaCreate = (props) => (
-  <Create {...props}>
+  <Create {...props} redirect="list">
     <CategoriaForm />
   </Create>
 );
 
 // ✅ EDITAR CATEGORÍA
 export const CategoriaEdit = (props) => (
-  <Edit {...props}>
+  <Edit {...props} redirect="list">
     <CategoriaForm />
   </Edit>
 );

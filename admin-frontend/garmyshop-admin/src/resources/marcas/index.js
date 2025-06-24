@@ -111,14 +111,14 @@ const MarcaForm = () => (
 
 // 🟦 Crear marca
 export const MarcaCreate = (props) => (
-  <Create {...props}>
+  <Create {...props} redirect="list">
     <MarcaForm />
   </Create>
 );
 
 // 🟪 Editar marca
 export const MarcaEdit = (props) => (
-  <Edit {...props}>
+  <Edit {...props} redirect="list">
     <MarcaForm />
   </Edit>
 );

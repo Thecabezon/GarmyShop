@@ -73,14 +73,14 @@ const CombinacionProductoForm = () => (
     </SimpleForm>
 );
 
-export const CombinacionProductoCreate = () => (
-    <Create>
+export const CombinacionProductoCreate = (props) => (
+    <Create {...props} redirect="list">
         <CombinacionProductoForm />
     </Create>
 );
 
-export const CombinacionProductoEdit = () => (
-    <Edit>
+export const CombinacionProductoEdit = (props) => (
+    <Edit {...props} redirect="list">
         <CombinacionProductoForm />
     </Edit>
 );

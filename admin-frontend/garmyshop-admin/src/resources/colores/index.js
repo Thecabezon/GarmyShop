@@ -42,14 +42,14 @@ const ColorForm = () => (
 
 // ✅ Crear Color
 export const ColorCreate = (props) => (
-  <Create {...props}>
+  <Create {...props} redirect="list">
     <ColorForm /> {/* Usa el formulario definido */}
   </Create>
 );
 
 // ✅ Editar Color
 export const ColorEdit = (props) => (
-  <Edit {...props}>
+  <Edit {...props} redirect="list">
     <ColorForm /> {/* Usa el formulario definido */}
   </Edit>
 );

@@ -81,7 +81,7 @@ const OrdenForm = () => (
 
 // 🟪 Editar orden
 export const OrdenEdit = (props) => (
-  <Edit {...props}>
+  <Edit {...props} redirect="list"> 
     <OrdenForm />
   </Edit>
 );
