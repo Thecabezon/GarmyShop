@@ -1,7 +1,7 @@
-// src/components/Header/IconsComponent.jsx
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { CLOUDINARY_BASE_URL } from '../../config/cloudinary'; // Importar la URL base de Cloudinary
 
 // IconsComponent recibe props, incluyendo handlers del padre para buscador, dropdowns, y MENÚ MÓVIL
 export function IconsComponent({ 
@@ -33,24 +33,64 @@ export function IconsComponent({
     // Lógica para eliminar un ítem del carrito
     const removeFromCart = (itemId) => {
         if (typeof setCartItems === 'function') {
-            setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
+            setCartItems(prevItems => prevItems.filter(item => 
+                (item.idUnicoCarrito || item.id) !== itemId
+            ));
+        }
+    };
+
+    // Función para actualizar la cantidad de un producto en el carrito
+    const updateCartItemQuantity = (itemId, newQuantity) => {
+        if (typeof setCartItems === 'function' && newQuantity >= 1) {
+            setCartItems(prevItems => 
+                prevItems.map(item => 
+                    (item.idUnicoCarrito || item.id) === itemId 
+                        ? { ...item, cantidad: newQuantity, quantity: newQuantity } 
+                        : item
+                )
+            );
         }
     };
 
     // Calcular el total de ítems en el carrito
     const getTotalItems = () => {
         if (!cartItems || !Array.isArray(cartItems)) return 0;
-        return cartItems.reduce((total, item) => total + (item.cantidad || 1), 0);
+        return cartItems.reduce((total, item) => 
+            total + (item.quantity || item.cantidad || 1), 0
+        );
     };
 
     // Calcular el total del carrito
     const getCartTotal = () => {
         if (!cartItems || !Array.isArray(cartItems)) return 0;
         return cartItems.reduce((total, item) => {
-            const precio = parseFloat(item.precio) || 0;
-            const cantidad = parseInt(item.cantidad) || 1;
+            // Usar el precio correcto (displayPrice, price o precio)
+            const precio = parseFloat(item.displayPrice || item.price || item.precio) || 0;
+            const cantidad = parseInt(item.quantity || item.cantidad) || 1;
             return total + (precio * cantidad);
         }, 0);
+    };
+
+    // Función para proceder al checkout
+    const handleCheckout = () => {
+        navigate('/finalizar_compra');
+        setCartVisible(false);
+    };
+
+    // Función para obtener la URL completa de la imagen
+    const getFullImageUrl = (item) => {
+        // Si ya es una URL completa, devolverla
+        if (item.imagen && (item.imagen.startsWith('http') || item.imagen.startsWith('/'))) {
+            return item.imagen;
+        }
+        
+        // Si es una ruta parcial, construir la URL completa con Cloudinary
+        if (item.imagen) {
+            return `${CLOUDINARY_BASE_URL}/${item.imagen}`;
+        }
+        
+        // Si no hay imagen, devolver un placeholder
+        return 'https://dummyimage.com/100x100/f0f0f0/ccc&text=No+Imagen';
     };
 
     // Efecto para cerrar paneles al hacer clic fuera
@@ -87,7 +127,7 @@ export function IconsComponent({
         }
     }
 
-    // NUEVO: Handler para el menú hamburguesa
+    // Handler para el menú hamburguesa
     const handleMobileMenuClick = () => {
         if (typeof toggleMobileMenu === 'function') {
             toggleMobileMenu(); // Toggle del menú móvil
@@ -102,7 +142,7 @@ export function IconsComponent({
         <div className="icons-container" ref={iconsContainerRef}> 
             <div className="icons">
 
-                {/* NUEVO: Ícono de Menú Hamburguesa */}
+                {/* Ícono de Menú Hamburguesa */}
                 <div className="hamburger-icon-wrapper" onClick={handleMobileMenuClick}>
                     <i className="bi bi-list hamburger-icon"></i>
                 </div>
@@ -154,40 +194,58 @@ export function IconsComponent({
                             ) : (
                                 <>
                                     <div className="cart-items">
-                                        {cartItems.map((item) => (
-                                            <div key={item.id} className="cart-item">
-                                                <div className="item-image">
-                                                    <img src={item.imagen || '/placeholder-image.jpg'} alt={item.nombre} />
-                                                </div>
-                                                <div className="item-details">
-                                                    <div className="item-info">
-                                                        <h3>{item.nombre}</h3>
-                                                        <div className="quantity-controls">
-                                                            <button className="quantity-btn">-</button>
-                                                            <span className="quantity">{item.cantidad || 1}</span>
-                                                            <button className="quantity-btn">+</button>
+                                        {cartItems.map((item) => {
+                                            const itemId = item.idUnicoCarrito || item.id;
+                                            const itemQuantity = item.quantity || item.cantidad || 1;
+                                            const itemPrice = parseFloat(item.displayPrice || item.price || item.precio) || 0;
+                                            
+                                            return (
+                                                <div key={itemId} className="cart-item">
+                                                    <div className="item-image">
+                                                        <img src={getFullImageUrl(item)} alt={item.nombre} />
+                                                    </div>
+                                                    <div className="item-details">
+                                                        <div className="item-info">
+                                                            <h3>{item.nombre}</h3>
+                                                            {item.talla && <p>Talla: {item.talla}</p>}
+                                                            {item.color && <p>Color: {item.color.nombre}</p>}
+                                                            <div className="quantity-controls">
+                                                                <button 
+                                                                    className="quantity-btn"
+                                                                    onClick={() => updateCartItemQuantity(itemId, itemQuantity - 1)}
+                                                                >
+                                                                    -
+                                                                </button>
+                                                                <span className="quantity">{itemQuantity}</span>
+                                                                <button 
+                                                                    className="quantity-btn"
+                                                                    onClick={() => updateCartItemQuantity(itemId, itemQuantity + 1)}
+                                                                >
+                                                                    +
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div className="item-actions">
+                                                            <button 
+                                                                className="remove-item" 
+                                                                onClick={() => removeFromCart(itemId)}
+                                                            >
+                                                                🗑️
+                                                            </button>
+                                                            <span className="item-price">
+                                                                S/ {(itemPrice * itemQuantity).toFixed(2)}
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                    <div className="item-actions">
-                                                        <button 
-                                                            className="remove-item" 
-                                                            onClick={() => removeFromCart(item.id)}
-                                                        >
-                                                            🗑️
-                                                        </button>
-                                                        <span className="item-price">
-                                                            S/ {(parseFloat(item.precio || 0) * (item.cantidad || 1)).toFixed(2)}
-                                                        </span>
-                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                     <div className="cart-footer">
                                         <div style={{ marginBottom: '1rem', fontSize: '1.2rem', fontWeight: 'bold' }}>
                                             Total: S/ {getCartTotal().toFixed(2)}
                                         </div>
-                                        <button className="checkout-btn">
+                                        <button className="checkout-btn" onClick={handleCheckout}>
                                             Proceder al checkout
                                         </button>
                                     </div>

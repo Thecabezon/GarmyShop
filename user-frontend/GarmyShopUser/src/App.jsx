@@ -1,4 +1,3 @@
-// src/App.js
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -45,21 +44,49 @@ function App() {
   }, [favoriteItems]);
 
   // Añadir al carrito
+
   const handleAddToCart = (producto) => {
     setCartItems((prevItems) => {
+      // Asegurarse de que tenemos un identificador único para el producto
       const itemIdentifier = producto.idUnicoCarrito || producto.id;
-      const existingItem = prevItems.find(item => (item.idUnicoCarrito || item.id) === itemIdentifier);
-
+      
+      // Buscar si el producto ya existe en el carrito
+      const existingItem = prevItems.find(item => 
+        (item.idUnicoCarrito || item.id) === itemIdentifier
+      );
+  
       if (existingItem) {
+        // Si el producto ya existe, actualizar la cantidad
         return prevItems.map(item =>
           (item.idUnicoCarrito || item.id) === itemIdentifier
-            ? { ...item, quantity: item.quantity + (producto.cantidad || 1) }
+            ? { 
+                ...item, 
+                quantity: (item.quantity || 0) + (producto.cantidad || 1) 
+              }
             : item
         );
       } else {
-        return [...prevItems, { ...producto, quantity: producto.cantidad || 1 }];
+        // Si el producto no existe, añadirlo al carrito
+        // Asegurarse de que el producto tiene toda la información necesaria
+        const newItem = {
+          ...producto,
+          id: producto.id,
+          nombre: producto.nombre,
+          precio: producto.displayPrice || producto.price || producto.precio, // Usar el precio correcto
+          imagen: producto.imagen, // Asegurarse de que esto contiene la URL completa
+          talla: producto.talla,
+          color: producto.color,
+          cantidad: producto.cantidad || 1,
+          quantity: producto.cantidad || 1, // Mantener ambos para compatibilidad
+          idUnicoCarrito: itemIdentifier
+        };
+        
+        return [...prevItems, newItem];
       }
     });
+    
+    // Opcional: Mostrar confirmación
+    console.log("Producto añadido al carrito:", producto);
   };
 
   // Añadir o quitar de favoritos
@@ -104,9 +131,9 @@ function App() {
         <Route path="/ofertas" element={<OfertasPage handleAddToCart={handleAddToCart} />} />
         <Route path="/nosotros" element={<SobreNosotrosPage />} />
 
-        {/* Detalle de producto */}
+        {/* Detalle de producto - CORREGIDO */}
         <Route
-          path="/tienda/:cod"
+          path="/producto/:cod"  // Cambiado de "/tienda/:cod" a "/producto/:cod"
           element={
             <MainLayout>
               <ProductoDetallePage
@@ -151,8 +178,6 @@ function App() {
 
         {/* Ruta 404 (opcional) */}
         {/* <Route path="*" element={<NotFoundPage />} /> */}
-        
-
       </Routes>
 
       <Footer />
