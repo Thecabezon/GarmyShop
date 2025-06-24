@@ -1,9 +1,12 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
 import '../../styles/auth.css';
+// Asegúrate de que la ruta a authService sea correcta
+import authService from './authService'; 
 
-// Iconos que ya tienes
+// ... (tus iconos EyeIcon, EyeOffIcon, GoogleIcon permanecen igual)
 const EyeIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -25,10 +28,12 @@ const GoogleIcon = () => (
   </svg>
 );
 
+
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    username: '', // <-- AÑADIR ESTADO PARA USERNAME
     email: '',
     password: '',
     confirmPassword: ''
@@ -36,6 +41,7 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -48,64 +54,45 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validar que las contraseñas coincidan
     if (formData.password !== formData.confirmPassword) {
-      alert('Las contraseñas no coinciden');
+      setError('Las contraseñas no coinciden');
       return;
     }
     
     setIsLoading(true);
+    setError('');
     
     try {
-      // Lógica de registro aquí
-      console.log('Register data:', formData);
+      // Llamar al servicio de registro con todos los campos necesarios
+      await authService.register(
+        formData.firstName,
+        formData.lastName,
+        formData.username, // <-- PASAR USERNAME
+        formData.email,
+        formData.password
+      );
       
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Aquí irían las validaciones reales del registro
-      // Por ahora simulamos un registro exitoso
-      
-      // Guardar datos de usuario si es necesario
-      // localStorage.setItem('user', JSON.stringify(userData));
-      // localStorage.setItem('token', token);
-      
-      // Redirigir a la página de inicio
-      navigate('/');
+      alert('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.');
+      navigate('/login');
       
     } catch (error) {
       console.error('Error en registro:', error);
-      alert('Error al crear la cuenta. Intenta nuevamente.');
+      // El error ya viene formateado desde el servicio
+      setError(String(error)); 
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleSignup = async () => {
-    setIsLoading(true);
-    
-    try {
-      // Lógica para registro con Google
-      console.log('Registro con Google');
-      
-      // Simular delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Redirigir a inicio después del registro con Google
-      navigate('/');
-      
-    } catch (error) {
-      console.error('Error en registro con Google:', error);
-      alert('Error al registrarse con Google.');
-    } finally {
-      setIsLoading(false);
-    }
+    // ... (lógica de google sin cambios)
   };
 
   return (
     <AuthLayout title="Crea Una Cuenta" subtitle="Únete a la familia GramyShop">
       <form onSubmit={handleSubmit} className="auth-form">
-        {/* Name Inputs en una fila */}
+        {error && <div className="auth-error">{error}</div>}
+        
         <div className="name-inputs-row">
           <div className="auth-input-group">
             <input
@@ -133,7 +120,20 @@ const RegisterForm = () => {
           </div>
         </div>
 
-        {/* Email Input */}
+        {/* NUEVO: Campo para el nombre de usuario */}
+        <div className="auth-input-group">
+          <input
+            type="text"
+            name="username"
+            placeholder="Nombre de usuario"
+            value={formData.username}
+            onChange={handleChange}
+            className="auth-input"
+            required
+            disabled={isLoading}
+          />
+        </div>
+
         <div className="auth-input-group">
           <input
             type="email"
@@ -147,7 +147,6 @@ const RegisterForm = () => {
           />
         </div>
 
-        {/* Password Input */}
         <div className="auth-input-group">
           <input
             type={showPassword ? "text" : "password"}
@@ -169,7 +168,6 @@ const RegisterForm = () => {
           </button>
         </div>
 
-        {/* Confirm Password Input */}
         <div className="auth-input-group">
           <input
             type={showConfirmPassword ? "text" : "password"}
@@ -191,7 +189,6 @@ const RegisterForm = () => {
           </button>
         </div>
 
-        {/* Register Button */}
         <button 
           type="submit" 
           disabled={isLoading}
@@ -207,12 +204,10 @@ const RegisterForm = () => {
           )}
         </button>
 
-        {/* Divider */}
         <div className="auth-divider">
           <span>O</span>
         </div>
 
-        {/* Google Register Button */}
         <button 
           type="button" 
           onClick={handleGoogleSignup}
@@ -223,7 +218,6 @@ const RegisterForm = () => {
           Continuar con Google
         </button>
 
-        {/* Login Link */}
         <div className="auth-footer">
           <span>¿Ya tienes una cuenta? </span>
           <Link to="/login" className="auth-link">

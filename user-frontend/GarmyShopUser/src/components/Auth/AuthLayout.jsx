@@ -7,7 +7,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
       {/* Lado izquierdo - Imagen */}
       <div className="auth-image-section">
         <img 
-          src="https://cdn0.salir.com/es/articles/1/2/9/las_mejores_tiendas_en_gran_de_gracia_2921_600_square.jpg" 
+          src="https://i.scdn.co/image/ab6761610000e5eb667b1c37aac06716daa5fe92" 
           alt="Women shopping" 
         />
       </div>

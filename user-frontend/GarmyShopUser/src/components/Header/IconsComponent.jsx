@@ -1,33 +1,59 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { CLOUDINARY_BASE_URL } from '../../config/cloudinary'; // Importar la URL base de Cloudinary
+import { CLOUDINARY_BASE_URL } from '../../config/cloudinary';
+import UserDropdown from '../Auth/UserDropdown'; // Importamos el nuevo componente
 
-// IconsComponent recibe props, incluyendo handlers del padre para buscador, dropdowns, y MENÚ MÓVIL
 export function IconsComponent({ 
     cartItems, setCartItems, 
     favoriteItems, 
     toggleSearch, 
     setActiveDropdown, 
-    toggleMobileMenu // Handler del menú móvil del padre
+    toggleMobileMenu
 }) {
-    // Estado local para la visibilidad del carrito
-    const [cartVisible, setCartVisible] = useState(false); 
+    const [cartVisible, setCartVisible] = useState(false);
+    const [userDropdownVisible, setUserDropdownVisible] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userInfo, setUserInfo] = useState(null);
 
     const navigate = useNavigate();
-    const cartPanelRef = useRef(null); 
-    const iconsContainerRef = useRef(null); 
+    const cartPanelRef = useRef(null);
+    const iconsContainerRef = useRef(null);
+    const userDropdownRef = useRef(null);
+
+    // Verificar si el usuario está autenticado al cargar el componente
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        
+        if (token && user) {
+            setIsAuthenticated(true);
+            setUserInfo(JSON.parse(user));
+        }
+    }, []);
 
     // Lógica para alternar la visibilidad del carrito
     const toggleCart = () => {
         if (typeof setActiveDropdown === 'function') { 
             setActiveDropdown(null); 
         }
-        // Cierra menú móvil si está abierto
         if (typeof toggleMobileMenu === 'function') { 
             toggleMobileMenu(false); 
         }
+        setUserDropdownVisible(false); // Cerrar dropdown de usuario si está abierto
         setCartVisible(prev => !prev); 
+    };
+
+    // Lógica para alternar la visibilidad del dropdown de usuario
+    const toggleUserDropdown = () => {
+        if (typeof setActiveDropdown === 'function') { 
+            setActiveDropdown(null); 
+        }
+        if (typeof toggleMobileMenu === 'function') { 
+            toggleMobileMenu(false); 
+        }
+        setCartVisible(false); // Cerrar carrito si está abierto
+        setUserDropdownVisible(prev => !prev);
     };
 
     // Lógica para eliminar un ítem del carrito
@@ -64,7 +90,6 @@ export function IconsComponent({
     const getCartTotal = () => {
         if (!cartItems || !Array.isArray(cartItems)) return 0;
         return cartItems.reduce((total, item) => {
-            // Usar el precio correcto (displayPrice, price o precio)
             const precio = parseFloat(item.displayPrice || item.price || item.precio) || 0;
             const cantidad = parseInt(item.quantity || item.cantidad) || 1;
             return total + (precio * cantidad);
@@ -79,31 +104,38 @@ export function IconsComponent({
 
     // Función para obtener la URL completa de la imagen
     const getFullImageUrl = (item) => {
-        // Si ya es una URL completa, devolverla
         if (item.imagen && (item.imagen.startsWith('http') || item.imagen.startsWith('/'))) {
             return item.imagen;
         }
         
-        // Si es una ruta parcial, construir la URL completa con Cloudinary
         if (item.imagen) {
             return `${CLOUDINARY_BASE_URL}/${item.imagen}`;
         }
         
-        // Si no hay imagen, devolver un placeholder
         return 'https://dummyimage.com/100x100/f0f0f0/ccc&text=No+Imagen';
     };
 
     // Efecto para cerrar paneles al hacer clic fuera
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (iconsContainerRef.current && !iconsContainerRef.current.contains(event.target) &&
-                cartPanelRef.current && !cartPanelRef.current.contains(event.target)
-            ) {
-                setCartVisible(false); 
+            // Cerrar carrito si se hace clic fuera
+            if (cartVisible && 
+                cartPanelRef.current && 
+                !cartPanelRef.current.contains(event.target) &&
+                !iconsContainerRef.current.contains(event.target)) {
+                setCartVisible(false);
+            }
+            
+            // Cerrar dropdown de usuario si se hace clic fuera
+            if (userDropdownVisible && 
+                userDropdownRef.current && 
+                !userDropdownRef.current.contains(event.target) &&
+                !iconsContainerRef.current.querySelector('.user-icon-wrapper').contains(event.target)) {
+                setUserDropdownVisible(false);
             }
         };
 
-        if (cartVisible) {
+        if (cartVisible || userDropdownVisible) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -112,7 +144,7 @@ export function IconsComponent({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [cartVisible]);
+    }, [cartVisible, userDropdownVisible]);
 
     // Handler para el ícono de búsqueda
     const handleSearchClick = () => {
@@ -125,23 +157,25 @@ export function IconsComponent({
         if (typeof toggleMobileMenu === 'function') { 
             toggleMobileMenu(false); 
         }
+        setCartVisible(false);
+        setUserDropdownVisible(false);
     }
 
     // Handler para el menú hamburguesa
     const handleMobileMenuClick = () => {
         if (typeof toggleMobileMenu === 'function') {
-            toggleMobileMenu(); // Toggle del menú móvil
+            toggleMobileMenu();
         }
         if (typeof setActiveDropdown === 'function') { 
             setActiveDropdown(null); 
         }
-        setCartVisible(false); // Cierra el carrito si está abierto
+        setCartVisible(false);
+        setUserDropdownVisible(false);
     }
 
     return (
         <div className="icons-container" ref={iconsContainerRef}> 
             <div className="icons">
-
                 {/* Ícono de Menú Hamburguesa */}
                 <div className="hamburger-icon-wrapper" onClick={handleMobileMenuClick}>
                     <i className="bi bi-list hamburger-icon"></i>
@@ -152,18 +186,29 @@ export function IconsComponent({
                     <i className={`bi bi-search icon search-icon`}></i> 
                 </div>
 
-                {/* Ícono de Usuario */}
-                <div className="icon-wrapper" onClick={() => { 
-                    if (typeof setActiveDropdown === 'function') setActiveDropdown(null); 
-                    if (typeof toggleMobileMenu === 'function') toggleMobileMenu(false); 
-                }}> 
+                {/* Ícono de Usuario con Dropdown */}
+                <div className="icon-wrapper user-icon-wrapper" onClick={toggleUserDropdown}> 
                     <i className="bi bi-person icon"></i>
+                    {isAuthenticated && (
+                        <span className="user-indicator"></span>
+                    )}
+                    {userDropdownVisible && (
+                        <div ref={userDropdownRef}>
+                            <UserDropdown 
+                                isAuthenticated={isAuthenticated} 
+                                userInfo={userInfo} 
+                                onClose={() => setUserDropdownVisible(false)}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Ícono de Favoritos */}
                 <Link to="/favoritos" className="icon-wrapper" onClick={() => { 
                     if (typeof setActiveDropdown === 'function') setActiveDropdown(null); 
                     if (typeof toggleMobileMenu === 'function') toggleMobileMenu(false); 
+                    setCartVisible(false);
+                    setUserDropdownVisible(false);
                 }}> 
                     <i className="bi bi-heart icon"></i>
                     {favoriteItems && favoriteItems.length > 0 && (
@@ -257,6 +302,8 @@ export function IconsComponent({
             </div>
             {/* Overlay del carrito */}
             {cartVisible && <div className="cart-overlay" onClick={toggleCart}></div>}
+            {/* Overlay del dropdown de usuario */}
+            {userDropdownVisible && <div className="user-dropdown-overlay" onClick={toggleUserDropdown}></div>}
         </div>
     );
 }
