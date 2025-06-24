@@ -2,7 +2,8 @@ package com.garmyshop.user_backend.service;
 
 import com.garmyshop.user_backend.dto.RegistroRequestDTO;
 import com.garmyshop.user_backend.dto.UsuarioDTO;
-import com.garmyshop.user_backend.entity.AuthUser; // Podríamos necesitar devolver la entidad en algún caso interno
+import com.garmyshop.user_backend.entity.AuthUser;
+// import com.garmyshop.user_backend.exception.RecursoNoEncontradoException; // Si decides que la interfaz declare excepciones específicas
 
 import java.util.Optional;
 
@@ -34,7 +35,6 @@ public interface AuthUserService {
      */
     Optional<AuthUser> encontrarPorEmail(String email);
 
-
     /**
      * Obtiene los datos de perfil de un usuario (para ser expuestos en la API).
      *
@@ -43,8 +43,28 @@ public interface AuthUserService {
      */
     Optional<UsuarioDTO> obtenerPerfilUsuario(String username);
 
-    // Más adelante podríamos añadir:
-    // UsuarioDTO actualizarPerfilUsuario(String username, ActualizarPerfilRequestDTO request);
-    // void solicitarReseteoPassword(String email);
-    // void resetearPassword(String token, String nuevaPassword);
+    // --- MÉTODOS PARA RESETEO DE CONTRASEÑA ---
+
+    /**
+     * Genera un token JWT para el reseteo de contraseña, lo envía por email
+     * y devuelve el token para fines de prueba/desarrollo.
+     *
+     * @param userEmail El email del usuario.
+     * @return El token de reseteo generado.
+     * @throws com.garmyshop.user_backend.exception.RecursoNoEncontradoException si el usuario con ese email no existe.
+     *         (o RuntimeException si no quieres importar la excepción específica aquí)
+     */
+    String generarYSimularEnvioTokenReseteo(String userEmail); // <<< DESCOMENTADO Y CON NOMBRE/FIRMA CORRECTOS
+
+    /**
+     * Valida el token de reseteo y actualiza la contraseña del usuario.
+     *
+     * @param token El token de reseteo.
+     * @param nuevaPassword La nueva contraseña (sin hashear).
+     * @throws RuntimeException Si el token es inválido, ha expirado o el usuario no se encuentra.
+     *                          (Considera excepciones más específicas como InvalidTokenException).
+     */
+    void resetearPasswordConToken(String token, String nuevaPassword); // <<< DESCOMENTADO Y CON NOMBRE/FIRMA CORRECTOS
+
+    // UsuarioDTO actualizarPerfilUsuario(String username, ActualizarPerfilRequestDTO request); // Ejemplo para el futuro
 }
