@@ -117,14 +117,14 @@ const ProductoForm = () => (
 
 // 🟦 CREAR PRODUCTO (Sin cambios)
 export const ProductoCreate = (props) => (
-  <Create {...props}>
+  <Create {...props} redirect="list">
     <ProductoForm />
   </Create>
 );
 
 // 🟪 EDITAR PRODUCTO (Sin cambios)
 export const ProductoEdit = (props) => (
-  <Edit {...props}>
+  <Edit {...props} redirect="list">
     <ProductoForm />
   </Edit>
 );

@@ -1,8 +1,7 @@
-// src/page/ProductoDetallePage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import RecomendacionesCarousel from '../components/RecomendacionesCarousel';
-import PriceDisplay from '../components/ofertas/PriceDisplay'; // Importa el nuevo componente
+import PriceDisplay from '../components/ofertas/PriceDisplay';
 import '../styles/ProductoDetalle.css';
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 
@@ -17,6 +16,9 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('descripcion');
   const [recomendaciones, setRecomendaciones] = useState([]);
+  const [combinacionesDisponibles, setCombinacionesDisponibles] = useState([]);
+  const [tallasDisponibles, setTallasDisponibles] = useState([]);
+  const [coloresDisponibles, setColoresDisponibles] = useState([]);
 
   useEffect(() => {
     const fetchProductoDetalle = async () => {
@@ -34,40 +36,51 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
 
         const fullListaImagenes = apiData.imagenes.map(img => `${CLOUDINARY_BASE_URL}/${img.imagen}`);
 
-         // Calcula displayPrice y originalPrice aquí
+        // Calcula displayPrice y originalPrice aquí
         const hasOffer = apiData.precioOferta != null && apiData.precioOferta < apiData.precio;
         const displayPrice = hasOffer ? apiData.precioOferta : apiData.precio;
         const originalPrice = hasOffer ? apiData.precio : null;
 
-
-        const tallasUnicas = [...new Set(apiData.combinacionesDisponibles.map(c => c.talla.nombre))]
-          .map(nombre => ({ talla: nombre, disponible: true }));
-
-        const coloresUnicos = apiData.combinacionesDisponibles
-          .map(c => c.color)
-          .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+        // Procesar combinaciones disponibles
+        if (apiData.combinacionesDisponibles && apiData.combinacionesDisponibles.length > 0) {
+          setCombinacionesDisponibles(apiData.combinacionesDisponibles);
+          
+          // Extraer tallas únicas disponibles
+          const tallas = [...new Set(apiData.combinacionesDisponibles
+            .map(c => c.talla.nombre))]
+            .map(nombreTalla => ({
+              talla: nombreTalla,
+              disponible: true
+            }));
+          setTallasDisponibles(tallas);
+          
+          // Extraer colores únicos disponibles
+          const colores = apiData.combinacionesDisponibles
+            .map(c => c.color)
+            .filter((color, index, self) => 
+              index === self.findIndex((c) => c.id === color.id)
+            );
+          setColoresDisponibles(colores);
+        }
 
         const productoFormateado = {
           id: apiData.id,
           cod: apiData.id,
           nombre: apiData.nombre,
-          precio: apiData.precio, // Precio regular (mantener por si acaso)
-          precioOferta: apiData.precioOferta, // Precio de oferta (mantener)
-          displayPrice: displayPrice, // Precio que se muestra y usa para el carrito
-          originalPrice: originalPrice, // Precio tachado si hay oferta
+          precio: apiData.precio,
+          precioOferta: apiData.precioOferta,
+          displayPrice: displayPrice,
+          originalPrice: originalPrice,
           sku: apiData.sku,
           descripcion: apiData.descripcion,
-          imagenes: fullListaImagenes, // Asumo que son solo las URLs
-          tallasDisponibles: tallasUnicas, // Asumo que esta estructura es correcta
-          coloresDisponibles: coloresUnicos, // Asumo que esta estructura es correcta
+          imagenes: fullListaImagenes,
+          combinacionesDisponibles: apiData.combinacionesDisponibles,
           detalles: "Fabricado con materiales de alta calidad para garantizar durabilidad y confort.",
           infoEnvio: "Envío estándar de 3-5 días hábiles. Devoluciones gratuitas dentro de los 30 días."
         };
 
         setProductoActual(productoFormateado);
         setSelectedImage(fullImagenPrincipal);
-        // Podrías fetch recomendaciones aquí si tu API lo soporta
-        // fetchRecomendaciones(apiData.id);
 
       } catch (err) {
         setError(err.message);
@@ -80,49 +93,45 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
     fetchProductoDetalle();
   }, [cod]);
 
-   // Función dummy para fetch recomendaciones (reemplazar con tu lógica real)
-   /*
-   const fetchRecomendaciones = async (currentProductId) => {
-       try {
-           // Lógica para obtener recomendaciones, quizás por categoría o destacados
-           const response = await fetch(`http://localhost:8085/api/productos/recomendaciones?id=${currentProductId}`);
-           if (!response.ok) throw new Error('No se pudieron cargar recomendaciones.');
-           const data = await response.json();
-           // Formatear data si es necesario (ej: añadir URLs completas de imagen)
-           setRecomendaciones(data);
-       } catch (err) {
-           console.error("Error fetching recommendations:", err);
-           setRecomendaciones([]); // Mostrar vacío en caso de error
-       }
-   };
-   */
+  
+const handleAddToCartClick = () => {
+  if (!selectedSize) {
+    alert("Por favor, selecciona una talla.");
+    return;
+  }
+  if (!selectedColor) {
+    alert("Por favor, selecciona un color.");
+    return;
+  }
 
+  // Verificar si la combinación seleccionada está disponible
+  const combinacionSeleccionada = combinacionesDisponibles.find(
+    c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id
+  );
 
-  const handleAddToCartClick = () => {
-    if (!selectedSize) {
-      alert("Por favor, selecciona una talla.");
-      return;
-    }
-    if (!selectedColor) {
-      alert("Por favor, selecciona un color.");
-      return;
-    }
+  if (!combinacionSeleccionada) {
+    alert("La combinación seleccionada no está disponible.");
+    return;
+  }
 
-    const itemToAdd = {
-      ...productoActual,
-      id: productoActual.id,
-      talla: selectedSize,
-      color: selectedColor, // Asegúrate de que selectedColor tiene la estructura correcta { nombre, codigoHex, etc }
-      cantidad: quantity,
-      // Usa el displayPrice calculado para el carrito
-      price: productoActual.displayPrice, 
-      // Usa el ID único incluyendo talla y color para el carrito
-      idUnicoCarrito: `${productoActual.id}-${selectedSize}-${selectedColor.nombre}` 
-    };
-
-    handleAddToCart(itemToAdd);
-    alert(`${productoActual.nombre} ha sido añadido al carrito.`);
+  const itemToAdd = {
+    ...productoActual,
+    id: productoActual.id,
+    nombre: productoActual.nombre,
+    talla: selectedSize,
+    color: selectedColor,
+    cantidad: quantity,
+    quantity: quantity, // Añadir quantity para compatibilidad
+    price: productoActual.displayPrice,
+    displayPrice: productoActual.displayPrice, // Añadir displayPrice para compatibilidad
+    precio: productoActual.precio, // Mantener el precio original
+    imagen: productoActual.imagenes?.[0] || '', // Usar la primera imagen
+    idUnicoCarrito: `${productoActual.id}-${selectedSize}-${selectedColor.nombre}`
   };
+
+  handleAddToCart(itemToAdd);
+  alert(`${productoActual.nombre} ha sido añadido al carrito.`);
+};
 
   if (loading) return <div className="page-status"><h1>Cargando...</h1></div>;
   if (error) return <div className="page-status"><h1>Error: {error}</h1></div>;
@@ -133,7 +142,6 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
       <div className="product-layout">
         <div className="product-gallery-layout">
           <div className="thumbnail-list">
-             {/* Asegúrate de que productoActual.imagenes ya contiene las URLs completas */}
             {productoActual.imagenes.map((fullImgUrl, index) => (
               <div
                 key={index}
@@ -152,20 +160,11 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
         <div className="product-info-layout">
           <h1>{productoActual.nombre}</h1>
           <div className="price-section">
-             {/* Usa el componente PriceDisplay */}
             <PriceDisplay 
                 regularPrice={productoActual.precio} 
                 offerPrice={productoActual.precioOferta} 
             />
-             {/* ELIMINA: La lógica manual de precio antiguo y actual */}
-            {/*
-            <span className="current-price">S/. {productoActual.precio.toFixed(2)}</span>
-            {productoActual.precioAnterior && (
-              <span className="old-price">S/. {productoActual.precioAnterior.toFixed(2)}</span>
-            )}
-            */}
           </div>
-          {/* Puedes ajustar la descripción para no cortarla si no es muy larga, o añadir un 'Leer más' */}
           <p className="product-short-description">
               {productoActual.descripcion?.length > 150 ?
                 productoActual.descripcion.substring(0, 150) + '...' :
@@ -177,12 +176,11 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
             <div className="option-block">
               <label>Color</label>
               <div className="color-selector">
-                 {/* Asegúrate de que coloresDisponibles es un array y cada item tiene .nombre y .codigoHex */}
-                {productoActual.coloresDisponibles?.map(color => (
+                {coloresDisponibles.map(color => (
                   <div
-                    key={color.nombre}
+                    key={color.id}
                     title={color.nombre}
-                    className={`color-swatch ${selectedColor?.nombre === color.nombre ? 'active' : ''}`}
+                    className={`color-swatch ${selectedColor?.id === color.id ? 'active' : ''}`}
                     style={{ backgroundColor: color.codigoHex }}
                     onClick={() => setSelectedColor(color)}
                   />
@@ -192,13 +190,12 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
             <div className="option-block">
               <label>Talla</label>
               <div className="size-selector">
-                 {/* Asegúrate de que tallasDisponibles es un array y cada item tiene .talla y .disponible */}
-                {productoActual.tallasDisponibles?.map(talla => (
+                {tallasDisponibles.map(talla => (
                   <button
                     key={talla.talla}
                     onClick={() => setSelectedSize(talla.talla)}
                     className={`size-btn ${selectedSize === talla.talla ? 'active' : ''}`}
-                    disabled={!talla.disponible} // Usa la propiedad 'disponible' si viene de la API
+                    disabled={!talla.disponible}
                   >
                     {talla.talla}
                   </button>
@@ -210,7 +207,7 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
           <div className="actions-group">
             <div className="quantity-selector">
               <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
-              <input type="text" value={quantity} readOnly /> {/* Usar input readOnly o span para mostrar cantidad */}
+              <input type="text" value={quantity} readOnly />
               <button onClick={() => setQuantity(q => q + 1)}>+</button>
             </div>
 
@@ -236,7 +233,6 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
         </div>
       </div>
 
-       {/* Asumo que tienes data de recomendaciones en el estado `recomendaciones` */}
       {recomendaciones && recomendaciones.length > 0 && (
            <div className="recommendations-section">
                <h2>TAMBIÉN TE PODRÍA INTERESAR</h2>

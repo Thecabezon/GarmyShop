@@ -38,14 +38,14 @@ const TallaForm = () => (
 
 // ✅ Crear Talla
 export const TallaCreate = (props) => (
-  <Create {...props}>
+  <Create {...props} redirect="list">
     <TallaForm /> {/* Usa el formulario definido */}
   </Create>
 );
 
 // ✅ Editar Talla
 export const TallaEdit = (props) => (
-  <Edit {...props}>
+  <Edit {...props} redirect="list">
     <TallaForm /> {/* Usa el formulario definido */}
   </Edit>
 );

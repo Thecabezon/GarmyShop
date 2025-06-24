@@ -9,7 +9,7 @@
 /* Lado izquierdo - Imagen */
 .auth-image-section {
   width: 50%;
-  background: linear-gradient(135deg,  #f5c8e6 0%,  #efefef 100%);
+  background: linear-gradient(135deg,  #ffffff 0%,  #ffffff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,8 +140,8 @@
 .auth-button {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg,  #ebcbdc 0%, rgb(223, 223, 223) 100%); /* Negro a plomo */
-  color: rgb(9, 9, 9);
+  background: linear-gradient(135deg,  #000000 0%, rgb(0, 0, 0) 100%); /* Negro a plomo */
+  color: rgb(255, 255, 255);
   border: none;
   border-radius: 12px;
   font-size: 1.1rem;
@@ -154,7 +154,7 @@
 .auth-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(175, 175, 175, 0.3);
-  background: linear-gradient(135deg, #d9d9d9 0%, #ebbcd3 100%);
+  background: linear-gradient(135deg, #f786bc 0%, #f786bc 100%);
 }
 
 .auth-button:active {
@@ -617,4 +617,16 @@
   .success-actions {
     gap: 0.75rem;
   }
+}
+
+
+
+.auth-error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  border-left: 3px solid #c62828;
 }

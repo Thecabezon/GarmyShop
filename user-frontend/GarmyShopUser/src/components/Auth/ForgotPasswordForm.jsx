@@ -1,23 +1,23 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
 import '../../styles/auth.css';
+import authService from './authService';
 
-// Icono de email
+// Iconos (mantener los que ya tienes)
 const EmailIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="email-icon">
     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
   </svg>
 );
 
-// Icono de flecha hacia atrás
 const ArrowLeftIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="arrow-icon">
     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
   </svg>
 );
 
-// Icono de check para éxito
 const CheckIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="check-icon">
     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
@@ -28,25 +28,41 @@ const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // Simular llamada a API
-    setTimeout(() => {
-      console.log('Reset password for:', email);
-      setIsLoading(false);
+    try {
+      // Llamar al servicio de recuperación de contraseña
+      await authService.forgotPassword(email);
+      
+      // Mostrar pantalla de éxito
       setIsSubmitted(true);
-    }, 2000);
+    } catch (error) {
+      console.error('Error al solicitar recuperación de contraseña:', error);
+      setError('Error al procesar la solicitud. Inténtalo de nuevo más tarde.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setIsLoading(true);
-    setTimeout(() => {
+    setError('');
+    
+    try {
+      // Volver a llamar al servicio de recuperación de contraseña
+      await authService.forgotPassword(email);
+      alert('Email reenviado. Por favor, revisa tu bandeja de entrada.');
+    } catch (error) {
+      console.error('Error al reenviar email:', error);
+      setError('Error al reenviar el email. Inténtalo de nuevo más tarde.');
+    } finally {
       setIsLoading(false);
-      console.log('Reenviar email a:', email);
-    }, 1500);
+    }
   };
 
   if (isSubmitted) {
@@ -75,6 +91,8 @@ const ForgotPasswordForm = () => {
               o correo no deseado.
             </p>
           </div>
+          
+          {error && <div className="auth-error">{error}</div>}
           
           {/* Botones de acción */}
           <div className="success-actions">
@@ -108,6 +126,8 @@ const ForgotPasswordForm = () => {
         </div>
         
         <form onSubmit={handleSubmit} className="auth-form">
+          {error && <div className="auth-error">{error}</div>}
+          
           {/* Email Input */}
           <div className="auth-input-group">
             <input

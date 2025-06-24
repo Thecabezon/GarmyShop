@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
 import '../../styles/auth.css';
+import authService from './authService';
 
-// Iconos mejorados
+// Iconos (mantener los que ya tienes)
 const EyeIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
     <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -25,16 +27,15 @@ const GoogleIcon = () => (
   </svg>
 );
 
-
-
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Estado de carga
-  const navigate = useNavigate(); // Hook para navegación
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -46,27 +47,18 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
     try {
-      // Simular llamada a API de login
-      console.log('Login data:', formData);
-      
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Aquí irían las validaciones reales del login
-      // Por ahora simulamos un login exitoso
-      
-      // Guardar datos de usuario si es necesario
-      // localStorage.setItem('user', JSON.stringify(userData));
-      // localStorage.setItem('token', token);
+      // Llamar al servicio de autenticación
+      await authService.login(formData.email, formData.password);
       
       // Redirigir a la página de inicio
       navigate('/');
       
     } catch (error) {
       console.error('Error en login:', error);
-      alert('Error al iniciar sesión. Verifica tus credenciales.');
+      setError('Error al iniciar sesión. Verifica tus credenciales.');
     } finally {
       setIsLoading(false);
     }
@@ -74,20 +66,16 @@ const LoginForm = () => {
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
+    setError('');
     
     try {
-      // Lógica para login con Google
-      console.log('Login con Google');
-      
-      // Simular delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Redirigir a inicio después del login con Google
-      navigate('/');
+      // Aquí iría la lógica para login con Google
+      // Por ahora, solo mostramos un mensaje
+      alert('La funcionalidad de login con Google está en desarrollo.');
       
     } catch (error) {
       console.error('Error en login con Google:', error);
-      alert('Error al iniciar sesión con Google.');
+      setError('Error al iniciar sesión con Google.');
     } finally {
       setIsLoading(false);
     }
@@ -96,6 +84,8 @@ const LoginForm = () => {
   return (
     <AuthLayout title="Inicia Sesión">
       <form onSubmit={handleSubmit} className="auth-form">
+        {error && <div className="auth-error">{error}</div>}
+        
         {/* Email Input */}
         <div className="auth-input-group">
           <input
