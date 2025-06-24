@@ -12,11 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import com.garmyshop.user_backend.exception.RecursoNoEncontradoException; // Importa tu excepción
+import com.garmyshop.user_backend.exception.RecursoNoEncontradoException;
 import com.garmyshop.user_backend.exception.StockInsuficienteException;
 
 @RestController
-@RequestMapping("/api/ordenes") // Ruta base para las órdenes del usuario
+@RequestMapping("/api/ordenes")
 public class OrdenController {
 
     private final OrdenService ordenService;
@@ -27,17 +27,16 @@ public class OrdenController {
 
     /**
      * Endpoint para obtener el historial de órdenes del usuario autenticado (paginado).
-     * GET /api/ordenes
+     * 
      *
-     * @param pageable Información de paginación (ej. ?page=0&size=10&sort=fechaCreacion,desc)
-     * @return ResponseEntity con una Page de OrdenListDTO.
+     * @param pageable
+     * @return 
      */
     @GetMapping
     public ResponseEntity<Page<OrdenListDTO>> obtenerMisOrdenes(
             @PageableDefault(
                     size = 10
-                    //sort = "fechaCreacion", // <<< CAMBIADO AQUÍ: de "fecha_creacion" a "fechaCreacion"
-                    //direction = PageableDefault.Sort.Direction.DESC
+                    
             ) Pageable pageable) {
         
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -52,10 +51,10 @@ public class OrdenController {
 
     /**
      * Endpoint para obtener el detalle de una orden específica del usuario autenticado.
-     * GET /api/ordenes/{ordenId}
+     * 
      *
-     * @param ordenId El ID de la orden a consultar.
-     * @return ResponseEntity con OrdenDetailDTO si se encuentra y pertenece al usuario, o 404/401.
+     * @param ordenId
+     * @return 
      */
     @GetMapping("/{ordenId}")
     public ResponseEntity<OrdenDetailDTO> obtenerDetalleDeMiOrden(@PathVariable Integer ordenId) {
@@ -67,22 +66,19 @@ public class OrdenController {
 
         return ordenService.obtenerDetalleOrdenPorIdYUsuario(ordenId, currentUsername)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build()); // 404 si la orden no existe o no pertenece al usuario
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // --- NUEVO Endpoint para Crear Orden ---
     /**
      * Endpoint para crear una nueva orden a partir del carrito/solicitud del usuario.
-     * POST /api/ordenes
+     * 
      *
-     * @param crearOrdenRequestDTO Los detalles de la orden a crear.
-     * @return ResponseEntity con el OrdenDetailDTO de la orden creada y estado HTTP 201 (Created),
-     *         o un error HTTP 400/404/409 si algo falla.
+     * @param crearOrdenRequestDTO
+     * @return
      */
     @PostMapping
     public ResponseEntity<?> crearNuevaOrden(@RequestBody CrearOrdenRequestDTO crearOrdenRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // Doble verificación, aunque Spring Security ya debería proteger este endpoint
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal().toString())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no autenticado.");
         }
@@ -94,14 +90,12 @@ public class OrdenController {
         } catch (RecursoNoEncontradoException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (StockInsuficienteException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage()); // 409 Conflict es apropiado para stock
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage()); // Para validaciones de datos de entrada
-        } catch (SecurityException ex) { // Si la dirección no pertenece al usuario
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (SecurityException ex) { 
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
-        } catch (RuntimeException ex) { // Captura general para otros errores inesperados
-            // Loguear este error en el servidor es importante
-            // logger.error("Error inesperado al crear orden: ", ex);
+        } catch (RuntimeException ex) { 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno al procesar la orden.");
         }
     }

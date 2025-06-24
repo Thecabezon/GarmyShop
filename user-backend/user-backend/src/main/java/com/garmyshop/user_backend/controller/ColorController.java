@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/colores") // Cambiado a "colores" para pluralizar
+@RequestMapping("/api/colores")
 public class ColorController {
 
     private final ColorService colorService;

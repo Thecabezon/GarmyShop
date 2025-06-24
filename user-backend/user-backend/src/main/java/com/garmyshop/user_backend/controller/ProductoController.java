@@ -5,11 +5,10 @@ import com.garmyshop.user_backend.dto.ProductoListDTO;
 import com.garmyshop.user_backend.service.ProductoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault; // Para valores por defecto de Pageable
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-// import java.util.Optional; // No es necesario si el servicio ya devuelve Optional y lo manejamos
 
 @RestController
 @RequestMapping("/api/productos")
@@ -23,12 +22,9 @@ public class ProductoController {
 
     /**
      * Endpoint para obtener todos los productos activos con paginación.
-     * GET /api/productos?page=0&size=10&sort=nombre,asc
      *
-     * @param pageable Objeto Pageable inyectado por Spring.
-     *                 Se pueden pasar parámetros como page, size, sort en la URL.
-     *                 @PageableDefault puede usarse para establecer valores por defecto.
-     * @return ResponseEntity con una Page de ProductoListDTO.
+     * @param pageable
+     * @return
      */
     @GetMapping
     public ResponseEntity<Page<ProductoListDTO>> obtenerTodosLosProductosActivos(

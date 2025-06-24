@@ -1,16 +1,16 @@
 package com.garmyshop.user_backend.controller;
 
-import com.garmyshop.user_backend.dto.*; // Importa todos tus DTOs necesarios
+import com.garmyshop.user_backend.dto.*;
 import com.garmyshop.user_backend.entity.AuthUser;
-import com.garmyshop.user_backend.exception.RecursoNoEncontradoException; // Para manejo de excepciones
+import com.garmyshop.user_backend.exception.RecursoNoEncontradoException;
 import com.garmyshop.user_backend.security.JwtTokenProvider;
 import com.garmyshop.user_backend.service.AuthUserService;
-import com.stripe.model.tax.Registration.CountryOptions.Ma;
+// import com.stripe.model.tax.Registration.CountryOptions.Ma;
 
 import java.util.Map;
 
-import org.slf4j.Logger; // Import para Logger
-import org.slf4j.LoggerFactory; // Import para Logger
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,15 +19,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-// Ya no necesitarías este import si no usas el List<String> roles en AuthResponseDTO
-// import java.util.List;
-// import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth") // Ruta base para autenticación
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class); // Logger para la clase
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthenticationManager authenticationManager;
     private final AuthUserService authUserService;
@@ -92,19 +89,19 @@ public class AuthController {
 
     /**
      * Endpoint para solicitar el reseteo de contraseña.
-     * El usuario envía su email. Si el email existe, se genera un token de reseteo
-     * y se envía un email al usuario con el enlace para resetear la contraseña.
+     * 
+     * 
      *
-     * @param forgotPasswordRequestDTO DTO que contiene el email del usuario.
-     * @return ResponseEntity con un mensaje de éxito o error.
+     * @param forgotPasswordRequestDTO
+     * @return
      */
-    @PostMapping("/forgot-password") // <<< MÉTODO AÑADIDO
+    @PostMapping("/forgot-password")
     public ResponseEntity<?> solicitarReseteoPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO) {
         if (forgotPasswordRequestDTO.getEmail() == null || forgotPasswordRequestDTO.getEmail().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("El email es requerido.");
         }
         try {
-            // El método del servicio ahora envía el email y devuelve el token (para nuestra prueba/log)
+           
             String token = authUserService.generarYSimularEnvioTokenReseteo(forgotPasswordRequestDTO.getEmail());
             logger.info("Token de reseteo generado para {}: {} (solo para depuración en desarrollo)", forgotPasswordRequestDTO.getEmail(), token);
 
@@ -112,7 +109,7 @@ public class AuthController {
                                      ", se ha enviado un enlace para resetear la contraseña.");
         } catch (RecursoNoEncontradoException ex) {
             logger.warn("Intento de reseteo de contraseña para email no registrado: {}", forgotPasswordRequestDTO.getEmail());
-            // Devolvemos el mismo mensaje genérico para no confirmar si un email está registrado o no.
+            
             return ResponseEntity.ok("Si existe una cuenta asociada con " + forgotPasswordRequestDTO.getEmail() +
                                      ", se ha enviado un enlace para resetear la contraseña.");
         } catch (Exception ex) {
@@ -123,10 +120,10 @@ public class AuthController {
 
     /**
      * Endpoint para resetear la contraseña usando un token válido.
-     * El usuario envía el token (recibido por email) y su nueva contraseña.
+     * 
      *
-     * @param resetPasswordRequestDTO DTO que contiene el token y la nueva contraseña.
-     * @return ResponseEntity con un mensaje de éxito o error.
+     * @param resetPasswordRequestDTO
+     * @return
      */
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetearPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) {
