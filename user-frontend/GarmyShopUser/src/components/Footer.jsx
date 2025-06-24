@@ -34,7 +34,7 @@ const Footer = () => {
                 </a>
               </div>
             </div>
-  
+            
             {/* Enlaces rápidos / Navegación */}
             <div className="col-md-2 mb-4">
               {/* Usamos la clase personalizada text-pink para el título */}
@@ -47,22 +47,17 @@ const Footer = () => {
                   </a>
                 </li>
                 <li className="mb-2">
-                  <a href="/productos" className="text-white text-decoration-none">
+                  <a href="/tienda" className="text-white text-decoration-none">
                     Productos
                   </a>
                 </li>
-                 <li className="mb-2">
-                  <a href="/categorias" className="text-white text-decoration-none">
-                    Categorías
-                  </a>
-                </li>
                 <li className="mb-2">
-                  <a href="/promociones" className="text-white text-decoration-none">
-                    Promociones
+                  <a href="/ofertas" className="text-white text-decoration-none">
+                    Ofertas
                   </a>
                 </li>
                  <li className="mb-2">
-                  <a href="/sobre-nosotros" className="text-white text-decoration-none">
+                  <a href="/nosotros" className="text-white text-decoration-none">
                     Sobre Nosotros
                   </a>
                 </li>
