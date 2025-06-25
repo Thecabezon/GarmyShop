@@ -17,5 +17,4 @@ public class ProductoListDTO {
     private BigDecimal precioOferta; // Podría ser null
     private String marcaNombre; // Nombre de la marca para mostrar
     private String categoriaNombre; // Nombre de la categoría para mostrar
-    // Podrías añadir también 'esDestacado' si lo usas para alguna insignia
 }

@@ -1,6 +1,8 @@
 package com.garmyshop.user_backend.config;
 
-import com.garmyshop.user_backend.security.JwtAuthenticationFilter; // <<< DESCOMENTA O AÑADE ESTE IMPORT
+import com.garmyshop.user_backend.security.JwtAuthenticationFilter;
+import com.garmyshop.user_backend.security.oauth2.CustomOAuth2UserService;
+import com.garmyshop.user_backend.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -14,7 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // <<< DESCOMENTA O AÑADE ESTE IMPORT
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,11 +27,17 @@ import java.util.Arrays;
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter; // Declara el campo
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
-    // Constructor para inyectar el filtro
-    public SecurityConfig(@Lazy JwtAuthenticationFilter jwtAuthenticationFilter) { // <<< MODIFICADO: Inyecta el filtro
+    public SecurityConfig(@Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
+                          @Lazy CustomOAuth2UserService customOAuth2UserService,          
+                          @Lazy OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler
+                         ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.customOAuth2UserService = customOAuth2UserService;                 
+        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
     }
 
     @Bean
@@ -45,13 +53,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -64,17 +71,34 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/api/auth/**").permitAll() // /registro y /login son públicos
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/login/oauth2/code/**").permitAll()
+                    .requestMatchers("/oauth2/**").permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/marcas/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/colores/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/tallas/**").permitAll()
-                    .anyRequest().authenticated() // Todas las demás, incluyendo /api/auth/perfil, requieren autenticación
+                    .anyRequest().authenticated()
             )
-            // VVVV ESTA ES LA LÍNEA CRUCIAL QUE FALTABA ACTIVAR VVVV
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Añade tu filtro JWT
+            .oauth2Login(oauth2 -> {
+                oauth2.authorizationEndpoint(authEndpoint ->
+                    authEndpoint.baseUri("/oauth2/authorization")
+                );
+                oauth2.redirectionEndpoint(redirectionEndpoint ->
+                    redirectionEndpoint.baseUri("/login/oauth2/code/*")
+                );
+                oauth2.userInfoEndpoint(userInfo ->
+                    // ========================= CAMBIO IMPORTANTE AQUÍ =========================
+                    // Usamos oidcUserService porque Google usa OpenID Connect. Esto asegura
+                    // que nuestro servicio personalizado sea invocado correctamente.
+                    userInfo.oidcUserService(this.customOAuth2UserService)
+                    // ========================================================================
+                );
+                oauth2.successHandler(oAuth2AuthenticationSuccessHandler);
+            })
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

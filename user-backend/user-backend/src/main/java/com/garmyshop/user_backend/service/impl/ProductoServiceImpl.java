@@ -4,11 +4,7 @@ import com.garmyshop.user_backend.dto.*; // Importa todos tus DTOs
 import com.garmyshop.user_backend.entity.*; // Importa todas tus entidades
 import com.garmyshop.user_backend.repository.*; // Importa tus repositorios
 import com.garmyshop.user_backend.service.ProductoService;
-// Importa MapStruct si decides usarlo más adelante
-// import com.garmyshop.user_backend.mapper.ProductoMapper;
-// import com.garmyshop.user_backend.mapper.CategoriaMapper;
-// import com.garmyshop.user_backend.mapper.MarcaMapper;
-// etc.
+
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +23,7 @@ public class ProductoServiceImpl implements ProductoService {
     private final CategoriaRepository categoriaRepository; // Necesario para buscar por categoría
     private final MarcaRepository marcaRepository;       // Necesario para buscar por marca
     private final ColorRepository colorRepository;         // Potencialmente para la búsqueda por color
-    // Si fuéramos a usar MapStruct, lo inyectaríamos aquí:
-    // private final ProductoMapper productoMapper;
+
 
     public ProductoServiceImpl(ProductoRepository productoRepository,
                                CategoriaRepository categoriaRepository,
@@ -41,9 +36,6 @@ public class ProductoServiceImpl implements ProductoService {
         this.colorRepository = colorRepository;
         // this.productoMapper = productoMapper;
     }
-
-    // --- Métodos de Mapeo Manual (Helpers Privados) ---
-    // (Estos podrían ser reemplazados por MapStruct en el futuro)
 
     private ProductoListDTO convertirAProductoListDTO(Producto producto) {
         if (producto == null) return null;
@@ -116,27 +108,11 @@ public class ProductoServiceImpl implements ProductoService {
         );
     }
 
-    // --- Implementación de los métodos del servicio ---
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProductoListDTO> obtenerTodosLosProductosActivos(Pageable pageable) {
-        // Asumimos que el repositorio puede tener un método para buscar activos directamente
-        // o que filtramos después. Por ahora, un método simple:
-        // Si no tienes un findByActivoTrue en ProductoRepository, puedes filtrar aquí.
-        // Page<Producto> productosPage = productoRepository.findByActivoTrue(pageable); // Si existiera
-        // Para filtrar por activo si el repositorio no lo hace:
-        // List<ProductoListDTO> dtoList = productosPage.getContent().stream()
-        //        .filter(Producto::getActivo) // Asegúrate que la entidad Producto tenga getActivo()
-        //        .map(this::convertirAProductoListDTO)
-        //        .collect(Collectors.toList());
-        // return new PageImpl<>(dtoList, pageable, productosPage.getTotalElements()); // Si filtras manualmente
-        // Por ahora, asumimos que todos los productos del repositorio findAll son potencialmente mostrables
-        // y el filtrado por activo debería estar en la query del repositorio.
-        // **ACCIÓN REQUERIDA: Añadir findByActivoTrue(Pageable pageable) a ProductoRepository**
 
-        // **Añade a ProductoRepository.java:**
-        // Page<Producto> findByActivoTrue(Pageable pageable);
 
         // Luego usa:
         return productoRepository.findByActivoTrue(pageable) // Asumiendo que añades este método al repo
@@ -167,12 +143,7 @@ public class ProductoServiceImpl implements ProductoService {
         if (categoriaOpt.isEmpty() || !categoriaOpt.get().getActivo()) {
             return Page.empty(pageable); // Devuelve una página vacía si la categoría no es válida
         }
-        // **ACCIÓN REQUERIDA: Añadir findByCategoriaAndActivoTrue(Categoria categoria, Pageable pageable) a ProductoRepository**
 
-        // **Añade a ProductoRepository.java:**
-        // Page<Producto> findByCategoriaAndActivoTrue(Categoria categoria, Pageable pageable);
-
-        // Luego usa:
         return productoRepository.findByCategoriaAndActivoTrue(categoriaOpt.get(), pageable)
                 .map(this::convertirAProductoListDTO);
     }
@@ -184,10 +155,6 @@ public class ProductoServiceImpl implements ProductoService {
         if (marcaOpt.isEmpty() || !marcaOpt.get().getActivo()) {
             return Page.empty(pageable);
         }
-        // **ACCIÓN REQUERIDA: Añadir findByMarcaAndActivoTrue(Marca marca, Pageable pageable) a ProductoRepository**
-
-        // **Añade a ProductoRepository.java:**
-        // Page<Producto> findByMarcaAndActivoTrue(Marca marca, Pageable pageable);
 
         // Luego usa:
         return productoRepository.findByMarcaAndActivoTrue(marcaOpt.get(), pageable)
@@ -197,20 +164,14 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     @Transactional(readOnly = true)
     public Page<ProductoListDTO> buscarProductos(String terminoBusqueda, Pageable pageable) {
-        // Aquí es donde implementaríamos la lógica de parseo de "polo rojo"
-        // y usaríamos la query @Query("SELECT DISTINCT p FROM Producto p ...") que discutimos.
 
-        // Lógica de parseo simplificada (debe mejorarse mucho):
         String terminoProducto = terminoBusqueda;
         String nombreColor = null;
 
-        // Ejemplo muy básico de extracción de color (esto necesita ser más robusto)
-        // Podrías tener una lista de colores conocidos del colorRepository.findAll()
         List<String> coloresConocidos = colorRepository.findAll().stream().map(Color::getNombre).collect(Collectors.toList());
         for (String colorConocido : coloresConocidos) {
             if (terminoBusqueda.toLowerCase().contains(colorConocido.toLowerCase())) {
                 nombreColor = colorConocido;
-                // Remover el color del término de búsqueda del producto (esto es un ejemplo simple)
                 terminoProducto = terminoBusqueda.toLowerCase().replace(colorConocido.toLowerCase(), "").trim();
                 break;
             }
@@ -219,18 +180,6 @@ public class ProductoServiceImpl implements ProductoService {
              return Page.empty(pageable); // O buscar todos si el término original estaba vacío.
         }
 
-
-        // **ACCIÓN REQUERIDA: Añadir la query @Query buscarAvanzado(...) a ProductoRepository**
-        // que discutimos anteriormente.
-        // @Query("SELECT DISTINCT p FROM Producto p " +
-        //        "LEFT JOIN p.combinaciones cp " +
-        //        "LEFT JOIN cp.color c " +
-        //        "WHERE p.activo = true " +
-        //        "AND (:terminoProd = '' OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', :terminoProd, '%')) OR LOWER(p.descripcion) LIKE LOWER(CONCAT('%', :terminoProd, '%'))) " +
-        //        "AND (:nombreCol IS NULL OR LOWER(c.nombre) = LOWER(:nombreCol))")
-        // Page<Producto> buscarAvanzado(@Param("terminoProd") String terminoProd, @Param("nombreCol") String nombreCol, Pageable pageable);
-
-        // Luego usa:
         return productoRepository.buscarAvanzado(terminoProducto, nombreColor, pageable)
                .map(this::convertirAProductoListDTO);
     }

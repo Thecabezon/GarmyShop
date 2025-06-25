@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue; // Para la serialización JSO
 public enum MetodoPago {
     TARJETA_CREDITO("tarjeta_credito"), // Valores en minúscula para la BD y JSON
     TARJETA_DEBITO("tarjeta_debito"),
-    MERCADO_PAGO("mercado_pago"),
+    STRIPE_CHECKOUT("stripe_checkout"),
     TRANSFERENCIA_BANCARIA("transferencia_bancaria"),
     EFECTIVO_CONTRA_ENTREGA("efectivo_contra_entrega");
 

@@ -16,5 +16,4 @@ public class UsuarioDTO {
     private String email;
     private LocalDateTime dateJoined;
     private LocalDateTime lastLogin;
-    // No incluimos password, isSuperuser, isStaff, isActive (a menos que el frontend necesite isActive)
 }
