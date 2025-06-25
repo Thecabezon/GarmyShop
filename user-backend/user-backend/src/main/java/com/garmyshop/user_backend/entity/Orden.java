@@ -2,7 +2,7 @@ package com.garmyshop.user_backend.entity;
 
 import com.garmyshop.user_backend.model.enums.EstadoOrden;
 import com.garmyshop.user_backend.model.enums.EstadoPagoOrden;
-import com.garmyshop.user_backend.model.enums.MetodoPago; // Asegúrate que este también tenga su converter y lógica similar
+import com.garmyshop.user_backend.model.enums.MetodoPago;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
