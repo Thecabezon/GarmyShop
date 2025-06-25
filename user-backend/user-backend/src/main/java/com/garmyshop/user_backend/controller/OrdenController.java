@@ -27,8 +27,6 @@ public class OrdenController {
 
     /**
      * Endpoint para obtener el historial de órdenes del usuario autenticado (paginado).
-     * 
-     *
      * @param pageable
      * @return 
      */
@@ -51,8 +49,6 @@ public class OrdenController {
 
     /**
      * Endpoint para obtener el detalle de una orden específica del usuario autenticado.
-     * 
-     *
      * @param ordenId
      * @return 
      */
@@ -71,8 +67,6 @@ public class OrdenController {
 
     /**
      * Endpoint para crear una nueva orden a partir del carrito/solicitud del usuario.
-     * 
-     *
      * @param crearOrdenRequestDTO
      * @return
      */

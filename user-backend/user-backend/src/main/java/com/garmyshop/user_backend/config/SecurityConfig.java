@@ -90,11 +90,7 @@ public class SecurityConfig {
                     redirectionEndpoint.baseUri("/login/oauth2/code/*")
                 );
                 oauth2.userInfoEndpoint(userInfo ->
-                    // ========================= CAMBIO IMPORTANTE AQUÍ =========================
-                    // Usamos oidcUserService porque Google usa OpenID Connect. Esto asegura
-                    // que nuestro servicio personalizado sea invocado correctamente.
                     userInfo.oidcUserService(this.customOAuth2UserService)
-                    // ========================================================================
                 );
                 oauth2.successHandler(oAuth2AuthenticationSuccessHandler);
             })

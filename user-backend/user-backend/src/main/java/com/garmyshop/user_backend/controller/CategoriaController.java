@@ -16,17 +16,13 @@ public class CategoriaController {
 
     private final CategoriaService categoriaService;
 
-    // Inyección de dependencias
     public CategoriaController(CategoriaService categoriaService) {
         this.categoriaService = categoriaService;
     }
 
     /**
      * Endpoint para obtener todas las categorías activas.
-     * 
-     *
-     * @return
-     *         
+     * @return       
      */
     @GetMapping
     public ResponseEntity<List<CategoriaDTO>> obtenerTodasLasCategoriasActivas() {
@@ -39,11 +35,8 @@ public class CategoriaController {
 
     /**
      * Endpoint para obtener una categoría activa por su slug.
-     * 
-     *
-     * @param slug el slug de la categoría.
-     * @return
-     *         
+     * @param slug
+     * @return       
      */
     @GetMapping("/slug/{slug}")
     public ResponseEntity<CategoriaDTO> obtenerCategoriaActivaPorSlug(@PathVariable String slug) {
@@ -54,12 +47,10 @@ public class CategoriaController {
 
     /**
      * Endpoint para obtener una categoría por su ID.
-     * 
-     *
      * @param id
      * @return
      */
-    @GetMapping("/{id}") // La ruta es /api/categorias/{id}
+    @GetMapping("/{id}")
     public ResponseEntity<CategoriaDTO> obtenerCategoriaPorId(@PathVariable Integer id) {
         return categoriaService.obtenerCategoriaPorId(id)
                 .map(ResponseEntity::ok)

@@ -5,7 +5,6 @@ import com.garmyshop.user_backend.entity.AuthUser;
 import com.garmyshop.user_backend.exception.RecursoNoEncontradoException;
 import com.garmyshop.user_backend.security.JwtTokenProvider;
 import com.garmyshop.user_backend.service.AuthUserService;
-// import com.stripe.model.tax.Registration.CountryOptions.Ma;
 
 import java.util.Map;
 
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/auth") // Ruta base para autenticación
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -89,9 +88,6 @@ public class AuthController {
 
     /**
      * Endpoint para solicitar el reseteo de contraseña.
-     * 
-     * 
-     *
      * @param forgotPasswordRequestDTO
      * @return
      */
@@ -120,8 +116,6 @@ public class AuthController {
 
     /**
      * Endpoint para resetear la contraseña usando un token válido.
-     * 
-     *
      * @param resetPasswordRequestDTO
      * @return
      */
@@ -140,7 +134,7 @@ public class AuthController {
         } catch (RecursoNoEncontradoException ex) {
             logger.warn("Intento de reseteo con token, pero recurso no encontrado: {}", ex.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        } catch (RuntimeException ex) { // Captura otras excepciones como token inválido/expirado desde el servicio
+        } catch (RuntimeException ex) {
             logger.warn("Error en reseteo de contraseña (token inválido/expirado o similar): {}", ex.getMessage());
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {

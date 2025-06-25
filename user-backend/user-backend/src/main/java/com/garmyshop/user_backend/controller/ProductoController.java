@@ -22,7 +22,6 @@ public class ProductoController {
 
     /**
      * Endpoint para obtener todos los productos activos con paginación.
-     *
      * @param pageable
      * @return
      */
@@ -35,10 +34,8 @@ public class ProductoController {
 
     /**
      * Endpoint para obtener un producto activo por su slug.
-     * GET /api/productos/slug/{slugDelProducto}
-     *
-     * @param slug El slug del producto.
-     * @return ResponseEntity con ProductoDetailDTO si se encuentra, o 404 Not Found.
+     * @param slug
+     * @return
      */
     @GetMapping("/slug/{slug}")
     public ResponseEntity<ProductoDetailDTO> obtenerProductoActivoPorSlug(@PathVariable String slug) {
@@ -49,10 +46,8 @@ public class ProductoController {
 
     /**
      * Endpoint para obtener un producto activo por su ID.
-     * GET /api/productos/{idDelProducto}
-     *
-     * @param id El ID del producto.
-     * @return ResponseEntity con ProductoDetailDTO si se encuentra, o 404 Not Found.
+     * @param id
+     * @return
      */
     @GetMapping("/{id}")
     public ResponseEntity<ProductoDetailDTO> obtenerProductoActivoPorId(@PathVariable Integer id) {
@@ -63,11 +58,9 @@ public class ProductoController {
 
     /**
      * Endpoint para obtener productos activos de una categoría específica con paginación.
-     * GET /api/productos/categoria/{categoriaId}?page=0&size=10
-     *
-     * @param categoriaId El ID de la categoría.
-     * @param pageable    Información de paginación.
-     * @return ResponseEntity con una Page de ProductoListDTO.
+     * @param categoriaId
+     * @param pageable
+     * @return
      */
     @GetMapping("/categoria/{categoriaId}")
     public ResponseEntity<Page<ProductoListDTO>> obtenerProductosActivosPorCategoria(
@@ -79,11 +72,9 @@ public class ProductoController {
 
     /**
      * Endpoint para obtener productos activos de una marca específica con paginación.
-     * GET /api/productos/marca/{marcaId}?page=0&size=10
-     *
-     * @param marcaId El ID de la marca.
-     * @param pageable Información de paginación.
-     * @return ResponseEntity con una Page de ProductoListDTO.
+     * @param marcaId
+     * @param pageable
+     * @return
      */
     @GetMapping("/marca/{marcaId}")
     public ResponseEntity<Page<ProductoListDTO>> obtenerProductosActivosPorMarca(
@@ -96,16 +87,14 @@ public class ProductoController {
 
     /**
      * Endpoint para la búsqueda de productos.
-     * GET /api/productos/buscar?termino=polo%20rojo&page=0&size=10
-     *
-     * @param termino  El término de búsqueda ingresado por el usuario.
-     * @param pageable Información de paginación.
-     * @return ResponseEntity con una Page de ProductoListDTO.
+     * @param termino
+     * @param pageable
+     * @return
      */
     @GetMapping("/buscar")
     public ResponseEntity<Page<ProductoListDTO>> buscarProductos(
-            @RequestParam(name = "termino") String termino, // El término se pasa como ?termino=valor
-            @PageableDefault(size = 12) Pageable pageable) { // No ordenamos por defecto en búsqueda, dejamos que la relevancia lo haga si la BD lo soporta
+            @RequestParam(name = "termino") String termino,
+            @PageableDefault(size = 12) Pageable pageable) {
         Page<ProductoListDTO> productosPage = productoService.buscarProductos(termino, pageable);
         return ResponseEntity.ok(productosPage);
     }

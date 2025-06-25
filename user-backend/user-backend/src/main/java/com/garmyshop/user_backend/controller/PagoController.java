@@ -37,14 +37,13 @@ public class PagoController {
 
     /**
      * Endpoint para crear una sesión de Stripe Checkout.
-     *
      * @param requestDTO
      * @return
      */
     @PostMapping("/crear-checkout-session")
     public ResponseEntity<?> crearCheckoutSession(@RequestBody CrearCheckoutSessionRequestDTO requestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = requestDTO.getEmailCliente(); // Usamos el email del DTO por ahora
+        String userEmail = requestDTO.getEmailCliente();
 
         if (userEmail == null && authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal().toString())) {
 
@@ -65,11 +64,9 @@ public class PagoController {
 
         } catch (StripeException e) {
             logger.error("Error al crear la sesión de Stripe Checkout: {}", e.getMessage());
-            // Devolver un mensaje de error genérico al cliente
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                     .body("Error al procesar el pago: " + e.getMessage());
         } catch (Exception e) {
-            // Captura para cualquier otra excepción inesperada
             logger.error("Error inesperado al crear la sesión de checkout: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                     .body("Error interno del servidor al procesar la solicitud de pago.");
@@ -80,7 +77,6 @@ public class PagoController {
 
     /**
      * Endpoint para confirmar un pago de Stripe y actualizar la orden local.
-     *
      * @param payload
      * @return
      */
