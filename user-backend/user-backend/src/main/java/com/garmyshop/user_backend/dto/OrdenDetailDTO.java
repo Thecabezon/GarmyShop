@@ -1,8 +1,8 @@
 package com.garmyshop.user_backend.dto;
 
 import com.garmyshop.user_backend.model.enums.EstadoOrden;
-import com.garmyshop.user_backend.model.enums.EstadoPagoOrden; // Asumiendo que tienes este enum
-import com.garmyshop.user_backend.model.enums.MetodoPago; // Asumiendo que tienes este enum
+import com.garmyshop.user_backend.model.enums.EstadoPagoOrden;
+import com.garmyshop.user_backend.model.enums.MetodoPago;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;

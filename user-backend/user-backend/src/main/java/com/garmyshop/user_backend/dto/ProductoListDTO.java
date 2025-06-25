@@ -12,9 +12,9 @@ public class ProductoListDTO {
     private Integer id;
     private String nombre;
     private String slug;
-    private String imagenPrincipalUrl; // Solo la URL de la imagen principal
+    private String imagenPrincipalUrl;
     private BigDecimal precio;
-    private BigDecimal precioOferta; // Podría ser null
-    private String marcaNombre; // Nombre de la marca para mostrar
-    private String categoriaNombre; // Nombre de la categoría para mostrar
+    private BigDecimal precioOferta;
+    private String marcaNombre;
+    private String categoriaNombre;
 }

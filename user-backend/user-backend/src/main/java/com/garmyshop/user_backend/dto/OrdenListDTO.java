@@ -1,6 +1,6 @@
 package com.garmyshop.user_backend.dto;
 
-import com.garmyshop.user_backend.model.enums.EstadoOrden; // Asumiendo que tienes este enum
+import com.garmyshop.user_backend.model.enums.EstadoOrden;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrdenListDTO {
-    private Integer id; // ID de la Orden
+    private Integer id;
     private LocalDateTime fechaCreacion;
     private BigDecimal total;
-    private EstadoOrden estado; // Usando el Enum para el estado
-    private Integer cantidadTotalItems; // Suma de las cantidades de todos los OrdenItem
+    private EstadoOrden estado;
+    private Integer cantidadTotalItems;
 }

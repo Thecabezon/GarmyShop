@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class DireccionDTO {
     private Integer id;
-    // private String nombreCompleto; // Podrías combinar nombre y apellido
     private String nombre;
     private String apellido;
     private String departamento;

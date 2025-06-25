@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ImagenProductoDTO {
     private Integer id;
-    private String imagen; // URL de la imagen
+    private String imagen;
     private Boolean esPrincipal;
     private Integer orden;
 }

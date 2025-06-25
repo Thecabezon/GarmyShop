@@ -14,15 +14,13 @@ public class ProductoDetailDTO {
     private String nombre;
     private String slug;
     private String descripcion;
-    private String sku; // SKU base del producto
-    private MarcaDTO marca;         // DTO completo de la marca
-    private CategoriaDTO categoria; // DTO completo de la categoría
+    private String sku;
+    private MarcaDTO marca;
+    private CategoriaDTO categoria;
     private BigDecimal precio;
     private BigDecimal precioOferta;
     private Boolean esDestacado;
-    // No incluimos 'activo' aquí, ya que el servicio solo devolverá productos activos.
-    // Los campos 'creado' y 'actualizado' de la entidad Producto tampoco suelen ser necesarios aquí.
 
     private List<ImagenProductoDTO> imagenes;
-    private List<CombinacionProductoDTO> combinacionesDisponibles; // Lista de variantes
+    private List<CombinacionProductoDTO> combinacionesDisponibles;
 }

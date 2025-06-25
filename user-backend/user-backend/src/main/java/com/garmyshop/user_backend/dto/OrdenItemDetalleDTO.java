@@ -9,16 +9,14 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrdenItemDetalleDTO {
-    private Integer id; // ID del OrdenItem
-    // Información del producto/combinación comprada
+    private Integer id;
     private Integer productoId;
     private String productoNombre;
-    private String productoImagenUrl; // Podríamos obtener la imagen principal del producto
+    private String productoImagenUrl;
     private String tallaNombre;
     private String colorNombre;
-    private String skuCombinacion; // SKU de la CombinacionProducto comprada
-    // Detalles del item en la orden
+    private String skuCombinacion;
     private Integer cantidad;
-    private BigDecimal precioUnitario; // Precio al momento de la compra
+    private BigDecimal precioUnitario;
     private BigDecimal subtotal;
 }
