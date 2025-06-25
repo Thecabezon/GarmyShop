@@ -17,6 +17,7 @@ import SobreNosotrosPage from './page/SobreNosotrosPage';
 import LoginPage from './page/Auth/LoginPage';
 import RegisterPage from './page/Auth/RegisterPage';
 import ForgotPasswordPage from './page/Auth/ForgotPasswordPage';
+import ResetPasswordForm from './components/Auth/ResetPasswordForm';
 
 // Componentes globales
 import Header from './components/Header';
@@ -72,12 +73,12 @@ function App() {
           ...producto,
           id: producto.id,
           nombre: producto.nombre,
-          precio: producto.displayPrice || producto.price || producto.precio, // Usar el precio correcto
-          imagen: producto.imagen, // Asegurarse de que esto contiene la URL completa
+          precio: producto.displayPrice || producto.price || producto.precio,
+          imagen: producto.imagen,
           talla: producto.talla,
           color: producto.color,
           cantidad: producto.cantidad || 1,
-          quantity: producto.cantidad || 1, // Mantener ambos para compatibilidad
+          quantity: producto.cantidad || 1, 
           idUnicoCarrito: itemIdentifier
         };
         
@@ -85,7 +86,7 @@ function App() {
       }
     });
     
-    // Opcional: Mostrar confirmación
+   
     console.log("Producto añadido al carrito:", producto);
   };
 
@@ -131,9 +132,9 @@ function App() {
         <Route path="/ofertas" element={<OfertasPage handleAddToCart={handleAddToCart} />} />
         <Route path="/nosotros" element={<SobreNosotrosPage />} />
 
-        {/* Detalle de producto - CORREGIDO */}
+        
         <Route
-          path="/producto/:cod"  // Cambiado de "/tienda/:cod" a "/producto/:cod"
+          path="/producto/:cod"  
           element={
             <MainLayout>
               <ProductoDetallePage
@@ -175,9 +176,9 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
         <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
+        <Route path="/auth/reset-password" element={<ResetPasswordForm />} /> 
 
-        {/* Ruta 404 (opcional) */}
-        {/* <Route path="*" element={<NotFoundPage />} /> */}
+      
       </Routes>
 
       <Footer />
