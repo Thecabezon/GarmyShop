@@ -7,7 +7,7 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-import jakarta.annotation.PostConstruct; // Para inicializar la API key de Stripe
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,30 +22,27 @@ public class StripeServiceImpl implements StripeService {
     @Value("${stripe.apiKey.secret}")
     private String stripeSecretKey;
 
-    @PostConstruct // Este método se ejecuta después de que se inyectan las dependencias
+    @PostConstruct
     public void init() {
-        Stripe.apiKey = stripeSecretKey; // Configura la clave API globalmente para la librería Stripe
+        Stripe.apiKey = stripeSecretKey;
     }
 
     @Override
     public Session crearCheckoutSession(CrearCheckoutSessionRequestDTO requestDTO) throws StripeException {
-        // URLs de redirección (deben ser URLs completas)
-        String successUrl = requestDTO.getSuccessUrl(); // Ej. "http://localhost:3000/pago-exitoso?session_id={CHECKOUT_SESSION_ID}"
-        String cancelUrl = requestDTO.getCancelUrl();   // Ej. "http://localhost:3000/pago-cancelado"
+        String successUrl = requestDTO.getSuccessUrl();
+        String cancelUrl = requestDTO.getCancelUrl();
 
         List<SessionCreateParams.LineItem> lineItems = new ArrayList<>();
         for (ItemCheckoutDTO itemDto : requestDTO.getItems()) {
             SessionCreateParams.LineItem.PriceData.ProductData productData =
                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
                     .setName(itemDto.getNombreProducto())
-                    // .setDescription(itemDto.getDescripcionProducto()) // Opcional
-                    // .addImage(itemDto.getImagenProductoUrl()) // Opcional
                     .build();
 
             SessionCreateParams.LineItem.PriceData priceData =
                 SessionCreateParams.LineItem.PriceData.builder()
-                    .setCurrency(itemDto.getMoneda().toLowerCase()) // Stripe espera la moneda en minúsculas, ej. "pen", "usd"
-                    .setUnitAmount((long) (itemDto.getPrecioUnitario().doubleValue() * 100)) // Stripe espera el monto en centavos/la menor unidad
+                    .setCurrency(itemDto.getMoneda().toLowerCase())
+                    .setUnitAmount((long) (itemDto.getPrecioUnitario().doubleValue() * 100))
                     .setProductData(productData)
                     .build();
 
@@ -55,29 +52,25 @@ public class StripeServiceImpl implements StripeService {
                     .setQuantity(Long.valueOf(itemDto.getCantidad()))
                     .build();
             lineItems.add(lineItem);
-        }
-        
-        // Metadata para asociar la sesión de Stripe con tu orden local
+        }        
         Map<String, String> metadata = new HashMap<>();
         metadata.put("orden_id_local", String.valueOf(requestDTO.getOrdenIdLocal()));
 
         SessionCreateParams params =
             SessionCreateParams.builder()
                 .addAllLineItem(lineItems)
-                .setMode(SessionCreateParams.Mode.PAYMENT) // Para pagos únicos
+                .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(successUrl)
                 .setCancelUrl(cancelUrl)
-                .putAllMetadata(metadata) // Añadir metadata
-                .setCustomerEmail(requestDTO.getEmailCliente()) // Opcional pero recomendado
-                // Podrías añadir más opciones como envío, impuestos, etc.
+                .putAllMetadata(metadata)
+                .setCustomerEmail(requestDTO.getEmailCliente())
                 .build();
 
         return Session.create(params);
     }
 
-    @Override // <<< NUEVO MÉTODO
+    @Override
     public Session obtenerCheckoutSession(String sessionId) throws StripeException {
-        // Asegúrate de que Stripe.apiKey ya ha sido configurado en el método init()
         return Session.retrieve(sessionId);
     }
 }

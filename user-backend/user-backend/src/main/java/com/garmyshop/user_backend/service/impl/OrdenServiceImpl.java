@@ -6,9 +6,6 @@ import com.garmyshop.user_backend.exception.RecursoNoEncontradoException;
 import com.garmyshop.user_backend.exception.StockInsuficienteException;
 import com.garmyshop.user_backend.model.enums.EstadoOrden;
 import com.garmyshop.user_backend.model.enums.EstadoPagoOrden;
-// El import de MetodoPago no se usa directamente aquí si solo se pasa el enum desde el requestDTO
-// pero es bueno tenerlo por si acaso o si los mappers lo necesitaran explícitamente
-// import com.garmyshop.user_backend.model.enums.MetodoPago;
 import com.garmyshop.user_backend.repository.*;
 import com.garmyshop.user_backend.service.OrdenService;
 import org.springframework.data.domain.Page;
@@ -30,18 +27,16 @@ public class OrdenServiceImpl implements OrdenService {
     private final AuthUserRepository authUserRepository;
     private final DireccionRepository direccionRepository;
     private final CombinacionProductoRepository combinacionProductoRepository;
-    // private final ProductoRepository productoRepository; // <<< ELIMINADO
 
     public OrdenServiceImpl(OrdenRepository ordenRepository,
                             AuthUserRepository authUserRepository,
                             DireccionRepository direccionRepository,
                             CombinacionProductoRepository combinacionProductoRepository
-                            /*, ProductoRepository productoRepository */) { // <<< ELIMINADO DEL CONSTRUCTOR
+                            ) {
         this.ordenRepository = ordenRepository;
         this.authUserRepository = authUserRepository;
         this.direccionRepository = direccionRepository;
         this.combinacionProductoRepository = combinacionProductoRepository;
-        // this.productoRepository = productoRepository; // <<< ELIMINADO
     }
 
     private OrdenListDTO convertirAOrdenListDTO(Orden orden) {
@@ -49,7 +44,7 @@ public class OrdenServiceImpl implements OrdenService {
         int cantidadTotalItems = orden.getItems() != null ? orden.getItems().stream().mapToInt(OrdenItem::getCantidad).sum() : 0;
         return new OrdenListDTO(
                 orden.getId(),
-                orden.getFechaCreacion(), // Usa LocalDateTime
+                orden.getFechaCreacion(),
                 orden.getTotal(),
                 orden.getEstado(),
                 cantidadTotalItems
@@ -97,12 +92,12 @@ public class OrdenServiceImpl implements OrdenService {
         int cantidadTotalItems = itemsDTO.stream().mapToInt(OrdenItemDetalleDTO::getCantidad).sum();
         return new OrdenDetailDTO(
                 orden.getId(),
-                orden.getFechaCreacion(),      // Usa LocalDateTime
-                orden.getFechaActualizacion(), // Usa LocalDateTime
+                orden.getFechaCreacion(),
+                orden.getFechaActualizacion(),
                 orden.getTotal(),
-                orden.getMetodoPago(), // Devuelve String
-                orden.getEstadoPago(),    // Pasa el Enum (Jackson usará @JsonValue)
-                orden.getEstado(),        // Pasa el Enum (Jackson usará @JsonValue)
+                orden.getMetodoPago(),
+                orden.getEstadoPago(),
+                orden.getEstado(),
                 cantidadTotalItems,
                 direccionDTO,
                 itemsDTO
@@ -194,52 +189,31 @@ public class OrdenServiceImpl implements OrdenService {
         nuevaOrden.setEstado(EstadoOrden.PENDIENTE);
         nuevaOrden.setCantidadCompra(cantidadTotalItemsEnOrden);
         
-        // Primero se guardan los items individuales si no hay cascade o para asegurar IDs
-        // Esta parte podría cambiar dependiendo de la estrategia de cascade
         for (OrdenItem item : ordenItems) {
-            item.setOrden(nuevaOrden); // Asocia el item a la orden ANTES de que la orden se guarde
-                                       // si la orden va a hacer cascade a los items.
+            item.setOrden(nuevaOrden);
         }
-        nuevaOrden.setItems(ordenItems); // Establece la colección en la Orden
+        nuevaOrden.setItems(ordenItems);
 
-        Orden ordenGuardada = ordenRepository.save(nuevaOrden); // Guarda la Orden (y los items por cascade)
+        Orden ordenGuardada = ordenRepository.save(nuevaOrden);
 
         return convertirAOrdenDetailDTO(ordenGuardada);
     }
 
-
-
-    @Override // <<< NUEVO MÉTODO
-    @Transactional // Esta operación modifica la base de datos
+    @Override
+    @Transactional
     public Optional<OrdenDetailDTO> confirmarPagoOrden(Integer ordenId, String sessionId) {
-        // Aquí podrías añadir lógica para guardar el sessionId de Stripe en tu Orden si quieres,
-        // para futuras referencias o para evitar procesar el mismo pago dos veces.
-        // Por ejemplo, añadiendo un campo `idTransaccionPasarela` a tu entidad Orden.
 
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Orden no encontrada con ID: " + ordenId));
 
-        // Verificar si la orden ya fue pagada para evitar doble procesamiento (idempotencia básica)
         if (orden.getEstadoPago() == EstadoPagoOrden.PAGADO) {
-            // La orden ya está pagada, simplemente devuelve sus detalles.
-            // Podrías loguear esto como una confirmación repetida.
-            // logger.info("Intento de confirmar pago para orden ya pagada: {}", ordenId);
             return Optional.of(convertirAOrdenDetailDTO(orden));
         }
 
-        // Actualizar estados
         orden.setEstadoPago(EstadoPagoOrden.PAGADO);
-        orden.setEstado(EstadoOrden.PENDIENTE); // O el estado que siga después de un pago exitoso
-                                                 // (PENDIENTE -> PROCESANDO podría ser uno)
-        // Nota: El campo `fechaActualizacion` de la Orden se actualizará automáticamente
-        // gracias a la anotación @UpdateTimestamp en la entidad Orden.
+        orden.setEstado(EstadoOrden.PENDIENTE);
 
         Orden ordenActualizada = ordenRepository.save(orden);
-
-        // Aquí podrías disparar otras acciones:
-        // - Enviar un email de confirmación de orden/pago al usuario.
-        // - Notificar a un sistema de inventario/fulfillment.
-        // Por ahora, solo actualizamos la orden.
 
         return Optional.of(convertirAOrdenDetailDTO(ordenActualizada));
     }

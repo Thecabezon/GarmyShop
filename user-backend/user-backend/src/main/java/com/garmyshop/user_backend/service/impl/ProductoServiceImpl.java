@@ -1,8 +1,8 @@
-package com.garmyshop.user_backend.service.impl; // O com.garmyshop.user_backend.service
+package com.garmyshop.user_backend.service.impl;
 
-import com.garmyshop.user_backend.dto.*; // Importa todos tus DTOs
-import com.garmyshop.user_backend.entity.*; // Importa todas tus entidades
-import com.garmyshop.user_backend.repository.*; // Importa tus repositorios
+import com.garmyshop.user_backend.dto.*;
+import com.garmyshop.user_backend.entity.*;
+import com.garmyshop.user_backend.repository.*;
 import com.garmyshop.user_backend.service.ProductoService;
 
 
@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-// import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,21 +19,20 @@ import java.util.stream.Collectors;
 public class ProductoServiceImpl implements ProductoService {
 
     private final ProductoRepository productoRepository;
-    private final CategoriaRepository categoriaRepository; // Necesario para buscar por categoría
-    private final MarcaRepository marcaRepository;       // Necesario para buscar por marca
-    private final ColorRepository colorRepository;         // Potencialmente para la búsqueda por color
+    private final CategoriaRepository categoriaRepository;
+    private final MarcaRepository marcaRepository;
+    private final ColorRepository colorRepository;
 
 
     public ProductoServiceImpl(ProductoRepository productoRepository,
-                               CategoriaRepository categoriaRepository,
-                               MarcaRepository marcaRepository,
-                               ColorRepository colorRepository
-                               /* ProductoMapper productoMapper */) {
+                                CategoriaRepository categoriaRepository,
+                                MarcaRepository marcaRepository,
+                                ColorRepository colorRepository
+                                ) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.marcaRepository = marcaRepository;
         this.colorRepository = colorRepository;
-        // this.productoMapper = productoMapper;
     }
 
     private ProductoListDTO convertirAProductoListDTO(Producto producto) {
@@ -44,7 +42,7 @@ public class ProductoServiceImpl implements ProductoService {
                 .filter(ImagenProducto::getEsPrincipal)
                 .map(ImagenProducto::getImagen)
                 .findFirst()
-                .orElse(producto.getImagenes().isEmpty() ? null : producto.getImagenes().get(0).getImagen()); // Fallback a la primera imagen si no hay principal
+                .orElse(producto.getImagenes().isEmpty() ? null : producto.getImagenes().get(0).getImagen());
 
         return new ProductoListDTO(
                 producto.getId(),
@@ -61,28 +59,24 @@ public class ProductoServiceImpl implements ProductoService {
     private ProductoDetailDTO convertirAProductoDetailDTO(Producto producto) {
         if (producto == null) return null;
 
-        // Mapeo de Marca a MarcaDTO
         MarcaDTO marcaDTO = null;
         if (producto.getMarca() != null) {
             Marca marca = producto.getMarca();
             marcaDTO = new MarcaDTO(marca.getId(), marca.getNombre(), marca.getSlug(), marca.getImagen());
         }
 
-        // Mapeo de Categoria a CategoriaDTO
         CategoriaDTO categoriaDTO = null;
         if (producto.getCategoria() != null) {
             Categoria categoria = producto.getCategoria();
             categoriaDTO = new CategoriaDTO(categoria.getId(), categoria.getNombre(), categoria.getSlug(), categoria.getImagen());
         }
 
-        // Mapeo de List<ImagenProducto> a List<ImagenProductoDTO>
         List<ImagenProductoDTO> imagenesDTO = producto.getImagenes().stream()
                 .map(img -> new ImagenProductoDTO(img.getId(), img.getImagen(), img.getEsPrincipal(), img.getOrden()))
                 .collect(Collectors.toList());
 
-        // Mapeo de List<CombinacionProducto> a List<CombinacionProductoDTO>
         List<CombinacionProductoDTO> combinacionesDTO = producto.getCombinaciones().stream()
-                .filter(cp -> cp.getStock() > 0) // Solo mostrar combinaciones con stock
+                .filter(cp -> cp.getStock() > 0)
                 .map(cp -> new CombinacionProductoDTO(
                         cp.getId(),
                         new TallaDTO(cp.getTalla().getId(), cp.getTalla().getNombre()),
@@ -113,9 +107,7 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional(readOnly = true)
     public Page<ProductoListDTO> obtenerTodosLosProductosActivos(Pageable pageable) {
 
-
-        // Luego usa:
-        return productoRepository.findByActivoTrue(pageable) // Asumiendo que añades este método al repo
+        return productoRepository.findByActivoTrue(pageable)
                 .map(this::convertirAProductoListDTO);
     }
 
@@ -123,7 +115,7 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional(readOnly = true)
     public Optional<ProductoDetailDTO> obtenerProductoActivoPorSlug(String slug) {
         return productoRepository.findBySlug(slug)
-                .filter(Producto::getActivo) // Asegúrate que la entidad Producto tenga getActivo()
+                .filter(Producto::getActivo)
                 .map(this::convertirAProductoDetailDTO);
     }
 
@@ -131,17 +123,16 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional(readOnly = true)
     public Optional<ProductoDetailDTO> obtenerProductoActivoPorId(Integer id) {
         return productoRepository.findById(id)
-                .filter(Producto::getActivo) // Asegúrate que la entidad Producto tenga getActivo()
+                .filter(Producto::getActivo)
                 .map(this::convertirAProductoDetailDTO);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProductoListDTO> obtenerProductosActivosPorCategoria(Integer categoriaId, Pageable pageable) {
-        // Primero verificamos si la categoría existe y está activa
         Optional<Categoria> categoriaOpt = categoriaRepository.findById(categoriaId);
         if (categoriaOpt.isEmpty() || !categoriaOpt.get().getActivo()) {
-            return Page.empty(pageable); // Devuelve una página vacía si la categoría no es válida
+            return Page.empty(pageable);
         }
 
         return productoRepository.findByCategoriaAndActivoTrue(categoriaOpt.get(), pageable)
@@ -176,8 +167,8 @@ public class ProductoServiceImpl implements ProductoService {
                 break;
             }
         }
-        if (terminoProducto.isEmpty() && nombreColor == null) { // Si después del parseo no queda nada
-             return Page.empty(pageable); // O buscar todos si el término original estaba vacío.
+        if (terminoProducto.isEmpty() && nombreColor == null) {
+             return Page.empty(pageable);
         }
 
         return productoRepository.buscarAvanzado(terminoProducto, nombreColor, pageable)

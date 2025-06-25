@@ -16,8 +16,7 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
-    // Podrías obtener el email "from" desde application.properties si quieres
-    @Value("${spring.mail.username}") // Asume que el email "from" es el mismo que el de autenticación SMTP
+    @Value("${spring.mail.username}")
     private String fromEmail;
 
     
@@ -52,10 +51,6 @@ public class EmailServiceImpl implements EmailService {
             logger.info("Email de reseteo de contraseña enviado exitosamente a {}", destinatarioEmail);
         } catch (MailException e) {
             logger.error("Error al enviar email de reseteo de contraseña a {}: {}", destinatarioEmail, e.getMessage());
-            // Aquí podrías lanzar una excepción personalizada si quieres que la lógica de negocio
-            // principal se entere de que el email no se pudo enviar.
-            // Por ahora, solo lo logueamos.
-            // throw new EmailSendingException("Error al enviar email de reseteo.", e);
         }
     }
 }

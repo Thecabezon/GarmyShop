@@ -33,8 +33,6 @@ public class MarcaServiceImpl implements MarcaService {
     @Override
     @Transactional(readOnly = true)
     public List<MarcaDTO> obtenerTodasLasMarcasActivas() {
-        // Necesitaremos un método findByActivoTrue() en MarcaRepository
-        // **ACCIÓN REQUERIDA: Añadir findByActivoTrue() a MarcaRepository**
         return marcaRepository.findByActivoTrue()
                 .stream()
                 .map(this::convertirAMarcaDTO)

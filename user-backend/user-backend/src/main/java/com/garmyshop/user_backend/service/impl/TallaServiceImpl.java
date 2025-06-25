@@ -1,4 +1,4 @@
-package com.garmyshop.user_backend.service.impl; // o .service
+package com.garmyshop.user_backend.service.impl;
 
 import com.garmyshop.user_backend.dto.TallaDTO;
 import com.garmyshop.user_backend.entity.Talla;
@@ -31,7 +31,7 @@ public class TallaServiceImpl implements TallaService {
     @Override
     @Transactional(readOnly = true)
     public List<TallaDTO> obtenerTodasLasTallas() {
-        return tallaRepository.findAll() // La entidad Talla no tiene 'activo', así que traemos todas
+        return tallaRepository.findAll()
                 .stream()
                 .map(this::convertirATallaDTO)
                 .collect(Collectors.toList());

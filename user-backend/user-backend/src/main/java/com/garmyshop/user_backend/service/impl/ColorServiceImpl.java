@@ -1,4 +1,4 @@
-package com.garmyshop.user_backend.service.impl; // o .service
+package com.garmyshop.user_backend.service.impl;
 
 import com.garmyshop.user_backend.dto.ColorDTO;
 import com.garmyshop.user_backend.entity.Color;
@@ -32,7 +32,7 @@ public class ColorServiceImpl implements ColorService {
     @Override
     @Transactional(readOnly = true)
     public List<ColorDTO> obtenerTodosLosColores() {
-        return colorRepository.findAll() // La entidad Color no tiene 'activo', así que traemos todos
+        return colorRepository.findAll()
                 .stream()
                 .map(this::convertirAColorDTO)
                 .collect(Collectors.toList());
