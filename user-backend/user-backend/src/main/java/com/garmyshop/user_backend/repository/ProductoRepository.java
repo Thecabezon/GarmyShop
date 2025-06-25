@@ -17,13 +17,10 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     List<Producto> findByCategoria(Categoria categoria);
     Optional<Producto> findBySlug(String slug);
     
-    // Para buscar en el nombre del producto, ignorando mayúsculas/minúsculas
     List<Producto> findByNombreContainingIgnoreCase(String nombre);
 
-    // O si quieres buscar en nombre Y descripción
     List<Producto> findByNombreContainingIgnoreCaseOrDescripcionContainingIgnoreCase(String terminoNombre, String terminoDescripcion);
 
-    // Si quieres paginación (MUY RECOMENDADO para resultados de búsqueda)
     Page<Producto> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
 
     Page<Producto> findByActivoTrue(Pageable pageable);

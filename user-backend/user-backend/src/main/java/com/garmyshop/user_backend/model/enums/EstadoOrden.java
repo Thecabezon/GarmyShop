@@ -1,4 +1,3 @@
-// En com.garmyshop.user_backend.model.enums.EstadoOrden.java
 package com.garmyshop.user_backend.model.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -19,7 +18,6 @@ public enum EstadoOrden {
         return valorEnDb;
     }
 
-    // Método para encontrar el Enum a partir del valor de la BD
     public static EstadoOrden fromValorEnDb(String valor) {
         if (valor == null) return null;
         for (EstadoOrden e : values()) {

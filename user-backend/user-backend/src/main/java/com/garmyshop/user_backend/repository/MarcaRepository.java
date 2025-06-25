@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface MarcaRepository extends JpaRepository<Marca, Integer> {
     Optional<Marca> findBySlug(String slug);
-    List<Marca> findByActivoTrue(); // Método para obtener marcas activas
+    List<Marca> findByActivoTrue();
 }
