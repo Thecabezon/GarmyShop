@@ -54,22 +54,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Object principal = authentication.getPrincipal();
         logger.debug("Tipo de Principal recibido en SuccessHandler: {}", principal.getClass().getName());
 
-        // La verificación más importante: ¿Es nuestro OidcUserDetails personalizado?
-        // Si no lo es, significa que nuestro CustomOAuth2UserService no se ejecutó o su resultado fue descartado.
         if (!(principal instanceof OidcUserDetails)) {
             logger.error("¡ERROR CRÍTICO! El Principal no es del tipo OidcUserDetails. Tu CustomOAuth2UserService no se ejecutó o su resultado fue descartado.");
             logger.error("Tipo de Principal recibido: {}. Esto significa que el usuario NO FUE CREADO/ACTUALIZADO en la base de datos.", principal.getClass().getName());
             
-            // Generamos una URL de error clara para el frontend.
             return UriComponentsBuilder.fromUriString(oauth2RedirectUri)
                     .queryParam("error", "UserProcessingFailed")
                     .build().toUriString();
         }
 
-        // Si llegamos aquí, el flujo fue correcto. El Principal es nuestra clase personalizada.
         OidcUserDetails userDetails = (OidcUserDetails) principal;
         
-        // Obtenemos el username de NUESTRO sistema, que está guardado en OidcUserDetails.
         String username = userDetails.getUsername(); 
 
         if (!StringUtils.hasText(username)) {
@@ -81,10 +76,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         logger.info("Éxito. Username determinado desde OidcUserDetails para generar JWT: {}", username);
         
-        // Generamos el token JWT usando el username de nuestra base de datos.
         String token = tokenProvider.generateTokenFromUsername(username);
 
-        // Construimos la URL final para redirigir al frontend con el token.
         return UriComponentsBuilder.fromUriString(oauth2RedirectUri)
                 .queryParam("token", token)
                 .build().toUriString();

@@ -8,17 +8,14 @@ public interface TallaService {
 
     /**
      * Obtiene una lista de todas las tallas disponibles en el sistema.
-     *
-     * @return una lista de TallaDTO.
+     * @return
      */
     List<TallaDTO> obtenerTodasLasTallas();
 
     /**
      * Obtiene una talla específica por su ID.
-     * (Opcional por ahora)
-     *
-     * @param id el ID de la talla a buscar.
-     * @return un Optional conteniendo el TallaDTO si se encuentra, o un Optional vacío si no.
+     * @param id
+     * @return
      */
     Optional<TallaDTO> obtenerTallaPorId(Integer id);
 }

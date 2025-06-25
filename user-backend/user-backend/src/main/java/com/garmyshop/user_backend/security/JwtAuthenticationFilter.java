@@ -19,14 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
-@Component // Para que Spring lo detecte y lo puedas inyectar en SecurityConfig
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-    // Inyección de dependencias (Spring las resolverá)
     private final JwtTokenProvider tokenProvider;
-    private UserDetailsService userDetailsService; // Spring inyectará tu AuthUserServiceImpl aquí
+    private UserDetailsService userDetailsService;
 
     
     public JwtAuthenticationFilter(JwtTokenProvider tokenProvider) {
@@ -57,8 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {
-            // Es importante loguear esto, pero no interrumpir el flujo del filtro
-            // para que otros filtros de seguridad (como los que manejan excepciones de autenticación) puedan actuar.
             logger.error("No se pudo establecer la autenticación del usuario en el contexto de seguridad: {}", ex.getMessage());
         }
 

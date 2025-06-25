@@ -1,6 +1,6 @@
 package com.garmyshop.user_backend.service;
 
-import com.garmyshop.user_backend.dto.CategoriaDTO; // Importa tu DTO
+import com.garmyshop.user_backend.dto.CategoriaDTO;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,14 +8,12 @@ public interface CategoriaService {
 
     /**
      * Obtiene una lista de todas las categorías que están activas.
-     *
-     * @return una lista de CategoriaDTO.
+     * @return
      */
     List<CategoriaDTO> obtenerTodasLasCategoriasActivas();
 
     /**
      * Obtiene una categoría específica por su slug, solo si está activa.
-     *
      * @param slug
      * @return
      */
@@ -23,7 +21,6 @@ public interface CategoriaService {
 
     /**
      * Obtiene una categoría específica por su ID.
-     *
      * @param id
      * @return
      */
