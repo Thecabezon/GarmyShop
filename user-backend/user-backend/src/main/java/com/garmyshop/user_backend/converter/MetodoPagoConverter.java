@@ -12,7 +12,7 @@ public class MetodoPagoConverter implements AttributeConverter<MetodoPago, Strin
         if (attribute == null) {
             return null;
         }
-        return attribute.getValorEnDb(); // Guarda el valor en minúscula
+        return attribute.getValorEnDb();
     }
 
     @Override
@@ -20,6 +20,6 @@ public class MetodoPagoConverter implements AttributeConverter<MetodoPago, Strin
         if (dbData == null) {
             return null;
         }
-        return MetodoPago.fromValorEnDb(dbData); // Convierte desde el valor en minúscula
+        return MetodoPago.fromValorEnDb(dbData);
     }
 }

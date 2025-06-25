@@ -1,10 +1,10 @@
-package com.garmyshop.user_backend.converter; // O el paquete que elijas
+package com.garmyshop.user_backend.converter;
 
 import com.garmyshop.user_backend.model.enums.EstadoOrden;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-@Converter(autoApply = true) // autoApply = true hace que se aplique a todos los atributos de tipo EstadoOrden
+@Converter(autoApply = true)
 public class EstadoOrdenConverter implements AttributeConverter<EstadoOrden, String> {
 
     @Override
@@ -12,7 +12,7 @@ public class EstadoOrdenConverter implements AttributeConverter<EstadoOrden, Str
         if (attribute == null) {
             return null;
         }
-        return attribute.getValorEnDb(); // Guarda el valor en minúscula
+        return attribute.getValorEnDb();
     }
 
     @Override
@@ -20,6 +20,6 @@ public class EstadoOrdenConverter implements AttributeConverter<EstadoOrden, Str
         if (dbData == null) {
             return null;
         }
-        return EstadoOrden.fromValorEnDb(dbData); // Convierte desde el valor en minúscula
+        return EstadoOrden.fromValorEnDb(dbData);
     }
 }

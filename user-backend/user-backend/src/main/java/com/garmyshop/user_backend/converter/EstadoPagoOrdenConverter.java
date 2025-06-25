@@ -12,7 +12,7 @@ public class EstadoPagoOrdenConverter implements AttributeConverter<EstadoPagoOr
         if (attribute == null) {
             return null;
         }
-        return attribute.getValorEnDb(); // Guarda el valor en minúscula
+        return attribute.getValorEnDb();
     }
 
     @Override
@@ -20,6 +20,6 @@ public class EstadoPagoOrdenConverter implements AttributeConverter<EstadoPagoOr
         if (dbData == null) {
             return null;
         }
-        return EstadoPagoOrden.fromValorEnDb(dbData); // Convierte desde el valor en minúscula
+        return EstadoPagoOrden.fromValorEnDb(dbData);
     }
 }
