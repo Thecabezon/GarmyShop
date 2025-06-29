@@ -2,35 +2,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { CLOUDINARY_BASE_URL } from '../../config/cloudinary';
-import UserDropdown from '../Auth/UserDropdown'; // Importamos el nuevo componente
+import UserDropdown from '../Auth/UserDropdown'; 
 
 export function IconsComponent({ 
     cartItems, setCartItems, 
     favoriteItems, 
     toggleSearch, 
     setActiveDropdown, 
-    toggleMobileMenu
+    toggleMobileMenu,
+    currentUser,
+    isAuthenticated,
+    onAuthChange
 }) {
     const [cartVisible, setCartVisible] = useState(false);
     const [userDropdownVisible, setUserDropdownVisible] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [userInfo, setUserInfo] = useState(null);
 
     const navigate = useNavigate();
     const cartPanelRef = useRef(null);
     const iconsContainerRef = useRef(null);
     const userDropdownRef = useRef(null);
-
-    // Verificar si el usuario está autenticado al cargar el componente
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
-        
-        if (token && user) {
-            setIsAuthenticated(true);
-            setUserInfo(JSON.parse(user));
-        }
-    }, []);
 
     // Lógica para alternar la visibilidad del carrito
     const toggleCart = () => {
@@ -40,7 +30,7 @@ export function IconsComponent({
         if (typeof toggleMobileMenu === 'function') { 
             toggleMobileMenu(false); 
         }
-        setUserDropdownVisible(false); // Cerrar dropdown de usuario si está abierto
+        setUserDropdownVisible(false);
         setCartVisible(prev => !prev); 
     };
 
@@ -52,7 +42,7 @@ export function IconsComponent({
         if (typeof toggleMobileMenu === 'function') { 
             toggleMobileMenu(false); 
         }
-        setCartVisible(false); // Cerrar carrito si está abierto
+        setCartVisible(false);
         setUserDropdownVisible(prev => !prev);
     };
 
@@ -196,8 +186,9 @@ export function IconsComponent({
                         <div ref={userDropdownRef}>
                             <UserDropdown 
                                 isAuthenticated={isAuthenticated} 
-                                userInfo={userInfo} 
+                                userInfo={currentUser} 
                                 onClose={() => setUserDropdownVisible(false)}
+                                onAuthChange={onAuthChange}
                             />
                         </div>
                     )}

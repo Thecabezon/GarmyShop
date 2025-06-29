@@ -127,7 +127,7 @@
 }
 
 .auth-link:hover {
-  color: #3182ce;
+  color: #ff21a2;
   text-decoration: underline;
 }
 
@@ -154,7 +154,9 @@
 .auth-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(175, 175, 175, 0.3);
-  background: linear-gradient(135deg, #f786bc 0%, #f786bc 100%);
+  background: linear-gradient(135deg, #f697ca 0%, #f697ca 100%);
+  border: 1px solid #000000;
+  color: rgb(0, 0, 0);
 }
 
 .auth-button:active {
@@ -590,6 +592,7 @@
   border-color: #f6a2dc;
   color: #f6a2dc;
   background: rgba(246, 162, 220, 0.02);
+  
 }
 
 /* Responsive para recuperar contraseña */

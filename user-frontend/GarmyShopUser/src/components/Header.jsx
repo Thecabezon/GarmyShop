@@ -1,39 +1,49 @@
-// src/components/Header.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
 // Importa los componentes hijos
-import LogoComponent from './Header/LogoComponent'; // Asegúrate de que LogoComponent es exportado correctamente
-import NavLinksComponent from './Header/NavLinksComponent';
-import IconsComponent from './Header/IconsComponent';
-import TopBarComponent from './Header/TopBarComponent';
-import CategoryDropdown from './Header/CategoryDropdown';
-import MegaMenu from './Header/MegaMenu';
+import LogoComponent from './Header/LogoComponent'; // Asegúrate de que la ruta sea correcta
+import NavLinksComponent from './Header/NavLinksComponent'; // Asegúrate de que la ruta sea correcta
+import IconsComponent from './Header/IconsComponent'; // Asegúrate de que la ruta sea correcta
+import TopBarComponent from './Header/TopBarComponent'; // Asegúrate de que la ruta sea correcta
+import CategoryDropdown from './Header/CategoryDropdown'; // Asegúrate de que la ruta sea correcta
+import MegaMenu from './Header/MegaMenu'; // Asegúrate de que la ruta sea correcta
 
 // Importa los datos del menú para el MegaMenu
-import { menuData } from '../data/menuData';
+import { menuData } from '../data/menuData'; // Asegúrate de que la ruta sea correcta
 
 // Importa los CSS
-import '../styles/header.css';
-import '../styles/HeaderDropdowns.css';
-// ¡NUEVO! Importa el CSS específico para el menú móvil
-import '../styles/mobileMenu.css'; // ¡Creamos este archivo en el Paso 2!
+import '../styles/header.css'; // Asegúrate de que la ruta sea correcta
+import '../styles/HeaderDropdowns.css'; // Asegúrate de que la ruta sea correcta
+import '../styles/mobileMenu.css'; // Asegúrate de que la ruta sea correcta
+
+// Importa authService para el logout en el menú móvil
+import authService from './Auth/authService'; // Asegúrate de que la ruta sea correcta
 
 
 // Define la URL del endpoint para categorías
-const API_CATEGORIAS_URL = 'http://localhost:8085/api/categorias';
+const API_CATEGORIAS_URL = 'http://localhost:8085/api/categorias'; // Asegúrate de que la URL sea correcta
+
 
 // El componente Header recibe las props necesarias de App.js
-function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, handleToggleFavorite }) {
+function Header({
+    cartItems,
+    setCartItems,
+    favoriteItems,
+    setFavoriteItems, // Recibido pero no usado en Header, es buena práctica
+    handleToggleFavorite, // Recibido pero no usado en Header, es buena práctica
+    currentUser,        // NUEVO: información del usuario actual
+    isAuthenticated,    // NUEVO: estado de autenticación
+    onAuthChange        // NUEVO: callback para cambios de autenticación
+}) {
     const [categories, setCategories] = useState([]);
     const [loadingCategories, setLoadingCategories] = useState(true);
     const [errorCategories, setErrorCategories] = useState(null);
 
     // Estados existentes: Controlan la visibilidad del buscador expandido y los dropdowns
     const [isSearchActive, setIsSearchActive] = useState(false);
-    const [activeDropdown, setActiveDropdown] = useState(null); 
+    const [activeDropdown, setActiveDropdown] = useState(null);
 
-    // NUEVO ESTADO: Controla la visibilidad del menú móvil
+    // Estado: Controla la visibilidad del menú móvil
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Refs para manejar clics fuera del header para cerrar todo
@@ -52,6 +62,7 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
 
                 if (response.status === 204) {
                     setCategories([]);
+                     console.log("Header: No content for categories.");
                     return;
                 }
 
@@ -60,10 +71,11 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
                 }
 
                 const data = await response.json();
+                 console.log("Header: Categories fetched successfully.");
                 setCategories(data);
             } catch (err) {
                 setErrorCategories(err);
-                console.error("Error fetching categories for header:", err);
+                console.error("Header: Error fetching categories:", err);
             } finally {
                 setLoadingCategories(false);
             }
@@ -74,22 +86,21 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
     // Función para togglear el buscador expandido
     const toggleSearch = () => {
         // Cierra cualquier dropdown abierto y el menú móvil al activar el buscador
-        setActiveDropdown(null); 
+        setActiveDropdown(null);
         setIsMobileMenuOpen(false);
         const newState = !isSearchActive;
         setIsSearchActive(newState);
+         console.log("Header: Toggling search to", newState);
     };
 
-    // NUEVA FUNCIÓN: Toggle del menú móvil
+    // Función: Toggle del menú móvil
     const toggleMobileMenu = (forceState = null) => {
-        if (forceState !== null) {
-            setIsMobileMenuOpen(forceState);
-        } else {
-            setIsMobileMenuOpen(prev => !prev);
-        }
-        
+        const newState = forceState !== null ? forceState : !isMobileMenuOpen;
+        setIsMobileMenuOpen(newState);
+         console.log("Header: Toggling mobile menu to", newState);
+
         // Cierra otros elementos cuando se abre el menú móvil (o se fuerza a abrir)
-        if (forceState === true || (!isMobileMenuOpen && forceState === null)) {
+        if (newState) { // Si el menú móvil se abre
             setActiveDropdown(null);
             setIsSearchActive(false);
         }
@@ -106,9 +117,10 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
         }
     }, [isSearchActive]);
 
-    // Función para manejar el mouse enter/leave en links de navegación
+    // Función para manejar el mouse enter/leave en links de navegación (Desktop)
     let dropdownTimeoutId = null;
     const handleNavLinkHover = (dropdownName) => {
+         //console.log("Header: Mouse over nav link", dropdownName);
         // Limpia el timeout existente
         if (dropdownTimeoutId) {
             clearTimeout(dropdownTimeoutId);
@@ -121,15 +133,20 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
         }
     };
 
-    // Función para cerrar dropdown al salir del área del header (con delay)
+    // Función para cerrar dropdown al salir del área del header (con delay) (Desktop)
     const handleHeaderMouseLeave = () => {
+         //console.log("Header: Mouse leaving header area. Setting close timeout.");
+        // Establece un timeout para cerrar los dropdowns DESKTOP
         dropdownTimeoutId = setTimeout(() => {
             setActiveDropdown(null);
-        }, 200);
+            dropdownTimeoutId = null; // Limpiar el ID después de ejecutar
+             //console.log("Header: Dropdown close timeout finished.");
+        }, 200); // Pequeño delay para permitir pasar el mouse al dropdown
     };
 
-    // Función para mantener el dropdown/megamenu abierto si el mouse entra en él
+     // Función para mantener el dropdown/megamenu abierto si el mouse entra en él (Desktop)
     const handleDropdownMouseEnter = () => {
+        //console.log("Header: Mouse entering dropdown. Clearing close timeout.");
         // Limpia el timeout para evitar que se cierre
         if (dropdownTimeoutId) {
             clearTimeout(dropdownTimeoutId);
@@ -137,47 +154,43 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
         }
     };
 
-    // Efecto para cerrar todo al hacer clic fuera del header
+    // Efecto para cerrar todo al hacer clic fuera del header (Desktop/Mobile Overlays)
     useEffect(() => {
         const handleClickOutside = (event) => {
-            // Si el clic NO fue dentro del header (usando la ref) Y NO fue dentro del cart panel (si está visible)
-            // (La lógica del cart panel es mejor manejarla dentro de IconsComponent,
-            // pero para el menú móvil y search, este listener global es efectivo)
+            // Si se hace clic fuera del header, cerrar dropdowns (desktop) y buscador
             if (headerRef.current && !headerRef.current.contains(event.target)) {
-                 // Solo cerramos si el clic fue realmente fuera de CUALQUIER panel/elemento activo
-                 // Esto es una simplificación, una lógica más robusta consideraría si el clic fue en el cartPanelRef, etc.
-                 // Pero para menú móvil y search, `headerRef` es suficiente si IconsComponent maneja su propio overlay/outside click
-                 // Let's rely on IconsComponent handling its cart panel clicks.
-                
-                 // Cierra dropdowns y buscador si están activos
+                 //console.log("Header handleClickOutside: Click outside header.");
+                // Cierra dropdowns (Desktop) y buscador si están activos
                 if (activeDropdown !== null || isSearchActive) {
-                    setActiveDropdown(null); 
-                    setIsSearchActive(false); 
+                    setActiveDropdown(null);
+                    setIsSearchActive(false);
+                     //console.log("Header handleClickOutside: Closed dropdowns and search.");
                 }
-                
-                // Cierra el menú móvil SOLO si el clic fue fuera del header Y el menú móvil está abierto
-                // (IconsComponent ya maneja el cierre del carrito al abrir/cerrar el menú móvil)
-                if (isMobileMenuOpen) {
-                     setIsMobileMenuOpen(false); 
-                }
+
+                // Cierra el menú móvil si está abierto (manejado por su propio overlay/lógica de toggleMobileMenu)
+                // La lógica del menú móvil se cierra con el overlay o el botón interno.
+                // No es necesario cerrarlo aquí si el overlay ya lo maneja.
             }
-             // Note: A more precise outside click handler might be needed if panels overlap or have complex interactions,
-             // but given the current structure where mobile menu/search close other things, this might be sufficient.
-             // IconsComponent's cart logic already has its own outside click handler using cartPanelRef and iconsContainerRef.
         };
 
-        // Añadir el listener si CUALQUIERA de los paneles controlados aquí está visible
-        if (activeDropdown !== null || isSearchActive || isMobileMenuOpen) {
+        // Añadir el listener si CUALQUIERA de los paneles controlados por este useEffect está visible
+        // (principalmente dropdowns desktop y buscador expandido)
+        // El menú móvil se cierra por su propio overlay o el botón de cerrar
+        if (activeDropdown !== null || isSearchActive) {
             document.addEventListener('mousedown', handleClickOutside);
+             //console.log("Header useEffect: Added mousedown listener for outside clicks.");
         } else {
             // Limpiar el listener si nada está abierto
             document.removeEventListener('mousedown', handleClickOutside);
+             //console.log("Header useEffect: Removed mousedown listener.");
         }
+
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+             //console.log("Header useEffect: Cleanup mousedown listener.");
         };
-    }, [activeDropdown, isSearchActive, isMobileMenuOpen]); 
+    }, [activeDropdown, isSearchActive, isMobileMenuOpen]); // Incluir isMobileMenuOpen aunque no lo cerremos aquí directamente
 
 
     // Lógica para el input de búsqueda expandido
@@ -188,6 +201,7 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
             navigate(`/buscar?query=${encodeURIComponent(searchTerm.trim())}`);
             setIsSearchActive(false);
             setSearchTerm('');
+             console.log("Header: Search submitted for", searchTerm);
         }
     };
 
@@ -196,23 +210,36 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
             handleSearchSubmit();
         } else if (e.key === 'Escape') {
             setIsSearchActive(false);
+             console.log("Header: Search cancelled via Escape.");
         }
     };
+
+    // Handler para el logout en el menú móvil
+    const handleMobileLogout = () => {
+         console.log("Header: Mobile logout clicked.");
+        authService.logout(); // Llama a tu servicio de logout
+        if (onAuthChange) {
+            onAuthChange(); // Notifica a App.js sobre el cambio de autenticación
+        }
+        toggleMobileMenu(false); // Cierra el menú
+        navigate('/'); // Redirige a la página de inicio
+    };
+
 
     return (
         // Contenedor principal del header con ref y onMouseLeave
         <header className="main-header" ref={headerRef} onMouseLeave={handleHeaderMouseLeave}>
             {/* La barra superior */}
             <TopBarComponent />
-            
+
             {/* Contenedor para el logo, nav/buscador, y íconos */}
             <div className={`header-content-wrap ${isSearchActive ? 'search-active' : ''}`}>
                 {/* Logo principal (visible en desktop) */}
                 <Link to="/" className="logo-link" onClick={() => {
-                    setActiveDropdown(null); 
+                    setActiveDropdown(null);
                     setIsSearchActive(false);
-                    setIsMobileMenuOpen(false); // Cerrar menú móvil también al hacer clic en el logo principal
-                }}> 
+                    toggleMobileMenu(false); // Cerrar menú móvil al hacer clic en el logo
+                }}>
                     <LogoComponent />
                 </Link>
 
@@ -235,7 +262,7 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
                         <i className="bi bi-search"></i>
                     </button>
                     {/* Botón para cerrar el buscador */}
-                    <button className="close-button" onClick={() => setIsSearchActive(false)}>
+                    <button className="close-button" onClick={() => toggleSearch(false)}> {/* Cambiado a toggleSearch(false) */}
                         <i className="bi bi-x-lg"></i>
                     </button>
                 </div>
@@ -245,85 +272,159 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
                     categories={categories}
                     loading={loadingCategories}
                     error={errorCategories}
-                    onNavLinkHover={handleNavLinkHover} 
-                    activeDropdown={activeDropdown} 
+                    onNavLinkHover={handleNavLinkHover}
+                    activeDropdown={activeDropdown}
                 />
 
-                {/* Iconos (incluye el hamburger) */}
+                {/* Iconos (incluye el hamburger) - MODIFICADO para pasar nuevas props */}
                 <IconsComponent
                     cartItems={cartItems}
                     setCartItems={setCartItems}
                     favoriteItems={favoriteItems}
-                    setFavoriteItems={setFavoriteItems} 
-                    handleToggleFavorite={handleToggleFavorite} 
-                    toggleSearch={toggleSearch} 
+                    setFavoriteItems={setFavoriteItems} // Pasando props que IconsComponent no usa pero Header recibe
+                    handleToggleFavorite={handleToggleFavorite} // Pasando props que IconsComponent no usa
+                    toggleSearch={toggleSearch}
                     setActiveDropdown={setActiveDropdown}
-                    toggleMobileMenu={toggleMobileMenu} // Pasa la función toggle del menú móvil
+                    toggleMobileMenu={toggleMobileMenu}
+                    currentUser={currentUser}
+                    isAuthenticated={isAuthenticated}
+                    onAuthChange={onAuthChange} // Pasando callback de cambio de auth
                 />
             </div>
 
-            {/* NUEVO: Menú Móvil Panel */}
+            {/* Menú Móvil Panel */}
             <div className={`mobile-menu ${isMobileMenuOpen ? 'visible' : ''}`}>
                 <div className="mobile-menu-content">
-                    {/* NUEVO: Encabezado del Menú Móvil (Logo y Cerrar) */}
+                    {/* Encabezado del Menú Móvil (Logo y Cerrar) */}
                     <div className="mobile-menu-header">
                          {/* Logo/Nombre en el menú móvil */}
-                        <Link to="/" className="mobile-logo-link" onClick={() => setIsMobileMenuOpen(false)}> 
-                            <LogoComponent /> {/* Reutiliza el LogoComponent */}
+                        <Link to="/" className="mobile-logo-link" onClick={() => toggleMobileMenu(false)}> {/* Cerrar menú al hacer clic */}
+                            <LogoComponent />
                         </Link>
                          {/* Botón para cerrar el menú móvil */}
                         <button className="mobile-menu-close-btn" onClick={() => toggleMobileMenu(false)}>
-                             <i className="bi bi-x-lg"></i> {/* Icono de cerrar */}
+                             <i className="bi bi-x-lg"></i>
                         </button>
+                    </div>
+
+                    {/* Sección de usuario en menú móvil */}
+                    <div className="mobile-user-section">
+                        {isAuthenticated ? (
+                            <div className="mobile-user-info">
+                                <div className="mobile-user-avatar">
+                                    {currentUser?.firstName?.charAt(0).toUpperCase() ||
+                                     currentUser?.username?.charAt(0).toUpperCase() || 'U'}
+                                </div>
+                                <div className="mobile-user-details">
+                                    <p className="mobile-user-name">
+                                        ¡Hola, {currentUser?.firstName || currentUser?.username || 'Usuario'}!
+                                    </p>
+                                    <p className="mobile-user-email">{currentUser?.email}</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mobile-auth-buttons">
+                                <Link
+                                    to="/login"
+                                    className="mobile-login-btn"
+                                    onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
+                                >
+                                    Iniciar Sesión
+                                </Link>
+                                <Link
+                                    to="/registro"
+                                    className="mobile-register-btn"
+                                    onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
+                                >
+                                    Registrarse
+                                </Link>
+                            </div>
+                        )}
                     </div>
 
                     {/* Enlaces de navegación para móvil */}
                     <div className="mobile-nav-links">
-                    <Link 
-                            to="/" 
+                        <Link
+                            to="/"
                             className="mobile-nav-link"
-                            onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic
+                            onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
                         >
                             Inicio
                         </Link>
-                        <Link 
-                            to="/Tienda" 
+                        <Link
+                            to="/tienda"
                             className="mobile-nav-link"
-                            onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic
+                            onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
                         >
                             Tienda
                         </Link>
-                        <Link 
-                            to="/ofertas" 
+                        <Link
+                            to="/ofertas"
                             className="mobile-nav-link"
-                            onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic
+                            onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
                         >
                             Ofertas
                         </Link>
-                         {/* Puedes añadir más enlaces aquí si es necesario */}
-                         <Link 
-                            to="/marcas" 
+                        <Link
+                            to="/marcas"
                             className="mobile-nav-link"
-                            onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic
+                            onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
                         >
                             Marcas
                         </Link>
-
-                        <Link 
+                        <Link
                             to="/nosotros"
                             className="mobile-nav-link"
-                            onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic
+                            onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
                         >
                             Sobre Nosotros
                         </Link>
-
-                        <Link 
+                        <Link
                             to="/ayuda"
                             className="mobile-nav-link"
-                            onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic
+                            onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
                         >
                             Ayuda
                         </Link>
+
+                        {/* Enlaces específicos para usuarios autenticados */}
+                        {isAuthenticated && (
+                            <>
+                                <div className="mobile-nav-divider"></div> {/* Línea separadora */}
+                                <Link
+                                    to="/perfil"
+                                    className="mobile-nav-link"
+                                    onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
+                                >
+                                    <i className="bi bi-person-circle"></i>
+                                    Mi Perfil
+                                </Link>
+                                <Link
+                                    to="/mis-pedidos"
+                                    className="mobile-nav-link"
+                                    onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
+                                >
+                                    <i className="bi bi-box-seam"></i>
+                                    Mis Pedidos
+                                </Link>
+                                <Link
+                                    to="/direcciones"
+                                    className="mobile-nav-link"
+                                    onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
+                                >
+                                    <i className="bi bi-geo-alt"></i>
+                                    Mis Direcciones
+                                </Link>
+                                {/* AÑADIR BOTÓN CERRAR SESIÓN EN MENÚ MÓVIL */}
+                                <button
+                                     onClick={handleMobileLogout}
+                                     className="mobile-nav-link logout-button" // Puedes usar la clase logout-button para el color rojo
+                                >
+                                     <i className="bi bi-box-arrow-right"></i>
+                                     Cerrar Sesión
+                                </button>
+                            </>
+                        )}
                     </div>
 
                     {/* Categorías en el menú móvil */}
@@ -331,13 +432,12 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
                         <div className="mobile-categories">
                             <h3 className="mobile-section-title">Categorías</h3>
                             <div className="mobile-category-list">
-                                {/* Mapear todas las categorías, no solo 6 */}
                                 {categories.map((category) => (
                                     <Link
                                         key={category.id}
                                         to={`/categoria/${category.id}`}
                                         className="mobile-category-link"
-                                        onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic
+                                        onClick={() => toggleMobileMenu(false)} // Cerrar menú al navegar
                                     >
                                         {category.nombre}
                                     </Link>
@@ -345,43 +445,38 @@ function Header({ cartItems, setCartItems, favoriteItems, setFavoriteItems, hand
                             </div>
                         </div>
                     )}
-                     {/* Puedes añadir otros elementos aquí si quieres, como enlaces a redes sociales, etc. */}
                 </div>
             </div>
 
             {/* Overlay del menú móvil */}
             {isMobileMenuOpen && (
-                <div 
-                    className="mobile-menu-overlay" 
-                    onClick={() => setIsMobileMenuOpen(false)} // Cerrar menú al hacer clic en el overlay
+                <div
+                    className="mobile-menu-overlay"
+                    onClick={() => toggleMobileMenu(false)} // Cerrar menú al hacer clic en overlay
                 ></div>
             )}
 
             {/* Dropdown de Categorías (Desktop) */}
-            {/* Asegúrate de que estos dropdowns no se muestren si el menú móvil está abierto */}
-            {!isMobileMenuOpen && (
-                <CategoryDropdown 
+            {!isMobileMenuOpen && ( // Asegurarse de que no se muestren en mobile
+                <CategoryDropdown
                     categories={categories}
                     loading={loadingCategories}
                     error={errorCategories}
                     className={`category-dropdown ${activeDropdown === 'productos' ? 'visible' : ''}`}
                     onMouseEnter={handleDropdownMouseEnter}
                     onMouseLeave={handleHeaderMouseLeave}
-                    // Pasa handler para cerrar menú móvil si se abren estos (aunque deberían estar ocultos por CSS)
-                    onLinkClick={() => { setActiveDropdown(null); setIsMobileMenuOpen(false); }} 
+                    onLinkClick={() => { setActiveDropdown(null); setIsMobileMenuOpen(false); }} // Cerrar dropdowns al hacer clic en link
                 />
             )}
 
             {/* MegaMenu de Ofertas (Desktop) */}
-             {/* Asegúrate de que estos menús no se muestren si el menú móvil está abierto */}
-             {!isMobileMenuOpen && menuData && menuData.ofertas && 
-                <MegaMenu 
-                    columns={menuData.ofertas} 
+             {!isMobileMenuOpen && menuData && menuData.ofertas && // Asegurarse de que no se muestren en mobile
+                <MegaMenu
+                    columns={menuData.ofertas}
                     className={`mega-menu ${activeDropdown === 'ofertas' ? 'visible' : ''}`}
                     onMouseEnter={handleDropdownMouseEnter}
                     onMouseLeave={handleHeaderMouseLeave}
-                     // Pasa handler para cerrar menú móvil si se abren estos (aunque deberían estar ocultos por CSS)
-                    onLinkClick={() => { setActiveDropdown(null); setIsMobileMenuOpen(false); }} 
+                    onLinkClick={() => { setActiveDropdown(null); setIsMobileMenuOpen(false); }} // Cerrar dropdowns al hacer clic en link
                 />
             }
 

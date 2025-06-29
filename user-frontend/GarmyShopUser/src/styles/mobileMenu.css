@@ -154,3 +154,101 @@
         display: none !important; /* Usa !important para asegurar que se oculta */
     }
 }
+
+/* Añadir a src/styles/mobileMenu.css */
+
+/* Sección de usuario en menú móvil */
+.mobile-user-section {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+  }
+  
+  .mobile-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .mobile-user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e24aa8;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .mobile-user-details {
+    flex: 1;
+  }
+  
+  .mobile-user-name {
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+  }
+  
+  .mobile-user-email {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .mobile-auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .mobile-login-btn,
+  .mobile-register-btn {
+    display: block;
+    padding: 12px;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .mobile-login-btn {
+    background-color: #000000;
+    color: white;
+  }
+  
+  .mobile-login-btn:hover {
+    background-color: #f697ca;
+    border: 1px solid #000000;
+    color: rgb(0, 0, 0);
+  }
+  
+  .mobile-register-btn {
+    border: 1px solid #000000;
+    color: #000000;
+    background-color: white;
+  }
+  
+  .mobile-register-btn:hover {
+    background-color: #efefef;
+    color: #000000;
+  }
+  
+  /* Divisor para enlaces de usuario autenticado */
+  .mobile-nav-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 10px 0;
+  }
+  
+  /* Estilos para enlaces con iconos */
+  .mobile-nav-link i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+  }
