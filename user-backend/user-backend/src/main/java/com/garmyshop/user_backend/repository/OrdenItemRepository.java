@@ -12,5 +12,4 @@ public interface OrdenItemRepository extends JpaRepository<OrdenItem, Integer> {
 
     List<OrdenItem> findByCombinacion(CombinacionProducto combinacion);
 
-
 }
