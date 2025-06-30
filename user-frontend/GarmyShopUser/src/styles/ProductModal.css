@@ -72,35 +72,22 @@
   gap: 20px;
 }
 
-
-/* ===== SOLUCIÓN CON MARCO INTERIOR ===== */
-
-/* 1. EL CONTENEDOR (EL MARCO): Sigue siendo un cuadrado de tamaño fijo. */
 .main-image-container {
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: 8px;
   overflow: hidden;
   background-color: #f8f8f8;
-
-  /* ¡NUEVO! Añadimos un espacio interior para crear el efecto de "marquito" */
   padding: 10px;
-  
-  /* ¡NUEVO! Esencial para que el padding no aumente el tamaño exterior del contenedor */
   box-sizing: border-box;
 }
 
-/* 2. LA IMAGEN: Sigue llenando el espacio disponible, que ahora es el interior del padding. */
 .modal-main-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Un pequeño redondeo para la imagen dentro del marco, queda muy bien */
   border-radius: 4px;
 }
-
-/* ===== FIN DE LA SOLUCIÓN ===== */
-
 
 .modal-thumbnails {
   display: flex;
@@ -158,6 +145,7 @@
   flex-direction: column;
   gap: 10px;
   align-items: flex-start;
+  width: 100%;
 }
 
 .modal-option label {
@@ -166,7 +154,8 @@
   font-size: 1rem;
 }
 
-.color-options {
+.color-options,
+.size-options {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -178,9 +167,12 @@
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
   position: relative;
-  border: 1px solid #333;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .color-option:hover {
@@ -189,15 +181,30 @@
 
 .color-option.selected {
   transform: scale(1.1);
-  box-shadow: 0 0 0 2px #000000;
-  border: 1px solid #333;
+  box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #000000;
 }
 
-.size-options {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+.color-option.disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+  position: relative;
+  overflow: hidden;
+}
+
+.color-option.disabled::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  width: 120%;
+  height: 2px;
+  background-color: #7f7f7f;
+  transform: rotate(45deg);
+  transform-origin: center center;
+}
+
+.color-option.disabled:hover {
+  transform: none;
 }
 
 .size-option {
@@ -227,6 +234,28 @@
   color: #999;
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.check-icon {
+  width: 15px;
+  height: 15px;
+  stroke: white;
+  stroke-width: 3;
+  filter: drop-shadow(0px 1px 1.5px rgba(0, 0, 0, 0.8));
+  opacity: 0;
+  transform: scale(0.5);
+  animation: check-fade-in 0.2s 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes check-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-45deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 .quantity-selector {
@@ -275,100 +304,38 @@
   cursor: pointer;
   transition: background-color 0.3s;
   margin-top: 20px;
-  margin-bottom: 20px;
   width: auto;
   max-width: 250px;
   align-self: flex-start;
 }
 
-.modal-add-btn:hover {
+.modal-add-btn:hover:not(:disabled) {
   background-color: #f988c0;
+}
+
+.modal-add-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
 /* Responsive - MÓVIL */
 @media (max-width: 768px) {
-  .modal-overlay {
-    padding: 15px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-content {
-    margin: 0;
-    max-height: 90vh;
-    width: 95%;
-    max-width: 500px;
-  }
-
-  .modal-body {
-    grid-template-columns: 1fr;
-    gap: 25px;
-    padding: 40px 25px 30px 25px;
-  }
-  
-  .modal-images {
-    display: flex !important;
-    flex-direction: column;
-    gap: 15px;
-    order: -1;
-    margin-bottom: 20px;
-  }
-
-  /* La misma solución se aplica en móvil */
-  .main-image-container {
-    margin: 0 auto;
-    max-width: 100%;
-  }
-
-  .modal-info {
-    text-align: center;
-    padding: 0;
-    gap: 20px;
-    align-items: center;
-  }
-  
-  .modal-info h2 {
-    font-size: 1.4rem;
-    text-align: center;
-  }
-
-  .modal-option {
-    align-items: center;
-  }
-
-  .color-options,
-  .size-options,
-  .quantity-selector {
-    justify-content: center;
-  }
-
-  .modal-add-btn {
-    align-self: center;
-  }
+  .modal-overlay { padding: 15px; align-items: center; justify-content: center; }
+  .modal-content { margin: 0; max-height: 90vh; width: 95%; max-width: 500px; }
+  .modal-body { grid-template-columns: 1fr; gap: 25px; padding: 40px 25px 30px 25px; }
+  .modal-images { order: -1; margin-bottom: 20px; }
+  .main-image-container { margin: 0 auto; max-width: 100%; }
+  .modal-info { text-align: center; padding: 0; gap: 20px; align-items: center; }
+  .modal-info h2 { font-size: 1.4rem; text-align: center; }
+  .modal-option { align-items: center; }
+  .color-options, .size-options, .quantity-selector { justify-content: center; }
+  .modal-add-btn { align-self: center; }
 }
 
 @media (max-width: 480px) {
-  .modal-overlay {
-    padding: 10px;
-  }
-  
-  .modal-content {
-    width: 98%;
-    max-width: 400px;
-  }
-
-  .modal-body {
-    padding: 35px 20px 25px 20px;
-    gap: 20px;
-  }
-
-  .modal-info h2 {
-    font-size: 1.3rem;
-  }
-
-  .modal-add-btn {
-    padding: 12px 20px;
-    font-size: 0.9rem;
-    max-width: 200px;
-  }
+  .modal-overlay { padding: 10px; }
+  .modal-content { width: 98%; max-width: 400px; }
+  .modal-body { padding: 35px 20px 25px 20px; gap: 20px; }
+  .modal-info h2 { font-size: 1.3rem; }
+  .modal-add-btn { padding: 12px 20px; font-size: 0.9rem; max-width: 200px; }
 }
