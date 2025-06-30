@@ -1,12 +1,11 @@
-
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+// src/components/Auth/RegisterForm.jsx
+import React, { useState, useEffect } from 'react'; // Importa useEffect si quieres manejar errores de OAuth2 como en Login
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // Importa useLocation
 import AuthLayout from './AuthLayout';
 import '../../styles/auth.css';
-// Asegúrate de que la ruta a authService sea correcta
-import authService from './authService'; 
+import authService from './authService'; // Asegúrate de que la ruta a authService sea correcta
 
-// ... (tus iconos EyeIcon, EyeOffIcon, GoogleIcon permanecen igual)
+// Iconos (mantén tus iconos)
 const EyeIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -43,6 +42,19 @@ const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation(); // Hook para acceder al estado de navegación
+
+  // Leer el posible error pasado por el OAuth2 Redirect Handler
+  const oauthError = location.state?.oauthError;
+
+  // Mostrar el error de OAuth2 si existe y luego limpiarlo del estado
+  useEffect(() => {
+    if (oauthError) {
+      setError('Error durante el registro/login con Google: ' + oauthError);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [oauthError, navigate, location.pathname]);
+
 
   const handleChange = (e) => {
     setFormData({
@@ -60,14 +72,13 @@ const RegisterForm = () => {
     }
     
     setIsLoading(true);
-    setError('');
+    setError(''); // Limpiar errores anteriores (incluyendo posibles errores de OAuth2)
     
     try {
-      // Llamar al servicio de registro con todos los campos necesarios
       await authService.register(
         formData.firstName,
         formData.lastName,
-        formData.username, // <-- PASAR USERNAME
+        formData.username,
         formData.email,
         formData.password
       );
@@ -77,20 +88,27 @@ const RegisterForm = () => {
       
     } catch (error) {
       console.error('Error en registro:', error);
-      // El error ya viene formateado desde el servicio
-      setError(String(error)); 
+      // El error ya viene formateado desde el servicio o puede ser un objeto/texto
+      const errorMessage = error.message || error.response?.data?.message || String(error);
+      setError(errorMessage); 
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleSignup = async () => {
-    // ... (lógica de google sin cambios)
+  // ** IMPLEMENTACIÓN DEL BOTÓN DE GOOGLE **
+  const handleGoogleSignup = () => {
+     // Redirige el navegador al endpoint de inicio de OAuth2 de Google en tu backend.
+     // Este es el mismo endpoint usado para iniciar sesión,
+     // ya que el backend maneja si el usuario necesita ser registrado o no.
+     window.location.href = 'http://localhost:8085/oauth2/authorization/google'; 
+     // Opcional: setIsLoading(true); si quieres mostrar un spinner antes de la redirección.
   };
 
   return (
     <AuthLayout title="Crea Una Cuenta" subtitle="Únete a la familia GramyShop">
       <form onSubmit={handleSubmit} className="auth-form">
+        {/* Mostrar errores, incluyendo los recibidos de la redirección OAuth2 */}
         {error && <div className="auth-error">{error}</div>}
         
         <div className="name-inputs-row">
@@ -120,7 +138,7 @@ const RegisterForm = () => {
           </div>
         </div>
 
-        {/* NUEVO: Campo para el nombre de usuario */}
+        {/* Campo para el nombre de usuario */}
         <div className="auth-input-group">
           <input
             type="text"
@@ -208,10 +226,11 @@ const RegisterForm = () => {
           <span>O</span>
         </div>
 
+        {/* Botón de Google: Llama a handleGoogleSignup */}
         <button 
           type="button" 
-          onClick={handleGoogleSignup}
-          disabled={isLoading}
+          onClick={handleGoogleSignup} // Llama a la nueva función
+          disabled={isLoading} // Deshabilita si el formulario normal está procesando
           className="google-button"
         >
           <GoogleIcon />
