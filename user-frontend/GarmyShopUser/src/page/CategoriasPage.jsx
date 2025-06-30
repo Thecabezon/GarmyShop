@@ -1,14 +1,13 @@
-// src/page/CategoriasPage.jsx
 import React, { useEffect, useState } from 'react';
-import CategoriaList from '../components/Categorias/CategoriasList'; // Asegúrate que esta ruta sea correcta
-import '../styles/Categorias.css'; // Estilos para la página
+import CategoriaList from '../components/Categorias/CategoriasList';
+import '../styles/Categorias.css';
 
 function CategoriasPage() {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_URL = 'http://localhost:8085/api/categorias'; // Cambia si usas variable de entorno
+  const API_URL = 'http://localhost:8085/api/categorias';
 
   useEffect(() => {
     const fetchCategorias = async () => {

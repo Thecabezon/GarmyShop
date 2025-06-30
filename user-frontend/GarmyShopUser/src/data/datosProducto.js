@@ -1,6 +1,4 @@
-// src/data/datosProducto.js
 
-// Datos para el producto que se está viendo en detalle
 export const productoDetalle = {
   id: "blu06013gsa",
   nombre: "Blusa Manga 3/4 Acampanada Forrada",
@@ -12,16 +10,16 @@ export const productoDetalle = {
     slug: "blusas"
   },
   imagenes: [
-    "https://ae01.alicdn.com/kf/H2e6eb19804e543c698322c47e2c5533dR.jpg_960x960.jpg", // Imagen principal de tu ejemplo
-    "https://m.media-amazon.com/images/I/61kBS9-MJZL._AC_SL1080_.jpg", // Imagen de la modelo de espalda
-    "https://i.pinimg.com/originals/f2/91/88/f29188204ca351f2b0cb604b51fc409a.jpg", // Imagen de la modelo de lado
-    "https://ae01.alicdn.com/kf/H2e6eb19804e543c698322c47e2c5533dR.jpg_960x960.jpg", // Otra imagen de la modelo
-    "https://image.made-in-china.com/202f0j00MjhUzSPBALbk/Women-Korean-Ruffles-Clothing-Streetwear-Slim-Chiffon-Blouses-Elegant-Shirts.webp"  // Una blusa similar en otro color
+    "https://ae01.alicdn.com/kf/H2e6eb19804e543c698322c47e2c5533dR.jpg_960x960.jpg",
+    "https://m.media-amazon.com/images/I/61kBS9-MJZL._AC_SL1080_.jpg",
+    "https://i.pinimg.com/originals/f2/91/88/f29188204ca351f2b0cb604b51fc409a.jpg",
+    "https://ae01.alicdn.com/kf/H2e6eb19804e543c698322c47e2c5533dR.jpg_960x960.jpg",
+    "https://image.made-in-china.com/202f0j00MjhUzSPBALbk/Women-Korean-Ruffles-Clothing-Streetwear-Slim-Chiffon-Blouses-Elegant-Shirts.webp"
   ],
   tallasDisponibles: [
     { talla: 'S', disponible: true },
     { talla: 'M', disponible: true },
-    { talla: 'L', disponible: false }, // Talla no disponible
+    { talla: 'L', disponible: false },
     { talla: 'XL', disponible: false },
   ],
   coloresDisponibles: [
@@ -35,7 +33,6 @@ export const productoDetalle = {
   infoEnvio: "Envío estándar de 3 a 5 días hábiles. Envío express disponible por un costo adicional. Devoluciones gratuitas dentro de los 30 días posteriores a la compra."
 };
 
-// Datos para la sección de productos recomendados
 export const productosRecomendados = [
   {
     cod: 101,

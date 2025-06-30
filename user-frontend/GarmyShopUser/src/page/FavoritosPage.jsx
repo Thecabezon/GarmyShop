@@ -1,4 +1,3 @@
-// src/pages/FavoritosPage.js
 
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -20,12 +19,10 @@ export const FavoritosPage = ({ favoriteItems, handleToggleFavorite }) => {
 
             return (
               <div key={producto.id || producto.cod} className="ropa-card">
-                {/* --- ESTRUCTURA CORREGIDA --- */}
                 <div className="ropa-imagen">
                   <Link to={`/tienda/${producto.id || producto.cod}`}>
                     <img src={fullImageUrl} alt={producto.nombre} />
                   </Link>
-                  {/* --- CAMBIO: El botón del corazón ahora está aquí, sobre la imagen --- */}
                   <button
                     onClick={() => handleToggleFavorite(producto)}
                     className="me-encanta-btn liked"
@@ -48,7 +45,6 @@ export const FavoritosPage = ({ favoriteItems, handleToggleFavorite }) => {
                   </div>
                 </div>
 
-                {/* --- CAMBIO: Ahora solo hay un botón claro y grande abajo --- */}
                 <div className="ropa-acciones">
                   <Link to={`/tienda/${producto.id || producto.cod}`} className="ver-producto-btn-full">
                     Ver Detalles

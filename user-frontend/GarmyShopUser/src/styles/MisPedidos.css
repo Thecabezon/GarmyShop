@@ -1,173 +1,188 @@
+/* src/styles/MisPedidos.css */
 
 .pedidos-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-  }
-  
-  .pedidos-container h1 {
-    margin-bottom: 30px;
-    font-size: 2rem;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.pedidos-container h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
     color: #333;
-  }
-  
-  .loading-spinner {
+}
+
+.loading-container {
     text-align: center;
-    padding: 40px;
-    color: #666;
-    font-size: 1.1rem;
-  }
-  
-  .error-message {
-    background-color: #ffebee;
-    color: #c62828;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-  }
-  
-  .retry-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-  }
-  
-  .retry-button:hover {
-    background-color: #d32f2f;
-  }
-  
-  .no-pedidos {
-    text-align: center;
-    padding: 60px 20px;
-    background-color: #f9f9f9;
+    padding: 4rem 0;
+}
+
+.loading-container .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #e83e8c;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem auto;
+}
+
+.loading-container p {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
     border-radius: 8px;
-  }
-  
-  .no-pedidos p {
-    margin-bottom: 20px;
-    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.no-pedidos {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: #f8f9fa;
+    border: 2px dashed #e0e0e0;
+    border-radius: 12px;
+}
+
+.no-pedidos-icon {
+    font-size: 4rem;
+    color: #cccccc;
+    margin-bottom: 1rem;
+}
+
+.no-pedidos h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.no-pedidos p {
     color: #666;
-  }
-  
-  .shop-now-button {
-    display: inline-block;
-    background-color: #4a90e2;
+    margin-bottom: 1.5rem;
+}
+
+.primary-button {
+    background-color: #e83e8c;
     color: white;
-    padding: 12px 24px;
-    border-radius: 4px;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     transition: background-color 0.2s;
-  }
-  
-  .shop-now-button:hover {
-    background-color: #3a7bc8;
-  }
-  
-  .pedidos-list {
+}
+
+.primary-button:hover {
+    background-color: #c22f73;
+}
+
+.pedidos-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-  }
-  
-  .pedido-card {
+    gap: 1.5rem;
+}
+
+.pedido-card {
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
     overflow: hidden;
-  }
-  
-  .pedido-header {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pedido-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.pedido-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .pedido-info h3 {
-    margin: 0;
-    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.pedido-info h3 {
+    font-size: 1.2rem;
+    margin: 0 0 0.25rem 0;
     color: #333;
-  }
-  
-  .pedido-fecha {
-    margin: 5px 0 0;
+}
+
+.pedido-fecha {
     font-size: 0.9rem;
-    color: #666;
-  }
-  
-  .estado-badge {
-    display: inline-block;
-    padding: 6px 12px;
+    color: #6c757d;
+    margin: 0;
+}
+
+.estado-badge {
+    padding: 0.3rem 0.8rem;
     border-radius: 20px;
     font-size: 0.85rem;
-    font-weight: 500;
-  }
-  
-  .estado-badge.entregado {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-  }
-  
-  .estado-badge.en-proceso {
-    background-color: #e3f2fd;
-    color: #1565c0;
-  }
-  
-  .estado-badge.enviado {
-    background-color: #fff8e1;
-    color: #f57f17;
-  }
-  
-  .estado-badge.cancelado {
-    background-color: #ffebee;
-    color: #c62828;
-  }
-  
-  .pedido-items {
-    padding: 15px 20px;
-  }
-  
-  .pedido-item {
+    font-weight: 600;
+    color: white;
+}
+
+.estado-badge.pendiente { background-color: #ffc107; color: #333; }
+.estado-badge.enviado { background-color: #17a2b8; }
+.estado-badge.entregado { background-color: #28a745; }
+.estado-badge.cancelado { background-color: #dc3545; }
+
+.pedido-items-summary {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    color: #555;
+}
+
+.pedido-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
-  }
-  
-  .pedido-item:last-child {
-    border-bottom: none;
-  }
-  
-  .item-name {
-    margin: 0 0 5px;
-    font-weight: 500;
-    color: #333;
-  }
-  
-  .item-quantity {
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.pedido-total {
+    text-align: right;
+}
+
+.pedido-total p {
     margin: 0;
     font-size: 0.9rem;
-    color: #666;
-  }
-  
-  .item-price {
-    font-weight: 500;
+    color: #6c757d;
+}
+
+.pedido-total .total-amount {
+    font-size: 1.2rem;
+    font-weight: 700;
     color: #333;
-  }
-  
-  .pedido-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #f9f9f9;      
-  }
+}
+
+.ver-detalles-button {
+    background-color: #343a40;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.ver-detalles-button:hover {
+    background-color: #23272b;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

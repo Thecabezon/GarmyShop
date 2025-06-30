@@ -3,22 +3,18 @@ import '../styles/Footer.css';
 
 const Footer = () => {
     return (
-      // Usamos bg-dark para el fondo negro y text-white para el texto general
       <footer className="bg-footer text-white py-5 mt-5">
 
         <div className="container">
           <div className="row">
-            {/* Información de la Tienda */}
             <div className="col-md-4 mb-4">
-              {/* Usamos la clase personalizada text-pink para el título */}
               <h5 className="fw-bold mb-3 text-pink">🌷 Gamyshop</h5>
-              {/* El texto general sigue siendo blanco gracias a text-white en el footer */}
               <p className="text-light"> 
                 Tu destino de moda femenina online. 
                 Descubre las últimas tendencias y prendas exclusivas 
                 para expresar tu estilo único.
               </p>
-              {/* Redes Sociales - los iconos y enlaces serán blancos (text-white) */}
+              {/* Redes Sociales - los iconos y enlaces serán blancos */}
               <div className="d-flex gap-3">
                 <a href="[Enlace a Facebook]" className="text-white fs-5" target="_blank" rel="noopener noreferrer">
                   <i className="bi bi-facebook"></i>
@@ -35,12 +31,9 @@ const Footer = () => {
               </div>
             </div>
             
-            {/* Enlaces rápidos / Navegación */}
             <div className="col-md-2 mb-4">
-              {/* Usamos la clase personalizada text-pink para el título */}
               <h6 className="fw-bold mb-3 text-pink">Enlaces Útiles</h6>
               <ul className="list-unstyled">
-                {/* Los enlaces ahora usan text-white */}
                 <li className="mb-2">
                   <a href="/" className="text-white text-decoration-none">
                     Inicio
@@ -71,55 +64,49 @@ const Footer = () => {
   
             {/* Ayuda y Servicios */}
             <div className="col-md-3 mb-4">
-               {/* Usamos la clase personalizada text-pink para el título */}
               <h6 className="fw-bold mb-3 text-pink">Ayuda y Servicios</h6>
               <ul className="list-unstyled">
-                {/* Los enlaces ahora usan text-white, los iconos text-pink */}
                 <li className="mb-2">
                   <a href="/como-comprar" className="text-white text-decoration-none">
-                    <i className="bi bi-cart3 me-2 text-pink"></i> {/* Icono rosa */}
+                    <i className="bi bi-cart3 me-2 text-pink"></i> 
                     Cómo Comprar
                   </a>
                 </li>
                 <li className="mb-2">
                   <a href="/envios" className="text-white text-decoration-none">
-                    <i className="bi bi-truck me-2 text-pink"></i> {/* Icono rosa */}
+                    <i className="bi bi-truck me-2 text-pink"></i> 
                     Información de Envío
                   </a>
                 </li>
                 <li className="mb-2">
                   <a href="/devoluciones" className="text-white text-decoration-none">
-                    <i className="bi bi-arrow-repeat me-2 text-pink"></i> {/* Icono rosa */}
+                    <i className="bi bi-arrow-repeat me-2 text-pink"></i> 
                     Devoluciones y Cambios
                   </a>
                 </li>
                 <li className="mb-2">
                   <a href="/guia-tallas" className="text-white text-decoration-none">
-                    <i className="bi bi-rulers me-2 text-pink"></i> {/* Icono rosa */}
+                    <i className="bi bi-rulers me-2 text-pink"></i> 
                     Guía de Tallas
                   </a>
                 </li>
                  <li className="mb-2">
                   <a href="/soporte" className="text-white text-decoration-none">
-                    <i className="bi bi-chat-dots me-2 text-pink"></i> {/* Icono rosa */}
+                    <i className="bi bi-chat-dots me-2 text-pink"></i> 
                     Soporte (Chatbot disponible)
                   </a>
                 </li>
               </ul>
             </div>
   
-            {/* Newsletter Suscripción */}
             <div className="col-md-3 mb-4">
-              {/* Usamos la clase personalizada text-pink para el título */}
               <h6 className="fw-bold mb-3 text-pink">Suscríbete</h6>
-              {/* El texto sigue siendo blanco */}
               <p className="text-light">
                 Sé la primera en enterarte de nuestras novedades, ofertas y 
                 promociones exclusivas.
               </p>
               <form>
                 <div className="mb-3">
-                  {/* El input usa la clase form-control de Bootstrap, que se adapta al tema oscuro */}
                   <input 
                     type="email" 
                     className="form-control" 
@@ -128,28 +115,23 @@ const Footer = () => {
                     aria-label="Ingresa tu correo electrónico para suscribirte"
                   />
                 </div>
-                {/* Usamos una clase personalizada para el botón rosa */}
                 <button type="submit" className="btn btn-pink w-100">
                   Suscribirse
                 </button>
               </form>
             </div>
 
-          </div> {/* Fin row principal */}
+          </div>
   
-          {/* La línea divisoria ahora es border-light para que sea blanca */}
           <hr className="my-4 border-light" /> 
           
-          {/* Copyright y Enlaces Legales */}
           <div className="row align-items-center">
             <div className="col-md-6">
-              {/* El texto del copyright sigue siendo blanco */}
               <p className="text-light mb-0 text-center text-md-start">
                 © 2025 Gamyshop. Todos los derechos reservados.
               </p>
             </div>
             <div className="col-md-6 text-center text-md-end">
-               {/* Los enlaces legales ahora usan text-white */}
               <a href="/terminos" className="text-white text-decoration-none me-3">
                 Términos de Servicio
               </a>
@@ -158,7 +140,7 @@ const Footer = () => {
               </a>
             </div>
           </div>
-        </div> {/* Fin container */}
+        </div>
       </footer>
     );
   };

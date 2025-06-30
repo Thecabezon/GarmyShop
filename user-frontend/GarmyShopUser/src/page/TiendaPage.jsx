@@ -12,7 +12,6 @@ export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorit
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   
-  // Estado para gestionar la carga dentro del modal
   const [modalLoading, setModalLoading] = useState(false);
 
   useEffect(() => {
@@ -34,16 +33,13 @@ export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorit
     fetchProductos();
   }, []);
 
-  // Función actualizada para manejar la apertura del modal
   const handleOpenModal = async (producto) => {
-    // Si el producto ya tiene los datos completos (viene de RopaComponente)
     if (producto.combinacionesDisponibles) {
       setSelectedProduct(producto);
       setIsModalOpen(true);
       return;
     }
 
-    // Si no tiene datos completos, los obtenemos
     setModalLoading(true);
     setIsModalOpen(true);
     setSelectedProduct({ nombre: "Cargando..." });

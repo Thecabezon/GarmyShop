@@ -36,16 +36,13 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
 
         const fullListaImagenes = apiData.imagenes.map(img => `${CLOUDINARY_BASE_URL}/${img.imagen}`);
 
-        // Calcula displayPrice y originalPrice aquí
         const hasOffer = apiData.precioOferta != null && apiData.precioOferta < apiData.precio;
         const displayPrice = hasOffer ? apiData.precioOferta : apiData.precio;
         const originalPrice = hasOffer ? apiData.precio : null;
 
-        // Procesar combinaciones disponibles
         if (apiData.combinacionesDisponibles && apiData.combinacionesDisponibles.length > 0) {
           setCombinacionesDisponibles(apiData.combinacionesDisponibles);
           
-          // Extraer tallas únicas disponibles
           const tallas = [...new Set(apiData.combinacionesDisponibles
             .map(c => c.talla.nombre))]
             .map(nombreTalla => ({
@@ -54,7 +51,6 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
             }));
           setTallasDisponibles(tallas);
           
-          // Extraer colores únicos disponibles
           const colores = apiData.combinacionesDisponibles
             .map(c => c.color)
             .filter((color, index, self) => 
@@ -94,44 +90,44 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
   }, [cod]);
 
   
-const handleAddToCartClick = () => {
-  if (!selectedSize) {
-    alert("Por favor, selecciona una talla.");
-    return;
-  }
-  if (!selectedColor) {
-    alert("Por favor, selecciona un color.");
-    return;
-  }
-
-  // Verificar si la combinación seleccionada está disponible
-  const combinacionSeleccionada = combinacionesDisponibles.find(
-    c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id
-  );
-
-  if (!combinacionSeleccionada) {
-    alert("La combinación seleccionada no está disponible.");
-    return;
-  }
-
-  const itemToAdd = {
-    ...productoActual,
-    id: productoActual.id,
-    nombre: productoActual.nombre,
-    talla: selectedSize,
-    color: selectedColor,
-    cantidad: quantity,
-    quantity: quantity, // Añadir quantity para compatibilidad
-    price: productoActual.displayPrice,
-    displayPrice: productoActual.displayPrice, // Añadir displayPrice para compatibilidad
-    precio: productoActual.precio, // Mantener el precio original
-    imagen: productoActual.imagenes?.[0] || '', // Usar la primera imagen
-    idUnicoCarrito: `${productoActual.id}-${selectedSize}-${selectedColor.nombre}`
+  const handleAddToCartClick = () => {
+    if (!selectedSize) {
+      alert("Por favor, selecciona una talla.");
+      return;
+    }
+    if (!selectedColor) {
+      alert("Por favor, selecciona un color.");
+      return;
+    }
+  
+    const combinacionSeleccionada = combinacionesDisponibles.find(
+      c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id
+    );
+  
+    if (!combinacionSeleccionada) {
+      alert("La combinación seleccionada no está disponible.");
+      return;
+    }
+  
+    const itemToAdd = {
+      ...productoActual,
+      id: productoActual.id,
+      nombre: productoActual.nombre,
+      talla: selectedSize,
+      color: selectedColor,
+      cantidad: quantity,
+      quantity: quantity,
+      price: productoActual.displayPrice,
+      displayPrice: productoActual.displayPrice,
+      precio: productoActual.precio,
+      imagen: productoActual.imagenes?.[0] || '',
+      idUnicoCarrito: `${productoActual.id}-${combinacionSeleccionada.id}`,
+      combinacionProductoId: combinacionSeleccionada.id
+    };
+  
+    handleAddToCart(itemToAdd);
+    alert(`${productoActual.nombre} ha sido añadido al carrito.`);
   };
-
-  handleAddToCart(itemToAdd);
-  alert(`${productoActual.nombre} ha sido añadido al carrito.`);
-};
 
   if (loading) return <div className="page-status"><h1>Cargando...</h1></div>;
   if (error) return <div className="page-status"><h1>Error: {error}</h1></div>;

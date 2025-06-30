@@ -1,8 +1,11 @@
+// src/page/MisPedidosPage.jsx
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../styles/MisPedidos.css'; // Crearemos este archivo después
-import authService from '../Auth/authService';
+import '../styles/MisPedidos.css';
+import authService from '../components/Auth/authService';
+
+const API_BASE_URL = 'http://localhost:8085';
 
 const MisPedidosPage = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -11,49 +14,35 @@ const MisPedidosPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verificar si el usuario está autenticado
-    if (!authService.isAuthenticated()) {
-      navigate('/login');
+    const token = localStorage.getItem('token');
+    if (!authService.isAuthenticated() || !token) {
+      navigate('/login?redirect=/mis-pedidos');
       return;
     }
 
-    // Función para cargar los pedidos
     const fetchPedidos = async () => {
       setIsLoading(true);
       setError('');
-      
+     
       try {
-        // Aquí iría la llamada a la API para obtener los pedidos del usuario
-        // Por ahora, usamos datos de ejemplo
-        const mockPedidos = [
-          {
-            id: 'ORD-12345',
-            fecha: '2023-05-15',
-            estado: 'Entregado',
-            total: 159.90,
-            items: [
-              { id: 1, nombre: 'Camiseta Básica', cantidad: 2, precio: 39.95 },
-              { id: 2, nombre: 'Pantalón Vaquero', cantidad: 1, precio: 79.95 }
-            ]
-          },
-          {
-            id: 'ORD-12346',
-            fecha: '2023-06-20',
-            estado: 'En proceso',
-            total: 89.95,
-            items: [
-              { id: 3, nombre: 'Zapatillas Deportivas', cantidad: 1, precio: 89.95 }
-            ]
-          }
-        ];
-        
-        // Simular delay de API
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        setPedidos(mockPedidos);
-      } catch (error) {
-        console.error('Error al cargar pedidos:', error);
-        setError('No se pudieron cargar tus pedidos. Inténtalo de nuevo más tarde.');
+        // Hacemos la llamada real al endpoint del backend
+        const response = await fetch(`${API_BASE_URL}/api/ordenes`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('No se pudieron cargar tus pedidos. Inténtalo de nuevo más tarde.');
+        }
+
+        const data = await response.json();
+        // El endpoint devuelve un objeto de paginación, los pedidos están en 'content'
+        setPedidos(data.content); 
+
+      } catch (err) {
+        console.error('Error al cargar pedidos:', err);
+        setError(err.message);
       } finally {
         setIsLoading(false);
       }
@@ -62,11 +51,19 @@ const MisPedidosPage = () => {
     fetchPedidos();
   }, [navigate]);
 
+  const formatEstado = (estado) => {
+    if (!estado) return 'Desconocido';
+    return estado.charAt(0).toUpperCase() + estado.slice(1).toLowerCase();
+  };
+
   if (isLoading) {
     return (
       <div className="pedidos-container">
         <h1>Mis Pedidos</h1>
-        <div className="loading-spinner">Cargando tus pedidos...</div>
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Cargando tus pedidos...</p>
+        </div>
       </div>
     );
   }
@@ -76,7 +73,7 @@ const MisPedidosPage = () => {
       <div className="pedidos-container">
         <h1>Mis Pedidos</h1>
         <div className="error-message">{error}</div>
-        <button onClick={() => window.location.reload()} className="retry-button">
+        <button onClick={() => window.location.reload()} className="primary-button">
           Intentar de nuevo
         </button>
       </div>
@@ -86,12 +83,14 @@ const MisPedidosPage = () => {
   return (
     <div className="pedidos-container">
       <h1>Mis Pedidos</h1>
-      
+     
       {pedidos.length === 0 ? (
         <div className="no-pedidos">
-          <p>No tienes pedidos realizados.</p>
-          <Link to="/tienda" className="shop-now-button">
-            Comprar ahora
+          <i className="bi bi-box-seam no-pedidos-icon"></i>
+          <h3>Aún no tienes pedidos</h3>
+          <p>¡Explora nuestra tienda y encuentra algo que te encante!</p>
+          <Link to="/tienda" className="primary-button">
+            Ir a la Tienda
           </Link>
         </div>
       ) : (
@@ -100,34 +99,29 @@ const MisPedidosPage = () => {
             <div key={pedido.id} className="pedido-card">
               <div className="pedido-header">
                 <div className="pedido-info">
-                  <h3>Pedido #{pedido.id}</h3>
-                  <p className="pedido-fecha">Fecha: {new Date(pedido.fecha).toLocaleDateString()}</p>
+                  <h3>Pedido #{String(pedido.id).padStart(6, '0')}</h3>
+                  <p className="pedido-fecha">
+                    Fecha: {new Date(pedido.fechaCreacion).toLocaleDateString('es-ES')}
+                  </p>
                 </div>
                 <div className="pedido-estado">
-                  <span className={`estado-badge ${pedido.estado.toLowerCase().replace(' ', '-')}`}>
-                    {pedido.estado}
+                  <span className={`estado-badge ${pedido.estado?.toLowerCase().replace(' ', '-')}`}>
+                    {formatEstado(pedido.estado)}
                   </span>
                 </div>
               </div>
-              
-              <div className="pedido-items">
-                {pedido.items.map(item => (
-                  <div key={item.id} className="pedido-item">
-                    <div className="item-details">
-                      <p className="item-name">{item.nombre}</p>
-                      <p className="item-quantity">Cantidad: {item.cantidad}</p>
-                    </div>
-                    <p className="item-price">S/ {item.precio.toFixed(2)}</p>
-                  </div>
-                ))}
+             
+              <div className="pedido-items-summary">
+                <p>{pedido.cantidadTotalItems} {pedido.cantidadTotalItems === 1 ? 'producto' : 'productos'}</p>
               </div>
-              
+             
               <div className="pedido-footer">
                 <div className="pedido-total">
                   <p>Total:</p>
                   <p className="total-amount">S/ {pedido.total.toFixed(2)}</p>
                 </div>
-                <Link to={`/pedido/${pedido.id}`} className="ver-detalles-button">
+                {/* En el futuro, este enlace irá a una página de detalle del pedido */}
+                <Link to={`/mis-pedidos/${pedido.id}`} className="ver-detalles-button">
                   Ver detalles
                 </Link>
               </div>

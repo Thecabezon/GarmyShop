@@ -7,21 +7,17 @@ import PriceDisplay from './ofertas/PriceDisplay';
 export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggleFavorite }) {
   const { id, nombre, imagenPrincipalUrl, precio, precioOferta, categoriaNombre } = producto;
   
-  // Estado para controlar si se está cargando el producto
   const [isLoading, setIsLoading] = useState(false);
 
-  // Función para manejar el clic en "Agregar al carrito"
   const handleAddToCartClick = async () => {
     setIsLoading(true);
     try {
-      // Obtener los detalles completos del producto antes de abrir el modal
       const response = await fetch(`http://localhost:8085/api/productos/${id}`);
       if (!response.ok) {
         throw new Error('No se pudieron cargar los detalles del producto.');
       }
       const productoCompleto = await response.json();
       
-      // Ahora que tenemos los datos completos, abrimos el modal
       handleOpenModal(productoCompleto);
     } catch (error) {
       console.error("Error al obtener detalles del producto:", error);

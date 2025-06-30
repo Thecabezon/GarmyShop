@@ -1,6 +1,5 @@
-// src/components/PriceDisplay.jsx
 import React from 'react';
-import '../../styles/PriceDisplay.css'; // Necesitarás crear este archivo CSS
+import '../../styles/PriceDisplay.css'; 
 
 const PriceDisplay = ({ regularPrice, offerPrice }) => {
   const hasOffer = offerPrice != null && offerPrice < regularPrice;

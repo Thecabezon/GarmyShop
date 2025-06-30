@@ -1,0 +1,189 @@
+/* src/styles/PedidoDetalle.css */
+
+.detalle-pedido-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.pedido-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.pedido-info-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.volver-link {
+    text-decoration: none;
+    color: #e83e8c;
+    font-weight: 500;
+}
+
+.volver-link:hover {
+    text-decoration: underline;
+}
+
+.pedido-info-sub-header {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.estado-badge, .pago-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    color: white;
+    font-size: 0.8rem;
+}
+
+.estado-badge.pendiente { background-color: #ffc107; color: #333; }
+.estado-badge.enviado { background-color: #17a2b8; }
+.estado-badge.entregado { background-color: #28a745; }
+.estado-badge.cancelado { background-color: #dc3545; }
+
+.pago-badge.pagado { background-color: #28a745; }
+.pago-badge.pendiente { background-color: #ffc107; color: #333; }
+.pago-badge.fallido { background-color: #dc3545; }
+
+.detalle-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.productos-lista, .detalle-seccion {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.productos-lista h3, .detalle-seccion h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.producto-item-detalle {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.producto-item-detalle:last-child {
+    border-bottom: none;
+}
+
+.producto-imagen-detalle {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.producto-info-detalle {
+    flex-grow: 1;
+}
+
+.producto-info-detalle p {
+    margin: 0;
+}
+
+.producto-info-detalle .nombre {
+    font-weight: 600;
+    color: #333;
+}
+
+.producto-info-detalle .sku, .producto-info-detalle .variantes {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.producto-precio-detalle {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.producto-precio-detalle .subtotal {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+}
+
+.resumen-y-direccion {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.detalle-seccion p {
+    margin: 0.25rem 0;
+    line-height: 1.6;
+    color: #555;
+}
+
+.resumen-linea {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.resumen-linea.total-final {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.metodo-pago {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 1rem;
+    text-align: center;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+@media (max-width: 992px) {
+    .detalle-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .pedido-info-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .pedido-info-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .producto-item-detalle {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

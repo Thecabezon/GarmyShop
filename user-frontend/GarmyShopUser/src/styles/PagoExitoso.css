@@ -1,0 +1,122 @@
+/* src/styles/PagoExitoso.css */
+
+.pago-status-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    padding: 2rem;
+    background-color: #f8f9fa;
+}
+
+.status-container {
+    background-color: white;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    border-top: 5px solid #6c757d; /* Gris por defecto */
+}
+
+.status-container h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.status-container p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.status-container.success {
+    border-top-color: #28a745; /* Verde para éxito */
+}
+
+.status-container.error {
+    border-top-color: #dc3545; /* Rojo para error */
+}
+
+.success-icon, .error-icon {
+    font-size: 4rem;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    color: white;
+    margin: 0 auto 1.5rem auto;
+}
+
+.success-icon {
+    background-color: #28a745;
+}
+
+.error-icon {
+    background-color: #dc3545;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+    border: 1px solid #f5c6cb;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.primary-button, .secondary-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.primary-button {
+    background-color: #e83e8c; /* Rosa de GarmyShop */
+    color: white;
+    border: 2px solid #e83e8c;
+}
+
+.primary-button:hover {
+    background-color: #c22f73;
+    border-color: #c22f73;
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: #333;
+    border: 2px solid #ddd;
+}
+
+.secondary-button:hover {
+    background-color: #f1f1f1;
+    border-color: #ccc;
+}
+
+/* Spinner de carga */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #e83e8c;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1.5rem auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

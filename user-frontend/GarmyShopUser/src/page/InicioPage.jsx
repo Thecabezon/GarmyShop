@@ -5,8 +5,6 @@ import '../styles/Inicio.css';
 export function InicioPage() {
   return (
     <div className="inicio-container">
-
-      {/* HERO BANNER - Full width y contenido centrado */}
       <section className="hero-banner text-white py-5"> 
         <div className="hero-inner">
           <div className="container">
@@ -24,7 +22,6 @@ export function InicioPage() {
         </div>
       </section>
 
-      {/* Sección de Categorías Populares */}
       <section className="featured-categories py-5 bg-light">
         <div className="container">
           <h2 className="text-center mb-4">Categorías Populares</h2>
@@ -51,7 +48,6 @@ export function InicioPage() {
         </div>
       </section>
 
-      {/* Sección de Productos Destacados */}
       <section className="featured-products py-5"> 
         <div className="container">
           <h2 className="text-center mb-4">Productos Destacados</h2>

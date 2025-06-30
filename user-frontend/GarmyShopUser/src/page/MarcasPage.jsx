@@ -1,4 +1,3 @@
-// src/page/MarcasPage.jsx
 import React, { useState, useEffect } from 'react';
 import MarcasSection from '../components/MarcasSection';
 import '../styles/MarcasPage.css';

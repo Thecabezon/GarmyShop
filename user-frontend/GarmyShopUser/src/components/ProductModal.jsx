@@ -19,7 +19,6 @@ export const ProductModal = ({
   const [tallasDisponibles, setTallasDisponibles] = useState([]);
   const [coloresDisponibles, setColoresDisponibles] = useState([]);
 
-  // Usa useMemo para calcular los precios y la URL de la imagen principal
   const { fullMainImageUrl, displayPrice, originalPrice, hasOffer, formattedProducto } = useMemo(() => {
     if (isLoading || !producto?.id) {
       return {
@@ -31,7 +30,6 @@ export const ProductModal = ({
       };
     }
 
-    // Lógica para calcular displayPrice y originalPrice
     const offerPrice = producto.precioOferta;
     const regularPrice = producto.precio;
 
@@ -39,7 +37,6 @@ export const ProductModal = ({
     const calculatedDisplayPrice = hasOffer ? offerPrice : regularPrice;
     const calculatedOriginalPrice = hasOffer ? regularPrice : null;
 
-    // Construye la URL completa de la imagen principal
     const imagenPrincipalObj = producto.imagenes?.find(img => img.esPrincipal) || producto.imagenes?.[0];
     const calculatedFullMainImageUrl = imagenPrincipalObj?.imagen
       ? `${CLOUDINARY_BASE_URL}/${imagenPrincipalObj.imagen}`
@@ -54,21 +51,17 @@ export const ProductModal = ({
     };
   }, [producto, isLoading]);
 
-  // Este useEffect se encarga de actualizar la imagen inicial y resetear estados
   useEffect(() => {
     if (!isLoading && producto && producto.id) {
       setSelectedImage(fullMainImageUrl);
 
-      // Resetea las selecciones para el nuevo producto
       setSelectedSize(null);
       setSelectedColor(null);
       setQuantity(1);
 
-      // Procesar combinaciones disponibles
       if (producto.combinacionesDisponibles && producto.combinacionesDisponibles.length > 0) {
         setCombinacionesDisponibles(producto.combinacionesDisponibles);
         
-        // Extraer tallas únicas disponibles
         const tallas = [...new Set(producto.combinacionesDisponibles
           .map(c => c.talla.nombre))]
           .map(nombreTalla => ({
@@ -77,7 +70,6 @@ export const ProductModal = ({
           }));
         setTallasDisponibles(tallas);
         
-        // Extraer colores únicos disponibles
         const colores = producto.combinacionesDisponibles
           .map(c => c.color)
           .filter((color, index, self) => 
@@ -86,7 +78,6 @@ export const ProductModal = ({
         setColoresDisponibles(colores);
       }
     } else if (!isOpen) {
-      // Si el modal se cierra o no hay producto/cargando, resetea estados
       setSelectedSize(null);
       setSelectedColor(null);
       setSelectedImage('');
@@ -97,7 +88,6 @@ export const ProductModal = ({
     }
   }, [producto, isLoading, fullMainImageUrl, isOpen]);
 
-  // Si el modal no está abierto o no hay producto (y no está cargando), no renderizamos nada
   if (!isOpen || (!isLoading && !producto?.id)) return null;
 
 
@@ -110,18 +100,16 @@ export const ProductModal = ({
       alert("Por favor, selecciona un color.");
       return;
     }
-  
-    // Verificar si la combinación seleccionada está disponible
+ 
     const combinacionSeleccionada = combinacionesDisponibles.find(
       c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id
     );
-  
+ 
     if (!combinacionSeleccionada) {
       alert("La combinación seleccionada no está disponible.");
       return;
     }
-  
-    // Asegúrate de que el producto en el estado tiene la estructura correcta para el carrito
+ 
     const itemToAdd = {
       ...producto,
       id: producto.id,
@@ -129,27 +117,24 @@ export const ProductModal = ({
       talla: selectedSize,
       color: selectedColor,
       cantidad: quantity,
-      quantity: quantity, // Añadir quantity para compatibilidad
+      quantity: quantity,
       price: displayPrice,
-      displayPrice: displayPrice, // Añadir displayPrice para compatibilidad
-      precio: producto.precio, // Mantener el precio original
-      imagen: producto.imagenes?.find(img => img.esPrincipal)?.imagen || producto.imagenes?.[0]?.imagen || producto.imagen,
-      idUnicoCarrito: `${producto.id}-${selectedSize}-${selectedColor.nombre}`
+      displayPrice: displayPrice,
+      precio: producto.precio,
+      imagen: producto.imagenes?.find(img => img.esPrincipal)?.imagen || producto.imagenes?.[0]?.imagen,
+      idUnicoCarrito: `${producto.id}-${combinacionSeleccionada.id}`,
+      combinacionProductoId: combinacionSeleccionada.id
     };
-  
+ 
     onAddToCart(itemToAdd);
     onClose();
-    alert(`${producto.nombre} agregado al carrito!`);
   };
 
-  // Construimos las URLs completas para las miniaturas
   const fullThumbnailUrls = producto?.imagenes?.map(
     imgObj => `${CLOUDINARY_BASE_URL}/${imgObj.imagen}`
   ) || [];
 
-  // Función para renderizar el contenido del modal
   const renderModalContent = () => {
-    // Si está cargando, muestra un spinner
     if (isLoading) {
       return (
         <div className="modal-loading">
@@ -159,7 +144,6 @@ export const ProductModal = ({
       );
     }
 
-    // Si ya cargó, muestra la información del producto
     return (
       <div className="modal-body">
         <div className="modal-images">

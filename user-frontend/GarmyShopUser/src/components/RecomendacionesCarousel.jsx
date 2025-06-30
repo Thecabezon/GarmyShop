@@ -1,10 +1,7 @@
-// Este es el archivo que exporta el carrusel
-// src/components/RecomendacionesCarousel.js (si este es el nombre)
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/RecomendacionesCarousel.css';
-// --- NUEVO: Importa la configuración de Cloudinary ---
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 
 const RecomendacionesCarousel = ({ productos }) => {
@@ -27,7 +24,6 @@ const RecomendacionesCarousel = ({ productos }) => {
           {Array.from({ length: totalPages }).map((_, pageIndex) => (
             <div className="carousel-page" key={pageIndex}>
               {productos.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage).map(producto => {
-                // --- NUEVO: Construye la URL completa para cada producto ---
                 const imagePath = producto.imagen || producto.imagenPrincipalUrl;
                 const fullImageUrl = imagePath
                   ? `${CLOUDINARY_BASE_URL}/${imagePath}`
@@ -37,7 +33,6 @@ const RecomendacionesCarousel = ({ productos }) => {
                   <div className="carousel-product-card" key={producto.id || producto.cod}>
                     <Link to={`/tienda/${producto.id || producto.cod}`}>
                       <div className="card-image-wrapper">
-                        {/* --- CAMBIO: Usa la URL completa --- */}
                         <img src={fullImageUrl} alt={producto.nombre} />
                       </div>
                       <div className="card-info">
