@@ -5,7 +5,7 @@
 /* --- VARIABLES DE DISEÑO --- */
 :root {
     --accent-color: #E94A7A; /* Un rosado vibrante y moderno */
-    --accent-color-hover: #d13c6a;
+    --accent-color-hover: #000000;
     --text-primary: #1a1a1a;
     --text-secondary: #555;
     --text-light: #888;

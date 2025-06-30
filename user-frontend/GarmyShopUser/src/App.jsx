@@ -22,6 +22,8 @@ import ForgotPasswordPage from './page/Auth/ForgotPasswordPage';
 import PagoExitosoPage from './page/PagoExitosoPage';
 import ResetPasswordForm from './components/Auth/ResetPasswordForm';
 
+import OAuth2RedirectHandler from './components/Auth/OAuth2RedirectHandler';
+
 // Componentes globales
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -316,6 +318,7 @@ function App() {
         <Route path="/registro" element={<RegisterPage />} />
         <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
         <Route path="/auth/reset-password" element={<ResetPasswordForm />} />
+        <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onAuthChange={handleAuthChange} />} />
       </Routes>
 
       <Footer />
