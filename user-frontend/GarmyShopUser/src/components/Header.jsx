@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import LogoComponent from './Header/LogoComponent';
 import NavLinksComponent from './Header/NavLinksComponent';
 import IconsComponent from './Header/IconsComponent';
@@ -42,6 +42,7 @@ function Header({
     const searchInputRef = useRef(null);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -72,13 +73,45 @@ function Header({
         fetchCategories();
     }, []);
 
+    const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        if (!isSearchActive) return;
+
+        if (searchTerm && location.pathname !== '/buscar') {
+            navigate('/buscar');
+        }
+
+        const handler = setTimeout(() => {
+            navigate(`/buscar?query=${encodeURIComponent(searchTerm)}`);
+        }, 400);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [searchTerm, isSearchActive, navigate, location.pathname]);
+
+
     const toggleSearch = () => {
-        setActiveDropdown(null);
-        setIsMobileMenuOpen(false);
         const newState = !isSearchActive;
         setIsSearchActive(newState);
-         console.log("Header: Toggling search to", newState);
+
+        if (newState) {
+            setActiveDropdown(null);
+            setIsMobileMenuOpen(false);
+            setTimeout(() => searchInputRef.current?.focus(), 100);
+        } else {
+            setSearchTerm(''); 
+        }
     };
+    
+    // Función para cerrar la búsqueda desde un componente hijo
+    const closeSearch = () => {
+        if(isSearchActive) {
+            setIsSearchActive(false);
+            setSearchTerm('');
+        }
+    }
 
     const toggleMobileMenu = (forceState = null) => {
         const newState = forceState !== null ? forceState : !isMobileMenuOpen;
@@ -106,7 +139,6 @@ function Header({
             clearTimeout(dropdownTimeoutId);
             dropdownTimeoutId = null;
         }
-
         if (!isSearchActive && !isMobileMenuOpen) {
             setActiveDropdown(dropdownName);
         }
@@ -135,38 +167,15 @@ function Header({
                 }
             }
         };
-
         if (activeDropdown !== null || isSearchActive) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
             document.removeEventListener('mousedown', handleClickOutside);
         }
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [activeDropdown, isSearchActive, isMobileMenuOpen]);
-
-
-    const [searchTerm, setSearchTerm] = useState('');
-
-    const handleSearchSubmit = () => {
-        if (searchTerm.trim()) {
-            navigate(`/buscar?query=${encodeURIComponent(searchTerm.trim())}`);
-            setIsSearchActive(false);
-            setSearchTerm('');
-             console.log("Header: Search submitted for", searchTerm);
-        }
-    };
-
-    const handleSearchKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            handleSearchSubmit();
-        } else if (e.key === 'Escape') {
-            setIsSearchActive(false);
-             console.log("Header: Search cancelled via Escape.");
-        }
-    };
 
     const handleMobileLogout = () => {
          console.log("Header: Mobile logout clicked.");
@@ -178,7 +187,6 @@ function Header({
         navigate('/');
     };
 
-
     return (
         <header className="main-header" ref={headerRef} onMouseLeave={handleHeaderMouseLeave}>
             <TopBarComponent />
@@ -186,7 +194,7 @@ function Header({
             <div className={`header-content-wrap ${isSearchActive ? 'search-active' : ''}`}>
                 <Link to="/" className="logo-link" onClick={() => {
                     setActiveDropdown(null);
-                    setIsSearchActive(false);
+                    closeSearch(); // Cierra la búsqueda
                     toggleMobileMenu(false);
                 }}>
                     <LogoComponent />
@@ -198,18 +206,13 @@ function Header({
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={handleSearchKeyPress}
                         placeholder="¿Qué estás buscando?"
                         className="search-input"
                     />
-                    <button
-                        className="search-button"
-                        onClick={handleSearchSubmit}
-                        disabled={!searchTerm.trim()}
-                    >
+                    <button className="search-button" disabled>
                         <i className="bi bi-search"></i>
                     </button>
-                    <button className="close-button" onClick={() => toggleSearch(false)}>
+                    <button className="close-button" onClick={toggleSearch}>
                         <i className="bi bi-x-lg"></i>
                     </button>
                 </div>
@@ -229,6 +232,7 @@ function Header({
                     setFavoriteItems={setFavoriteItems}
                     handleToggleFavorite={handleToggleFavorite}
                     toggleSearch={toggleSearch}
+                    closeSearch={closeSearch} // Pasamos la función para cerrar
                     setActiveDropdown={setActiveDropdown}
                     toggleMobileMenu={toggleMobileMenu}
                     currentUser={currentUser}
@@ -240,143 +244,54 @@ function Header({
             <div className={`mobile-menu ${isMobileMenuOpen ? 'visible' : ''}`}>
                 <div className="mobile-menu-content">
                     <div className="mobile-menu-header">
-                        <Link to="/" className="mobile-logo-link" onClick={() => toggleMobileMenu(false)}> {/* Cerrar menú al hacer clic */}
+                        <Link to="/" className="mobile-logo-link" onClick={() => toggleMobileMenu(false)}>
                             <LogoComponent />
                         </Link>
                         <button className="mobile-menu-close-btn" onClick={() => toggleMobileMenu(false)}>
                              <i className="bi bi-x-lg"></i>
                         </button>
                     </div>
-
                     <div className="mobile-user-section">
                         {isAuthenticated ? (
                             <div className="mobile-user-info">
                                 <div className="mobile-user-avatar">
-                                    {currentUser?.firstName?.charAt(0).toUpperCase() ||
-                                     currentUser?.username?.charAt(0).toUpperCase() || 'U'}
+                                    {currentUser?.firstName?.charAt(0).toUpperCase() || currentUser?.username?.charAt(0).toUpperCase() || 'U'}
                                 </div>
                                 <div className="mobile-user-details">
-                                    <p className="mobile-user-name">
-                                        ¡Hola, {currentUser?.firstName || currentUser?.username || 'Usuario'}!
-                                    </p>
+                                    <p className="mobile-user-name">¡Hola, {currentUser?.firstName || currentUser?.username || 'Usuario'}!</p>
                                     <p className="mobile-user-email">{currentUser?.email}</p>
                                 </div>
                             </div>
                         ) : (
                             <div className="mobile-auth-buttons">
-                                <Link
-                                    to="/login"
-                                    className="mobile-login-btn"
-                                    onClick={() => toggleMobileMenu(false)}
-                                >
-                                    Iniciar Sesión
-                                </Link>
-                                <Link
-                                    to="/registro"
-                                    className="mobile-register-btn"
-                                    onClick={() => toggleMobileMenu(false)}
-                                >
-                                    Registrarse
-                                </Link>
+                                <Link to="/login" className="mobile-login-btn" onClick={() => toggleMobileMenu(false)}>Iniciar Sesión</Link>
+                                <Link to="/registro" className="mobile-register-btn" onClick={() => toggleMobileMenu(false)}>Registrarse</Link>
                             </div>
                         )}
                     </div>
-
                     <div className="mobile-nav-links">
-                        <Link
-                            to="/"
-                            className="mobile-nav-link"
-                            onClick={() => toggleMobileMenu(false)}
-                        >
-                            Inicio
-                        </Link>
-                        <Link
-                            to="/tienda"
-                            className="mobile-nav-link"
-                            onClick={() => toggleMobileMenu(false)}
-                        >
-                            Tienda
-                        </Link>
-                        <Link
-                            to="/ofertas"
-                            className="mobile-nav-link"
-                            onClick={() => toggleMobileMenu(false)}
-                        >
-                            Ofertas
-                        </Link>
-                        <Link
-                            to="/marcas"
-                            className="mobile-nav-link"
-                            onClick={() => toggleMobileMenu(false)}
-                        >
-                            Marcas
-                        </Link>
-                        <Link
-                            to="/nosotros"
-                            className="mobile-nav-link"
-                            onClick={() => toggleMobileMenu(false)}
-                        >
-                            Sobre Nosotros
-                        </Link>
-                        <Link
-                            to="/ayuda"
-                            className="mobile-nav-link"
-                            onClick={() => toggleMobileMenu(false)}
-                        >
-                            Ayuda
-                        </Link>
-
+                        <Link to="/" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Inicio</Link>
+                        <Link to="/tienda" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Tienda</Link>
+                        <Link to="/ofertas" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Ofertas</Link>
+                        <Link to="/marcas" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Marcas</Link>
+                        <Link to="/nosotros" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Sobre Nosotros</Link>
+                        <Link to="/ayuda" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Ayuda</Link>
                         {isAuthenticated && (
                             <>
                                 <div className="mobile-nav-divider"></div>
-                                <Link
-                                    to="/perfil"
-                                    className="mobile-nav-link"
-                                    onClick={() => toggleMobileMenu(false)}
-                                >
-                                    <i className="bi bi-person-circle"></i>
-                                    Mi Perfil
-                                </Link>
-                                <Link
-                                    to="/mis-pedidos"
-                                    className="mobile-nav-link"
-                                    onClick={() => toggleMobileMenu(false)}
-                                >
-                                    <i className="bi bi-box-seam"></i>
-                                    Mis Pedidos
-                                </Link>
-                                <Link
-                                    to="/direcciones"
-                                    className="mobile-nav-link"
-                                    onClick={() => toggleMobileMenu(false)}
-                                >
-                                    <i className="bi bi-geo-alt"></i>
-                                    Mis Direcciones
-                                </Link>
-                                <button
-                                     onClick={handleMobileLogout}
-                                     className="mobile-nav-link logout-button"
-                                >
-                                     <i className="bi bi-box-arrow-right"></i>
-                                     Cerrar Sesión
-                                </button>
+                                <Link to="/perfil" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}><i className="bi bi-person-circle"></i> Mi Perfil</Link>
+                                <Link to="/mis-pedidos" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}><i className="bi bi-box-seam"></i> Mis Pedidos</Link>
+                                <Link to="/direcciones" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}><i className="bi bi-geo-alt"></i> Mis Direcciones</Link>
+                                <button onClick={handleMobileLogout} className="mobile-nav-link logout-button"><i className="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
                             </>
                         )}
                     </div>
-
                     {categories && categories.length > 0 && (
                         <div className="mobile-categories">
                             <h3 className="mobile-section-title">Categorías</h3>
                             <div className="mobile-category-list">
                                 {categories.map((category) => (
-                                    <Link
-                                        key={category.id}
-                                        to={`/categoria/${category.id}`}
-                                        className="mobile-category-link"
-                                        onClick={() => toggleMobileMenu(false)}
-                                    >
-                                        {category.nombre}
-                                    </Link>
+                                    <Link key={category.id} to={`/categoria/${category.id}`} className="mobile-category-link" onClick={() => toggleMobileMenu(false)}>{category.nombre}</Link>
                                 ))}
                             </div>
                         </div>
@@ -384,35 +299,9 @@ function Header({
                 </div>
             </div>
 
-            {isMobileMenuOpen && (
-                <div
-                    className="mobile-menu-overlay"
-                    onClick={() => toggleMobileMenu(false)}
-                ></div>
-            )}
-
-            {!isMobileMenuOpen && (
-                <CategoryDropdown
-                    categories={categories}
-                    loading={loadingCategories}
-                    error={errorCategories}
-                    className={`category-dropdown ${activeDropdown === 'productos' ? 'visible' : ''}`}
-                    onMouseEnter={handleDropdownMouseEnter}
-                    onMouseLeave={handleHeaderMouseLeave}
-                    onLinkClick={() => { setActiveDropdown(null); setIsMobileMenuOpen(false); }}
-                />
-            )}
-
-             {!isMobileMenuOpen && menuData && menuData.ofertas &&
-                <MegaMenu
-                    columns={menuData.ofertas}
-                    className={`mega-menu ${activeDropdown === 'ofertas' ? 'visible' : ''}`}
-                    onMouseEnter={handleDropdownMouseEnter}
-                    onMouseLeave={handleHeaderMouseLeave}
-                    onLinkClick={() => { setActiveDropdown(null); setIsMobileMenuOpen(false); }}
-                />
-            }
-
+            {isMobileMenuOpen && <div className="mobile-menu-overlay" onClick={() => toggleMobileMenu(false)}></div>}
+            {!isMobileMenuOpen && <CategoryDropdown categories={categories} loading={loadingCategories} error={errorCategories} className={`category-dropdown ${activeDropdown === 'productos' ? 'visible' : ''}`} onMouseEnter={handleDropdownMouseEnter} onMouseLeave={handleHeaderMouseLeave} onLinkClick={() => { setActiveDropdown(null); setIsMobileMenuOpen(false); }} />}
+            {!isMobileMenuOpen && menuData && menuData.ofertas && <MegaMenu columns={menuData.ofertas} className={`mega-menu ${activeDropdown === 'ofertas' ? 'visible' : ''}`} onMouseEnter={handleDropdownMouseEnter} onMouseLeave={handleHeaderMouseLeave} onLinkClick={() => { setActiveDropdown(null); setIsMobileMenuOpen(false); }} />}
         </header>
     );
 }

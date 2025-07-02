@@ -1,0 +1,74 @@
+/* src/styles/BusquedaPage.css */
+
+.busqueda-page-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.busqueda-titulo {
+  font-family: 'League Spartan', sans-serif;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #333;
+}
+
+.busqueda-titulo span {
+  color: #fd2892; /* Color de acento para el término de búsqueda */
+}
+
+/* Reutilizamos la clase de TiendaPage para la grilla de 3 columnas */
+.ropa-lista {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+/* Mensajes de estado (cargando, error, sin resultados) */
+.busqueda-mensaje {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  padding: 4rem 0;
+}
+
+.busqueda-mensaje.error {
+  color: #d9534f;
+}
+
+.busqueda-mensaje.no-results {
+    background-color: #f9f9f9;
+    border: 1px dashed #e0e0e0;
+    border-radius: 12px;
+    padding: 3rem 1rem;
+}
+.busqueda-mensaje.no-results h3 {
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+.busqueda-mensaje.no-results p {
+    margin: 0.5rem 0;
+}
+
+/* Responsividad para la grilla */
+@media (max-width: 992px) {
+  .ropa-lista {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .busqueda-titulo {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .ropa-lista {
+    grid-template-columns: 1fr;
+  }
+  .busqueda-titulo {
+    font-size: 1.8rem;
+  }
+}

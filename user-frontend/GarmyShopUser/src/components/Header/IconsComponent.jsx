@@ -1,13 +1,14 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { CLOUDINARY_BASE_URL } from '../../config/cloudinary';
 import UserDropdown from '../Auth/UserDropdown'; 
 
 export function IconsComponent({ 
-    cartItems, setCartItems, 
+    cartItems, 
+    setCartItems, 
     favoriteItems, 
-    toggleSearch, 
+    toggleSearch,
+    closeSearch, // <-- 1. RECIBIMOS LA NUEVA PROP
     setActiveDropdown, 
     toggleMobileMenu,
     currentUser,
@@ -24,24 +25,18 @@ export function IconsComponent({
 
     // Lógica para alternar la visibilidad del carrito
     const toggleCart = () => {
-        if (typeof setActiveDropdown === 'function') { 
-            setActiveDropdown(null); 
-        }
-        if (typeof toggleMobileMenu === 'function') { 
-            toggleMobileMenu(false); 
-        }
+        if (typeof closeSearch === 'function') closeSearch(); // <-- 2. LLAMAMOS A LA FUNCIÓN
+        if (typeof setActiveDropdown === 'function') setActiveDropdown(null); 
+        if (typeof toggleMobileMenu === 'function') toggleMobileMenu(false); 
         setUserDropdownVisible(false);
         setCartVisible(prev => !prev); 
     };
 
     // Lógica para alternar la visibilidad del dropdown de usuario
     const toggleUserDropdown = () => {
-        if (typeof setActiveDropdown === 'function') { 
-            setActiveDropdown(null); 
-        }
-        if (typeof toggleMobileMenu === 'function') { 
-            toggleMobileMenu(false); 
-        }
+        if (typeof closeSearch === 'function') closeSearch(); // <-- 2. LLAMAMOS A LA FUNCIÓN
+        if (typeof setActiveDropdown === 'function') setActiveDropdown(null); 
+        if (typeof toggleMobileMenu === 'function') toggleMobileMenu(false); 
         setCartVisible(false);
         setUserDropdownVisible(prev => !prev);
     };
@@ -88,6 +83,7 @@ export function IconsComponent({
 
     // Función para proceder al checkout
     const handleCheckout = () => {
+        if (typeof closeSearch === 'function') closeSearch(); // <-- 2. LLAMAMOS A LA FUNCIÓN
         navigate('/finalizar_compra');
         setCartVisible(false);
     };
@@ -108,15 +104,12 @@ export function IconsComponent({
     // Efecto para cerrar paneles al hacer clic fuera
     useEffect(() => {
         const handleClickOutside = (event) => {
-            // Cerrar carrito si se hace clic fuera
             if (cartVisible && 
                 cartPanelRef.current && 
                 !cartPanelRef.current.contains(event.target) &&
                 !iconsContainerRef.current.contains(event.target)) {
                 setCartVisible(false);
             }
-            
-            // Cerrar dropdown de usuario si se hace clic fuera
             if (userDropdownVisible && 
                 userDropdownRef.current && 
                 !userDropdownRef.current.contains(event.target) &&
@@ -127,10 +120,7 @@ export function IconsComponent({
 
         if (cartVisible || userDropdownVisible) {
             document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
         }
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -138,27 +128,24 @@ export function IconsComponent({
 
     // Handler para el ícono de búsqueda
     const handleSearchClick = () => {
+        // Este ícono es para abrir/cerrar la búsqueda, así que usa toggleSearch.
+        // No llama a closeSearch porque si no, no se podría abrir.
         if (typeof toggleSearch === 'function') {
             toggleSearch();
         }
-        if (typeof setActiveDropdown === 'function') { 
-            setActiveDropdown(null); 
-        }
-        if (typeof toggleMobileMenu === 'function') { 
-            toggleMobileMenu(false); 
-        }
+        if (typeof setActiveDropdown === 'function') setActiveDropdown(null); 
+        if (typeof toggleMobileMenu === 'function') toggleMobileMenu(false); 
         setCartVisible(false);
         setUserDropdownVisible(false);
     }
 
     // Handler para el menú hamburguesa
     const handleMobileMenuClick = () => {
+        if (typeof closeSearch === 'function') closeSearch(); // <-- 2. LLAMAMOS A LA FUNCIÓN
         if (typeof toggleMobileMenu === 'function') {
             toggleMobileMenu();
         }
-        if (typeof setActiveDropdown === 'function') { 
-            setActiveDropdown(null); 
-        }
+        if (typeof setActiveDropdown === 'function') setActiveDropdown(null); 
         setCartVisible(false);
         setUserDropdownVisible(false);
     }
@@ -195,7 +182,8 @@ export function IconsComponent({
                 </div>
 
                 {/* Ícono de Favoritos */}
-                <Link to="/favoritos" className="icon-wrapper" onClick={() => { 
+                <Link to="/favoritos" className="icon-wrapper" onClick={() => {
+                    if (typeof closeSearch === 'function') closeSearch(); // <-- 2. LLAMAMOS A LA FUNCIÓN
                     if (typeof setActiveDropdown === 'function') setActiveDropdown(null); 
                     if (typeof toggleMobileMenu === 'function') toggleMobileMenu(false); 
                     setCartVisible(false);
@@ -246,31 +234,14 @@ export function IconsComponent({
                                                             {item.talla && <p>Talla: {item.talla}</p>}
                                                             {item.color && <p>Color: {item.color.nombre}</p>}
                                                             <div className="quantity-controls">
-                                                                <button 
-                                                                    className="quantity-btn"
-                                                                    onClick={() => updateCartItemQuantity(itemId, itemQuantity - 1)}
-                                                                >
-                                                                    -
-                                                                </button>
+                                                                <button className="quantity-btn" onClick={() => updateCartItemQuantity(itemId, itemQuantity - 1)}>-</button>
                                                                 <span className="quantity">{itemQuantity}</span>
-                                                                <button 
-                                                                    className="quantity-btn"
-                                                                    onClick={() => updateCartItemQuantity(itemId, itemQuantity + 1)}
-                                                                >
-                                                                    +
-                                                                </button>
+                                                                <button className="quantity-btn" onClick={() => updateCartItemQuantity(itemId, itemQuantity + 1)}>+</button>
                                                             </div>
                                                         </div>
                                                         <div className="item-actions">
-                                                            <button 
-                                                                className="remove-item" 
-                                                                onClick={() => removeFromCart(itemId)}
-                                                            >
-                                                                🗑️
-                                                            </button>
-                                                            <span className="item-price">
-                                                                S/ {(itemPrice * itemQuantity).toFixed(2)}
-                                                            </span>
+                                                            <button className="remove-item" onClick={() => removeFromCart(itemId)}>🗑️</button>
+                                                            <span className="item-price">S/ {(itemPrice * itemQuantity).toFixed(2)}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -291,9 +262,7 @@ export function IconsComponent({
                     </div>
                 </div>
             </div>
-            {/* Overlay del carrito */}
             {cartVisible && <div className="cart-overlay" onClick={toggleCart}></div>}
-            {/* Overlay del dropdown de usuario */}
             {userDropdownVisible && <div className="user-dropdown-overlay" onClick={toggleUserDropdown}></div>}
         </div>
     );

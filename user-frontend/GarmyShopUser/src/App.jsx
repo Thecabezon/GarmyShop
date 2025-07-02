@@ -14,7 +14,7 @@ import { OfertasPage } from './page/OfertasPage';
 import SobreNosotrosPage from './page/SobreNosotrosPage';
 import MisPedidosPage from './page/MisPedidosPage';
 import PedidoDetallePage from './page/PedidoDetallePage';
-
+import { BusquedaPage } from './page/BusquedaPage';
 // Autenticación
 import LoginPage from './page/Auth/LoginPage';
 import RegisterPage from './page/Auth/RegisterPage';
@@ -240,6 +240,14 @@ function App() {
               />
             </MainLayout>
           }
+        />
+        <Route
+          path="/buscar"
+          element={<BusquedaPage
+            handleAddToCart={handleAddToCart}
+            favoriteItems={favoriteItems}
+            handleToggleFavorite={handleToggleFavorite}
+          />}
         />
         {/* Ofertas, Nosotros, Marcas */}
         <Route path="/ofertas" element={<MainLayout><OfertasPage handleAddToCart={handleAddToCart} /></MainLayout>} />
