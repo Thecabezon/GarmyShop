@@ -1,3 +1,5 @@
+// src/components/ProductModal.jsx
+
 import React, { useState, useEffect, useMemo } from 'react';
 import '../styles/ProductModal.css';
 import PriceDisplay from './ofertas/PriceDisplay';
@@ -62,25 +64,31 @@ export const ProductModal = ({
     }
   }, [producto, isLoading, fullMainImageUrl, isOpen]);
 
+  // ====================== CORRECCIÓN #1 AQUÍ ======================
   const todasLasTallas = useMemo(() => {
-    if (!producto) return []; 
+    // Si no hay producto O no hay combinaciones, devuelve un array vacío.
+    if (!producto || !producto.combinacionesDisponibles) return []; 
     return [...new Set(producto.combinacionesDisponibles.map(c => c.talla.nombre))];
   }, [producto]);
+  // ================================================================
 
+  // ====================== CORRECCIÓN #2 AQUÍ ======================
   const todosLosColores = useMemo(() => {
-    if (!producto) return []; 
+    // Si no hay producto O no hay combinaciones, devuelve un array vacío.
+    if (!producto || !producto.combinacionesDisponibles) return []; 
     return producto.combinacionesDisponibles
       .map(c => c.color)
       .filter((color, index, self) => index === self.findIndex(c => c.id === color.id));
   }, [producto]);
+  // ================================================================
   
   const coloresFiltrados = useMemo(() => {
-    // Si no hay talla seleccionada, todos los colores están disponibles
     if (!selectedSize) {
       return todosLosColores.map(color => ({ ...color, disponible: true }));
     }
-    if (!producto) return [];
-    // Si hay talla seleccionada, se filtran los colores
+    // Si no hay producto, devuelve un array vacío
+    if (!producto || !producto.combinacionesDisponibles) return [];
+    
     const idsColoresValidosParaTalla = producto.combinacionesDisponibles
       .filter(c => c.talla.nombre === selectedSize)
       .map(c => c.color.id);
@@ -91,8 +99,6 @@ export const ProductModal = ({
   }, [selectedSize, todosLosColores, producto]);
 
   useEffect(() => {
-    // Este efecto asegura que si una talla hace que el color seleccionado ya no sea válido,
-    // el color se deseleccione automáticamente.
     if (selectedColor) {
       const esColorValido = coloresFiltrados.find(
         color => color.id === selectedColor.id && color.disponible
@@ -103,11 +109,10 @@ export const ProductModal = ({
     }
   }, [coloresFiltrados, selectedColor]);
   
-  if (!isOpen || (!isLoading && !producto?.id)) return null;
+  if (!isOpen) return null;
 
-  const handleAddToCart = () => {
-    if (!selectedSize) { return; }
-    if (!selectedColor) { return; }
+  const handleAddToCartClick = () => { // Renombrado para evitar conflicto con prop
+    if (!selectedSize || !selectedColor) { return; }
 
     const combinacionSeleccionada = producto.combinacionesDisponibles.find(
       c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id
@@ -128,6 +133,7 @@ export const ProductModal = ({
     onClose();
   };
 
+  // Usamos optional chaining por seguridad
   const fullThumbnailUrls = producto?.imagenes?.map(
     imgObj => `${CLOUDINARY_BASE_URL}/${imgObj.imagen}`
   ) || [];
@@ -151,6 +157,11 @@ export const ProductModal = ({
   const renderModalContent = () => {
     if (isLoading) {
       return <div className="modal-loading"><div className="spinner"></div><p>Cargando...</p></div>;
+    }
+    
+    // Comprobación adicional por si el producto no se carga
+    if (!producto?.id) {
+        return <div className="modal-error">No se pudo cargar la información del producto.</div>;
     }
 
     return (
@@ -224,7 +235,7 @@ export const ProductModal = ({
             </div>
           </div>
 
-          <button className="modal-add-btn" onClick={handleAddToCart} disabled={!selectedSize || !selectedColor}>
+          <button className="modal-add-btn" onClick={handleAddToCartClick} disabled={!selectedSize || !selectedColor}>
             AÑADIR A LA BOLSA
           </button>
         </div>

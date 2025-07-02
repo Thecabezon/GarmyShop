@@ -1,0 +1,197 @@
+/* src/styles/FilterPanel.css */
+
+.filter-panel-static {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: #fff;
+  border-right: 1px solid #e9e9e9;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.4s ease, opacity 0.3s ease, margin-left 0.4s ease;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+}
+
+.filter-panel-static.closed {
+  width: 0;
+  opacity: 0;
+  margin-left: -2rem; 
+  border-right: none;
+  pointer-events: none;
+}
+
+.filter-panel-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.filter-panel-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+}
+
+.filter-panel-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  min-width: 250px;
+}
+
+.filter-section {
+  margin-bottom: 2rem;
+}
+
+.filter-section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.filter-option, .filter-option-color {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #555;
+  transition: color 0.2s;
+}
+.filter-option:hover, .filter-option-color:hover {
+  color: #1a1a1a;
+}
+.filter-option input[type="checkbox"] {
+  margin-right: 0.75rem;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #fd2892;
+}
+.filter-option.disabled, .filter-option-color.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #aaa;
+}
+.filter-option.disabled:hover {
+  color: #aaa;
+}
+
+.filter-badge {
+  margin-left: auto;
+  background-color: #eee;
+  color: #777;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.filter-option.disabled .filter-badge {
+  background-color: #f5f5f5;
+  color: #ccc;
+}
+
+.color-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.color-chip {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+  transition: outline 0.2s ease-out;
+}
+.filter-option-color input { display: none; }
+.filter-option-color input:checked + .color-chip {
+  outline: 2px solid #fd2892;
+  outline-offset: 2px;
+}
+
+.switch {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.switch input { display: none; }
+.switch .slider {
+  cursor: pointer;
+  width: 44px;
+  height: 24px;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+  position: relative;
+}
+.switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+.switch input:checked + .slider {
+  background-color: #fd2892;
+}
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.clear-filters-btn-inline {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1.5rem;
+  background-color: #fff;
+  color: #fd2892;
+  border: 2px solid #fd2892;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.clear-filters-btn-inline:hover {
+  background-color: #fd2892;
+  color: #fff;
+}
+
+.filter-panel-footer {
+  /* Este selector puede ser eliminado */
+  border-top: 1px solid #e0e0e0;
+  height: 0;
+  padding: 0;
+  opacity: 0;
+}
+
+@media (max-width: 992px) {
+  .filter-panel-static {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e9e9e9;
+    margin-bottom: 0;
+    transition: height 0.4s ease, opacity 0.3s ease, padding 0.4s ease, margin 0.4s ease;
+  }
+  .filter-panel-static.closed {
+    height: 0;
+    width: 100%;
+    margin-left: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border: none;
+  }
+}
