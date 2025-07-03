@@ -1,37 +1,17 @@
-import React, { useState, useEffect } from 'react';
+// src/page/MarcasPage.jsx
+
+import React from 'react';
 import MarcasSection from '../components/MarcasSection';
+import { useData } from '../context/DataContext'; // 1. Importamos nuestro hook del almacén
 import '../styles/MarcasPage.css';
 
 const MarcasPage = () => {
-  const [marcas, setMarcas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // 2. Tomamos los datos y estados directamente desde el DataContext.
+  // Ya no necesitamos los estados locales 'marcas', 'loading' y 'error'.
+  const { marcas, loading, error } = useData();
 
-  const API_URL = 'http://localhost:8085/api/marcas';
-
-  useEffect(() => {
-    const fetchMarcas = async () => {
-      try {
-        const response = await fetch(API_URL);
-
-        if (response.status === 204) {
-          setMarcas([]);
-        } else if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        } else {
-          const data = await response.json();
-          setMarcas(data);
-        }
-      } catch (err) {
-        setError(err);
-        console.error("Error fetching brands:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMarcas();
-  }, []);
+  // 3. ELIMINAMOS el useEffect que hacía la llamada a la API.
+  // Esa responsabilidad ahora es del DataProvider.
 
   return (
     <div className="marcas-page">
@@ -48,15 +28,20 @@ const MarcasPage = () => {
       </section>
 
       <section className="marcas-results">
+        {/* 4. Usamos los estados del DataContext para renderizar el contenido */}
         {loading && <p style={{ textAlign: 'center' }}>Cargando marcas...</p>}
         {error && <p className="error-message" style={{ textAlign: 'center' }}>Error al cargar las marcas: {error.message}</p>}
+        
+        {/* Renderizamos solo si no está cargando, no hay error y hay marcas disponibles */}
+        {!loading && !error && marcas.length > 0 && (
+          <MarcasSection marcas={marcas} />
+        )}
+        
+        {/* Mensaje para cuando no hay marcas */}
         {!loading && !error && marcas.length === 0 && (
           <div className="no-results" style={{ textAlign: 'center' }}>
             <p>No hay marcas disponibles en este momento.</p>
           </div>
-        )}
-        {!loading && !error && marcas.length > 0 && (
-          <MarcasSection marcas={marcas} />
         )}
       </section>
     </div>

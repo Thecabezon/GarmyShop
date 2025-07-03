@@ -1,43 +1,19 @@
-// src/page/InicioPage.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Inicio.css';
 import { RopaComponente } from '../components/RopaComponente';
+import { useData } from '../context/DataContext';
 
 export function InicioPage({ handleAddToCart, handleToggleFavorite, favoriteItems }) {
   
-  const [destacados, setDestacados] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { products, loading, error } = useData();
 
-  useEffect(() => {
-    const fetchDestacados = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('http://localhost:8085/api/productos/destacados');
-        
-        if (response.status === 204) {
-          setDestacados([]);
-          return;
-        }
+  const destacados = useMemo(() => {
+    if (!products || products.length === 0) return [];
+    return products.slice(0, 4); 
+  }, [products]);
 
-        if (!response.ok) {
-          throw new Error('No se pudieron cargar los productos destacados.');
-        }
-        
-        const data = await response.json();
-        setDestacados(data);
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching featured products:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDestacados();
-  }, []);
 
   const renderFeaturedProducts = () => {
     if (loading) {
@@ -108,7 +84,7 @@ export function InicioPage({ handleAddToCart, handleToggleFavorite, favoriteItem
           </div>
         </div>
       </section>
-
+      
       <section className="featured-products py-5">
         <div className="container">
           <h2 className="text-center mb-4">Productos Destacados</h2>

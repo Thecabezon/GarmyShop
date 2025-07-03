@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import authService from './components/Auth/authService'; // Asegúrate de que la ruta sea correcta
+import authService from './components/Auth/authService';
 
 // Páginas y Layouts
 import { InicioPage } from './page/InicioPage';
@@ -23,6 +23,7 @@ import PagoExitosoPage from './page/PagoExitosoPage';
 import ResetPasswordForm from './components/Auth/ResetPasswordForm';
 
 import OAuth2RedirectHandler from './components/Auth/OAuth2RedirectHandler';
+import { DataProvider } from './context/DataContext';
 
 // Componentes globales
 import Header from './components/Header';
@@ -210,137 +211,139 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <Header
-        cartItems={cartItems}
-        setCartItems={setCartItems}
-        favoriteItems={favoriteItems}
-        setFavoriteItems={setFavoriteItems}
-        handleToggleFavorite={handleToggleFavorite}
-        currentUser={currentUser}
-        isAuthenticated={isAuthenticated}
-        onAuthChange={handleAuthChange}
-      />
-
-      <Routes>
-        {/* Inicio */}
-        <Route
-          path="/"
-          element={
-            <MainLayout>
-              <InicioPage
-                handleAddToCart={handleAddToCart}
-                handleToggleFavorite={handleToggleFavorite}
-                favoriteItems={favoriteItems}
-              />
-            </MainLayout>
-          }
+    <DataProvider>
+      <BrowserRouter>
+        <Header
+          cartItems={cartItems}
+          setCartItems={setCartItems}
+          favoriteItems={favoriteItems}
+          setFavoriteItems={setFavoriteItems}
+          handleToggleFavorite={handleToggleFavorite}
+          currentUser={currentUser}
+          isAuthenticated={isAuthenticated}
+          onAuthChange={handleAuthChange}
         />
 
-        {/* Tienda */}
-        <Route
-          path="/tienda"
-          element={
-            <MainLayout>
-              <TiendaPage
-                handleAddToCart={handleAddToCart}
-                handleToggleFavorite={handleToggleFavorite}
-                favoriteItems={favoriteItems}
+        <Routes>
+          {/* Inicio */}
+          <Route
+            path="/"
+            element={
+              <MainLayout>
+                <InicioPage
+                  handleAddToCart={handleAddToCart}
+                  handleToggleFavorite={handleToggleFavorite}
+                  favoriteItems={favoriteItems}
+                />
+              </MainLayout>
+            }
+          />
+
+          {/* Tienda */}
+          <Route
+            path="/tienda"
+            element={
+              <MainLayout>
+                <TiendaPage
+                  handleAddToCart={handleAddToCart}
+                  handleToggleFavorite={handleToggleFavorite}
+                  favoriteItems={favoriteItems}
 
 
-              />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/buscar"
-          element={<BusquedaPage
-            handleAddToCart={handleAddToCart}
-            favoriteItems={favoriteItems}
-            handleToggleFavorite={handleToggleFavorite}
-          />}
-        />
-        {/* Ofertas, Nosotros, Marcas */}
-        <Route path="/nosotros" element={<MainLayout><SobreNosotrosPage /></MainLayout>} />
-        <Route path="/marcas" element={<MainLayout><MarcasPage /></MainLayout>} />
+                />
+              </MainLayout>
+            }
+          />
+          <Route
+            path="/buscar"
+            element={<BusquedaPage
+              handleAddToCart={handleAddToCart}
+              favoriteItems={favoriteItems}
+              handleToggleFavorite={handleToggleFavorite}
+            />}
+          />
+          {/* Ofertas, Nosotros, Marcas */}
+          <Route path="/nosotros" element={<MainLayout><SobreNosotrosPage /></MainLayout>} />
+          <Route path="/marcas" element={<MainLayout><MarcasPage /></MainLayout>} />
 
 
-        {/* Detalle de producto */}
-        <Route
-          path="/producto/:cod"
-          element={
-            <MainLayout>
-              <ProductoDetallePage
-                handleAddToCart={handleAddToCart}
-                handleToggleFavorite={handleToggleFavorite}
-                favoriteItems={favoriteItems}
-              />
-            </MainLayout>
-          }
-        />
+          {/* Detalle de producto */}
+          <Route
+            path="/producto/:cod"
+            element={
+              <MainLayout>
+                <ProductoDetallePage
+                  handleAddToCart={handleAddToCart}
+                  handleToggleFavorite={handleToggleFavorite}
+                  favoriteItems={favoriteItems}
+                />
+              </MainLayout>
+            }
+          />
 
-        {/* Favoritos */}
-        <Route
-          path="/favoritos"
-          element={
-            <MainLayout>
-              <FavoritosPage
-                favoriteItems={favoriteItems}
-                handleToggleFavorite={handleToggleFavorite}
-              />
-            </MainLayout>
-          }
-        />
+          {/* Favoritos */}
+          <Route
+            path="/favoritos"
+            element={
+              <MainLayout>
+                <FavoritosPage
+                  favoriteItems={favoriteItems}
+                  handleToggleFavorite={handleToggleFavorite}
+                />
+              </MainLayout>
+            }
+          />
 
-        {/* Finalizar compra */}
-        <Route
-          path="/finalizar_compra"
-          element={
-            <MainLayout>
-              <FinalizarCompraPage cartItems={cartItems} setCartItems={setCartItems} />
-            </MainLayout>
-          }
-        />
+          {/* Finalizar compra */}
+          <Route
+            path="/finalizar_compra"
+            element={
+              <MainLayout>
+                <FinalizarCompraPage cartItems={cartItems} setCartItems={setCartItems} />
+              </MainLayout>
+            }
+          />
 
 
-        <Route
-          path="/pago-exitoso"
-          element={
-            <MainLayout>
-              <PagoExitosoPage setCartItems={setCartItems} />
-            </MainLayout>
-          }
-        />
+          <Route
+            path="/pago-exitoso"
+            element={
+              <MainLayout>
+                <PagoExitosoPage setCartItems={setCartItems} />
+              </MainLayout>
+            }
+          />
 
-        <Route
-          path="/mis-pedidos"
-          element={
-            <MainLayout>
-              <MisPedidosPage />
-            </MainLayout>
-          }
-        />
+          <Route
+            path="/mis-pedidos"
+            element={
+              <MainLayout>
+                <MisPedidosPage />
+              </MainLayout>
+            }
+          />
 
-        {/* --- AÑADE ESTA NUEVA RUTA --- */}
-        <Route
-          path="/mis-pedidos/:ordenId"
-          element={
-            <MainLayout>
-              <PedidoDetallePage />
-            </MainLayout>
-          }
-        />
+          {/* --- AÑADE ESTA NUEVA RUTA --- */}
+          <Route
+            path="/mis-pedidos/:ordenId"
+            element={
+              <MainLayout>
+                <PedidoDetallePage />
+              </MainLayout>
+            }
+          />
 
-        {/* Rutas de autenticación - Pasan onAuthChange */}
-        <Route path="/login" element={<LoginPage onAuthChange={handleAuthChange} />} />
-        <Route path="/registro" element={<RegisterPage />} />
-        <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
-        <Route path="/auth/reset-password" element={<ResetPasswordForm />} />
-        <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onAuthChange={handleAuthChange} />} />
-      </Routes>
+          {/* Rutas de autenticación - Pasan onAuthChange */}
+          <Route path="/login" element={<LoginPage onAuthChange={handleAuthChange} />} />
+          <Route path="/registro" element={<RegisterPage />} />
+          <Route path="/recuperar-password" element={<ForgotPasswordPage />} />
+          <Route path="/auth/reset-password" element={<ResetPasswordForm />} />
+          <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onAuthChange={handleAuthChange} />} />
+        </Routes>
 
-      <Footer />
-    </BrowserRouter>
+        <Footer />
+      </BrowserRouter>
+    </DataProvider>
   );
 }
 
