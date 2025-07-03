@@ -46,7 +46,7 @@ export const FavoritosPage = ({ favoriteItems, handleToggleFavorite }) => {
                 </div>
 
                 <div className="ropa-acciones">
-                  <Link to={`/tienda/${producto.id || producto.cod}`} className="ver-producto-btn-full">
+                  <Link to={`/producto/${producto.id || producto.cod}`} className="ver-producto-btn-full">
                     Ver Detalles
                   </Link>
                 </div>

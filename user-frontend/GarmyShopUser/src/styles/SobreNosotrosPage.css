@@ -191,9 +191,10 @@
 
 .conclusion-text {
     font-size: 1.3em !important;
-    font-weight: 600;
+    font-weight: 400;
     color: #555 !important;
     margin-top: 30px;
+    font-family: 'League Spartan', sans-serif;
 }
 
 @media (max-width: 767px) {
@@ -220,7 +221,7 @@
         padding-right: 0;
     }
      .values-grid {
-         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
          gap: 20px;
      }
      .value-item {
