@@ -14,15 +14,19 @@
   }
   
   /* main-header apila hijos verticalmente y actúa como referencia para dropdowns/buscador */
-  .main-header {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 100%;
-  }
+
+.main-header {
+  /* Propiedades añadidas para que el header se quede fijo */
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
   
   /* header-content-wrap organiza logo, nav/buscador, iconos horizontalmente */
   .header-content-wrap {
