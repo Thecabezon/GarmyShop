@@ -16,19 +16,20 @@ const FilterIcon = () => (
     </svg>
 );
 
-export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorite }) {
+export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorite, isAuthenticated }) {
     return (
         <FilterProvider>
             <TiendaContent
                 handleAddToCart={handleAddToCart}
                 favoriteItems={favoriteItems}
                 handleToggleFavorite={handleToggleFavorite}
+                isAuthenticated={isAuthenticated}
             />
         </FilterProvider>
     );
 }
 
-function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite }) {
+function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, isAuthenticated }) {
     const {
         products: allProducts,
         categories,
@@ -38,8 +39,8 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
         error
     } = useData();
 
- const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);    
- const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
 
@@ -218,6 +219,7 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
                                     isLiked={favoriteItems.some(item => item.id === producto.id)}
                                     handleOpenModal={handleOpenModal}
                                     handleToggleFavorite={handleToggleFavorite}
+                                    isAuthenticated={isAuthenticated} 
                                 />
                             ))}
                         </div>

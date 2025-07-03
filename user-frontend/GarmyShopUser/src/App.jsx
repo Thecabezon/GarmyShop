@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import authService from './components/Auth/authService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { useData } from './context/DataContext'; 
 import { InicioPage } from './page/InicioPage';
 import MainLayout from './layout/MainLayout';
 import { TiendaPage } from './page/TiendaPage';
@@ -210,6 +210,8 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   handleToggleFavorite={handleToggleFavorite}
                   favoriteItems={favoriteItems}
+                          isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+
                 />
               </MainLayout>
             }
@@ -222,6 +224,8 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   handleToggleFavorite={handleToggleFavorite}
                   favoriteItems={favoriteItems}
+                          isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+
                 />
               </MainLayout>
             }
@@ -233,6 +237,8 @@ function App() {
                 handleAddToCart={handleAddToCart}
                 handleToggleFavorite={handleToggleFavorite}
                 favoriteItems={favoriteItems}
+                        isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+
               />
             }
           />
@@ -247,6 +253,8 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   favoriteItems={favoriteItems}
                   handleToggleFavorite={handleToggleFavorite}
+                          isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+
                 />
               </MainLayout>
             }
@@ -260,6 +268,8 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   handleToggleFavorite={handleToggleFavorite}
                   favoriteItems={favoriteItems}
+                          isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+
                 />
               </MainLayout>
             }

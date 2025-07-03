@@ -1,18 +1,30 @@
-// src/components/RopaComponente.jsx (CORREGIDO Y SIMPLIFICADO)
+// src/components/RopaComponente.jsx (CÓDIGO COMPLETO Y FUNCIONAL)
 
-import { Link } from "react-router-dom";
-import React from 'react'; // Eliminamos useState
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import React from 'react';
+import { toast } from 'react-toastify';
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 import PriceDisplay from './ofertas/PriceDisplay';
 
-export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggleFavorite }) {
+export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggleFavorite, isAuthenticated }) {
   const { id, nombre, imagenPrincipalUrl, precio, precioOferta, categoriaNombre } = producto;
- 
-  // La lógica de fetch se ha movido a TiendaPage, este componente ahora es más simple.
-  // La prop 'handleOpenModal' ahora se encarga de todo.
+  
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const handleAddToCartClick = () => {
-    // Simplemente llamamos a la función que nos pasó el componente padre.
     handleOpenModal(producto); 
+  };
+
+  const handleFavoriteClick = () => {
+    if (isAuthenticated) {
+      handleToggleFavorite(producto);
+    } else {
+      toast.info('Debes iniciar sesión para guardar favoritos.');
+      navigate('/login', { state: { from: location, 
+          action: 'addFavorite', 
+          productId: producto.id  } });
+    }
   };
 
   const fullImageUrl = imagenPrincipalUrl
@@ -26,7 +38,7 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
           <img src={fullImageUrl} alt={nombre} loading="lazy" />
         </Link>
         <button
-          onClick={() => handleToggleFavorite(producto)}
+          onClick={handleFavoriteClick} 
           className={`me-encanta-btn ${isLiked ? 'liked' : ''}`}
           aria-label="Añadir a favoritos"
           title="Añadir a favoritos"
@@ -52,7 +64,6 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
         <button
           onClick={handleAddToCartClick}
           className="agregar-carrito-btn"
-          // Ya no necesitamos 'disabled' porque el loading se maneja en el modal
         >
           Agregar al carrito
         </button>
