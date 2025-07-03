@@ -40,9 +40,7 @@ const UserDropdown = ({ isAuthenticated, userInfo, onClose, onAuthChange }) => {
           <div className="dropdown-divider"></div>
           <ul className="dropdown-menu">
             <li>
-              <Link to="/perfil" onClick={onClose}>
-                <i className="bi bi-person-circle"></i> Mi Perfil
-              </Link>
+              
             </li>
             <li>
               <Link to="/mis-pedidos" onClick={onClose}>
@@ -50,9 +48,7 @@ const UserDropdown = ({ isAuthenticated, userInfo, onClose, onAuthChange }) => {
               </Link>
             </li>
             <li>
-              <Link to="/direcciones" onClick={onClose}>
-                <i className="bi bi-geo-alt"></i> Mis Direcciones
-              </Link>
+             
             </li>
             <li>
               <button onClick={handleLogout} className="logout-button">

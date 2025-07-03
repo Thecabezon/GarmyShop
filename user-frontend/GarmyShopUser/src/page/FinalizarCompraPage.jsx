@@ -137,8 +137,7 @@ const DeliveryStep = ({ onBack, onNext, deliveryInfo, setDeliveryInfo, errors })
 
 const PaymentStep = ({ onBack, onFinalizePayment, isProcessing, paymentError, total, metodoPago, setMetodoPago }) => {
     const metodosDisponibles = {
-        'stripe_checkout': 'Tarjeta de Crédito / Débito (vía Stripe)',
-        'transferencia_bancaria': 'Transferencia Bancaria',
+        'stripe_checkout': 'Tarjeta de Crédito / Débito',
         'efectivo_contra_entrega': 'Efectivo Contra Entrega (Solo Lima)'
     };
 
@@ -157,7 +156,7 @@ const PaymentStep = ({ onBack, onFinalizePayment, isProcessing, paymentError, to
                         />
                         <div className="payment-method-details">
                             <strong>{value}</strong>
-                            {key === 'stripe_checkout' && <p>Paga de forma segura con tus tarjetas. Serás redirigido a Stripe.</p>}
+                            {key === 'stripe_checkout' && <p>Paga de forma segura con tus tarjetas. </p>}
                             {key === 'transferencia_bancaria' && <p>Te mostraremos los datos de la cuenta al finalizar la compra.</p>}
                             {key === 'efectivo_contra_entrega' && <p>Paga al recibir tu pedido. Disponible solo en algunas zonas.</p>}
                         </div>
@@ -216,10 +215,11 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
 
     const { subtotal, total, envio } = useMemo(() => {
         const subtotalCalc = cartItems.reduce((sum, item) => sum + item.precio * item.quantity, 0);
-        const envioCalc = subtotalCalc > 200 || subtotalCalc === 0 ? 0 : 15;
+        const envioCalc = subtotalCalc > 0 ? 0 : 0; 
         const totalCalc = subtotalCalc + envioCalc;
         return { subtotal: subtotalCalc, total: totalCalc, envio: envioCalc };
     }, [cartItems]);
+    
 
     const handleUpdateQuantity = (id, newQuantity) => {
         setCartItems(currentItems =>

@@ -278,9 +278,7 @@ function Header({
                         {isAuthenticated && (
                             <>
                                 <div className="mobile-nav-divider"></div>
-                                <Link to="/perfil" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}><i className="bi bi-person-circle"></i> Mi Perfil</Link>
                                 <Link to="/mis-pedidos" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}><i className="bi bi-box-seam"></i> Mis Pedidos</Link>
-                                <Link to="/direcciones" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}><i className="bi bi-geo-alt"></i> Mis Direcciones</Link>
                                 <button onClick={handleMobileLogout} className="mobile-nav-link logout-button"><i className="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
                             </>
                         )}
