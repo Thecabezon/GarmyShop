@@ -13,7 +13,7 @@ const MarcasSection = ({ marcas }) => {
 
             return (
               <div key={marca.id || marca.slug} className="marca-card">
-                <Link to={`/marca/${marca.slug}`} className="marca-link">
+                <Link to={`/marcas/${marca.slug}`} className="marca-link">
                   <div className="marca-logo-container">
                     <img
                       src={logoUrl || 'https://dummyimage.com/200x100/f0f0f0/666?text=Logo+No+Disp'}

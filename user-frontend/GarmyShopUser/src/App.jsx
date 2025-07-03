@@ -15,6 +15,7 @@ import SobreNosotrosPage from './page/SobreNosotrosPage';
 import MisPedidosPage from './page/MisPedidosPage';
 import PedidoDetallePage from './page/PedidoDetallePage';
 import { BusquedaPage } from './page/BusquedaPage';
+import MarcaProductosPage from './page/MarcaProductosPage';
 
 import LoginPage from './page/Auth/LoginPage';
 import RegisterPage from './page/Auth/RegisterPage';
@@ -238,6 +239,18 @@ function App() {
           <Route path="/nosotros" element={<MainLayout><SobreNosotrosPage /></MainLayout>} />
           <Route path="/contacto" element={<MainLayout><ContactoPage /></MainLayout>} />
           <Route path="/marcas" element={<MainLayout><MarcasPage /></MainLayout>} />
+          <Route
+            path="/marcas/:slug"
+            element={
+              <MainLayout>
+                <MarcaProductosPage
+                  handleAddToCart={handleAddToCart}
+                  favoriteItems={favoriteItems}
+                  handleToggleFavorite={handleToggleFavorite}
+                />
+              </MainLayout>
+            }
+          />
 
           <Route
             path="/producto/:cod"

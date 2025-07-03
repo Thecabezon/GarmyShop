@@ -1,5 +1,8 @@
+// src/context/DataContext.jsx (MEJORADO)
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+
+const API_BASE_URL = 'http://localhost:8085/api';
 
 const DataContext = createContext();
 
@@ -12,16 +15,18 @@ export function DataProvider({ children }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [productosPorMarca, setProductosPorMarca] = useState({});
+
     useEffect(() => {
         const fetchAllData = async () => {
             setLoading(true);
             try {
                 const [productsRes, categoriesRes, marcasRes, colorsRes, sizesRes] = await Promise.all([
-                    fetch('http://localhost:8085/api/productos?size=200'),
-                    fetch('http://localhost:8085/api/categorias'),
-                    fetch('http://localhost:8085/api/marcas'),
-                    fetch('http://localhost:8085/api/colores'),
-                    fetch('http://localhost:8085/api/tallas'),
+                    fetch(`${API_BASE_URL}/productos?size=200`),
+                    fetch(`${API_BASE_URL}/categorias`),
+                    fetch(`${API_BASE_URL}/marcas`),
+                    fetch(`${API_BASE_URL}/colores`),
+                    fetch(`${API_BASE_URL}/tallas`),
                 ]);
 
                 if (!productsRes.ok || !categoriesRes.ok || !marcasRes.ok || !colorsRes.ok || !sizesRes.ok) {
@@ -52,6 +57,38 @@ export function DataProvider({ children }) {
         fetchAllData();
     }, []);
 
+    const getProductsByMarcaSlug = useCallback(async (slug) => {
+        if (productosPorMarca[slug]) {
+            console.log(`⚡️ Devolviendo productos cacheados para la marca: ${slug}`);
+            return { productos: productosPorMarca[slug], marca: marcas.find(m => m.slug === slug) };
+        }
+
+        console.log(`⏳ Buscando productos en el backend para la marca: ${slug}`);
+        
+        try {
+            const marcaResponse = await fetch(`${API_BASE_URL}/marcas/slug/${slug}`);
+            if (!marcaResponse.ok) throw new Error(`Marca no encontrada: ${slug}`);
+            const marcaData = await marcaResponse.json();
+
+            const productosResponse = await fetch(`${API_BASE_URL}/productos/marca/${marcaData.id}?size=20`);
+            if (!productosResponse.ok) throw new Error('Error al cargar productos de la marca.');
+            const productosData = await productosResponse.json();
+            const fetchedProductos = productosData.content || [];
+
+            setProductosPorMarca(prevState => ({
+                ...prevState,
+                [slug]: fetchedProductos,
+            }));
+            
+            console.log(`✅ Productos para la marca "${slug}" cacheados.`);
+            return { productos: fetchedProductos, marca: marcaData };
+
+        } catch (err) {
+            console.error(`Error en getProductsByMarcaSlug para "${slug}":`, err);
+            throw err; 
+        }
+    }, [productosPorMarca, marcas]);
+
     const value = {
         products,
         categories,
@@ -59,7 +96,9 @@ export function DataProvider({ children }) {
         colors,
         sizes,
         loading,
-        error
+        error,
+        // Exponemos la nueva función en el contexto
+        getProductsByMarcaSlug, 
     };
 
     return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
