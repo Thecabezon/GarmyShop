@@ -162,6 +162,16 @@
   justify-content: flex-start;
 }
 
+.color-options {
+  display: flex;
+  flex-direction: row !important; 
+  flex-wrap: wrap;               
+  align-items: center;         
+  gap: 10px;
+  width: 100%;                    
+  justify-content: flex-start;
+}
+
 .color-option {
   width: 40px;
   height: 40px;
