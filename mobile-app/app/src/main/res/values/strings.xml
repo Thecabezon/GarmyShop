@@ -1,0 +1,36 @@
+<resources>
+    <string name="product_image">Imagen del producto</string>
+
+    <string name="app_name">GarmyShop</string>
+    <string name="terms_text">
+    <![CDATA[
+    TÉRMINOS Y CONDICIONES \n\n
+
+    Bienvenido/a a GarmyShop. Al utilizar nuestra aplicación, usted acepta estos términos y condiciones:\n\n
+
+    1. USO GENERAL\n
+    Esta aplicación permite comprar ropa para hombres y mujeres, crear una cuenta, gestionar su perfil, guardar productos en su lista de deseados y añadir artículos a su carrito de compras.\n\n
+
+    2. REGISTRO DE USUARIO\n
+    Para realizar compras, es necesario registrarse proporcionando información veraz. El usuario es responsable de mantener la confidencialidad de su cuenta y contraseña.\n\n
+
+    3. PAGOS\n
+    Los pagos se realizan mediante tarjetas de crédito. Al ingresar una tarjeta, usted autoriza el uso para compras realizadas desde su cuenta.\n\n
+
+    4. POLÍTICA DE PRIVACIDAD\n
+    La información personal que recolectamos se utiliza únicamente para fines relacionados con su experiencia en la app y no será compartida con terceros sin consentimiento.\n\n
+
+    5. USO ADECUADO\n
+    El usuario se compromete a no realizar un uso indebido de la aplicación, como actividades fraudulentas o maliciosas que afecten a otros usuarios o al sistema.\n\n
+
+    6. MODIFICACIONES\n
+    Nos reservamos el derecho de modificar estos términos en cualquier momento. Las modificaciones serán notificadas a través de la app.\n\n
+
+    7. CONTACTO\n
+    Para dudas o sugerencias, contáctenos en soporte@garmyshop.com\n\n
+
+    Última actualización: junio 2025\n
+
+    ]]>
+    </string>
+</resources>

@@ -1,0 +1,7 @@
+<!-- res/drawable/ic_paypal_resized.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/ic_apple_pay"
+    android:width="24dp"
+    android:height="24dp"/>
+</layer-list>

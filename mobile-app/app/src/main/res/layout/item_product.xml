@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:gravity="center"
+    android:background="@android:color/white">
+
+    <!-- Contenedor para la imagen y el botón de wishlist encima -->
+    <FrameLayout
+        android:layout_width="120dp"
+        android:layout_height="120dp">
+
+        <!-- Imagen del producto -->
+        <ImageView
+            android:id="@+id/productImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/sample_product" />
+
+        <!-- Botón de wishlist -->
+        <ImageButton
+            android:id="@+id/btnWishlist"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_circle_white"
+            android:src="@drawable/ic_heart_outline"
+            android:scaleType="centerInside"
+            android:contentDescription="Agregar a favoritos"
+            android:tint="@android:color/black"
+            android:padding="4dp" />
+    </FrameLayout>
+
+    <!-- Nombre del producto -->
+    <TextView
+        android:id="@+id/productName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre del producto"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Precio -->
+    <TextView
+        android:id="@+id/productPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$99.99"
+        android:textColor="#6f7f8c"
+        android:textSize="13sp"
+        android:layout_marginTop="4dp" />
+</LinearLayout>
