@@ -1,0 +1,127 @@
+/* Agrega estos estilos a tu archivo CSS de IconsComponent */
+
+/* Overlay oscuro que cubre la pantalla */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que esté por encima de todo */
+    animation: fadeIn 0.3s ease-out; /* Opcional: Animación de entrada */
+}
+
+/* Contenedor principal del modal */
+.modal-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px; /* Ancho máximo del modal */
+    width: 90%; /* Ancho responsivo */
+    text-align: center;
+    animation: slideInFromTop 0.4s ease-out; /* Opcional: Animación de entrada */
+    position: relative; /* Necesario para el ref del useEffect */
+}
+
+/* Animación de entrada suave (fade-in) */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Animación de entrada (slide desde arriba) */
+@keyframes slideInFromTop {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+
+/* Contenido del modal (título y mensaje) */
+.modal-content h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Contenedor de los botones */
+.modal-actions {
+    display: flex;
+    justify-content: center; /* Centra los botones */
+    gap: 15px; /* Espacio entre botones */
+}
+
+/* Estilo base para los botones del modal */
+.modal-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+/* Estilo para el botón de cancelar */
+.modal-button.cancel-button {
+    background-color: #ccc;
+    color: #333;
+}
+
+.modal-button.cancel-button:hover {
+    background-color: #bbb;
+}
+
+/* Estilo para el botón de confirmar */
+.modal-button.confirm-button {
+    background-color: #000000; /* Rojo para confirmar eliminación */
+    color: #fff;
+}
+
+.modal-button.confirm-button:hover {
+    background-color: #d40d2e;
+}
+
+/* Responsive para pantallas más pequeñas */
+@media (max-width: 480px) {
+    .modal-container {
+        padding: 20px;
+    }
+    .modal-content h3 {
+        font-size: 1.3em;
+    }
+    .modal-content p {
+        font-size: 0.95em;
+    }
+    .modal-actions {
+        flex-direction: column; /* Botones en columna en pantallas pequeñas */
+        gap: 10px;
+    }
+     .modal-button {
+         width: 100%; /* Botones ocupan todo el ancho */
+     }
+}
+
+/* Asegúrate de que otros overlays tengan un z-index menor que el modal */
+.cart-overlay, .user-dropdown-overlay {
+    z-index: 999; /* Por debajo del modal */
+}
+
+/* Asegúrate de que el cart-panel y user-dropdown tengan un z-index alto pero menor que los overlays */
+.cart-panel, .user-dropdown {
+     z-index: 990; /* Por debajo de los overlays */
+}
+
+
+
