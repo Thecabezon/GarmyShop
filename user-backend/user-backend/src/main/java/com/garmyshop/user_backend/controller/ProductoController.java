@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.*;
 
 
 @RestController
@@ -97,5 +98,21 @@ public class ProductoController {
             @PageableDefault(size = 12) Pageable pageable) {
         Page<ProductoListDTO> productosPage = productoService.buscarProductos(termino, pageable);
         return ResponseEntity.ok(productosPage);
+    }
+
+
+
+
+    /**
+     * Endpoint para obtener los productos destacados.
+     * @return
+     */
+    @GetMapping("/destacados")
+    public ResponseEntity<List<ProductoListDTO>> obtenerProductosDestacados() {
+        List<ProductoListDTO> productosDestacados = productoService.obtenerProductosDestacados();
+        if (productosDestacados.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(productosDestacados);
     }
 }

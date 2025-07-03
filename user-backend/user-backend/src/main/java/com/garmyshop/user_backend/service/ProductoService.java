@@ -5,6 +5,7 @@ import com.garmyshop.user_backend.dto.ProductoListDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.Optional;
+import java.util.List;
 
 public interface ProductoService {
 
@@ -53,5 +54,11 @@ public interface ProductoService {
      * @return
      */
     Page<ProductoListDTO> buscarProductos(String terminoBusqueda, Pageable pageable);
+
+    /**
+     * Obtiene una lista de todos los productos destacados activos.
+     * @return Lista de DTOs de productos destacados.
+     */
+    List<ProductoListDTO> obtenerProductosDestacados();
 
 }
