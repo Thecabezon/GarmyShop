@@ -5,20 +5,47 @@ import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 import PriceDisplay from './ofertas/PriceDisplay';
 
 export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggleFavorite }) {
-  const { id, nombre, imagenPrincipalUrl, precio, precioOferta, categoriaNombre } = producto;
-  
+  const { id, nombre, precio, precioOferta, categoriaNombre } = producto;
+ 
   const [isLoading, setIsLoading] = useState(false);
+
+  const getMainImagePath = (prod) => {
+    if (!prod) return null;
+
+    if (prod.imagenPrincipalUrl) {
+      return prod.imagenPrincipalUrl;
+    }
+
+    if (prod.imagenes && prod.imagenes.length > 0) {
+      const principalImage = prod.imagenes.find(img => img.esPrincipal === true);
+      if (principalImage) {
+        return principalImage.imagen;
+      }
+      return prod.imagenes[0].imagen;
+    }
+
+    return null;
+  };
+
+  const imagePath = getMainImagePath(producto);
+  
+  const fullImageUrl = imagePath
+    ? `${CLOUDINARY_BASE_URL}/${imagePath}`
+    : 'https://dummyimage.com/400x500/f0f0f0/ccc&text=No+Imagen';
 
   const handleAddToCartClick = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:8085/api/productos/${id}`);
-      if (!response.ok) {
-        throw new Error('No se pudieron cargar los detalles del producto.');
+      if (!producto.combinacionesDisponibles) {
+        const response = await fetch(`http://localhost:8085/api/productos/${id}`);
+        if (!response.ok) {
+          throw new Error('No se pudieron cargar los detalles del producto.');
+        }
+        const productoCompleto = await response.json();
+        handleOpenModal(productoCompleto);
+      } else {
+        handleOpenModal(producto);
       }
-      const productoCompleto = await response.json();
-      
-      handleOpenModal(productoCompleto);
     } catch (error) {
       console.error("Error al obtener detalles del producto:", error);
       alert('Hubo un error al cargar el producto. Por favor, inténtalo de nuevo.');
@@ -26,10 +53,6 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
       setIsLoading(false);
     }
   };
-
-  const fullImageUrl = imagenPrincipalUrl
-    ? `${CLOUDINARY_BASE_URL}/${imagenPrincipalUrl}`
-    : 'https://dummyimage.com/400x500/f0f0f0/ccc&text=No+Imagen';
 
   return (
     <div className="ropa-card">
@@ -48,21 +71,21 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
           </svg>
         </button>
       </div>
-      
+     
       <div className="ropa-info">
-        <p className="producto-categoria">{categoriaNombre || 'Categoría'}</p>
+        <p className="producto-categoria">{categoriaNombre || producto.categoria?.nombre || 'Categoría'}</p>
         <Link to={`/producto/${id}`} className="producto-nombre-link">
           <h5>{nombre}</h5>
         </Link>
-        
+       
         <div className="ropa-precio">
           <PriceDisplay regularPrice={precio} offerPrice={precioOferta} />
         </div>
       </div>
-      
+     
       <div className="ropa-acciones">
-        <button 
-          onClick={handleAddToCartClick} 
+        <button
+          onClick={handleAddToCartClick}
           className="agregar-carrito-btn"
           disabled={isLoading}
         >

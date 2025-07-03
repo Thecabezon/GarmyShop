@@ -1,8 +1,6 @@
-// src/context/FilterContext.jsx
 
 import React, { createContext, useContext, useReducer } from 'react';
 
-// 1. Definir el estado inicial de los filtros
 const initialState = {
   selectedCategories: [],
   selectedColors: [],
@@ -10,10 +8,8 @@ const initialState = {
   onlyOnSale: false,
 };
 
-// 2. Crear el contexto
 const FilterContext = createContext();
 
-// 3. Definir el reducer para manejar las acciones de filtrado
 function filterReducer(state, action) {
   switch (action.type) {
     case 'TOGGLE_CATEGORY': {
@@ -22,8 +18,8 @@ function filterReducer(state, action) {
       return {
         ...state,
         selectedCategories: isSelected
-          ? state.selectedCategories.filter(id => id !== categoryId) // Quitar
-          : [...state.selectedCategories, categoryId], // Añadir
+          ? state.selectedCategories.filter(id => id !== categoryId)
+          : [...state.selectedCategories, categoryId],
       };
     }
     case 'TOGGLE_COLOR': {
@@ -52,13 +48,12 @@ function filterReducer(state, action) {
         onlyOnSale: !state.onlyOnSale,
       };
     case 'CLEAR_FILTERS':
-      return initialState; // Resetea al estado inicial
+      return initialState;
     default:
       throw new Error(`Acción desconocida: ${action.type}`);
   }
 }
 
-// 4. Crear el proveedor del contexto que envolverá tu aplicación
 export function FilterProvider({ children }) {
   const [state, dispatch] = useReducer(filterReducer, initialState);
 
@@ -69,8 +64,6 @@ export function FilterProvider({ children }) {
   );
 }
 
-// 5. Crear y EXPORTAR el hook personalizado para usar el contexto fácilmente
-//    ¡Esta es la parte que faltaba!
 export function useFilters() {
   const context = useContext(FilterContext);
   if (context === undefined) {

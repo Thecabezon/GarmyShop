@@ -16,7 +16,7 @@ const OAuth2RedirectHandler = ({ onAuthChange }) => {
 
     if (token) {
       // Éxito: Token recibido del backend
-      console.log('OAuth2RedirectHandler: Token recibido.');
+      console.log('OAuth2RedirectHandler: Token recibido.');  
       authService.handleOAuth2Token(token); // Guarda el token
       if (onAuthChange) {
         onAuthChange(); // Dispara la carga de datos del usuario en App.js

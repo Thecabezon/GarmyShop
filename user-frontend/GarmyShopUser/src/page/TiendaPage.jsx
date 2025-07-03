@@ -1,6 +1,7 @@
-// src/pages/TiendaPage.jsx
+// src/page/TiendaPage.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom'; // Importamos useSearchParams
 import { ProductModal } from '../components/ProductModal';
 import { RopaComponente } from '../components/RopaComponente';
 import { FilterPanel } from '../components/FilterPanel';
@@ -34,20 +35,24 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+    const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(window.innerWidth > 768);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
 
-    const { filters } = useFilters();
+    const { filters, dispatch } = useFilters();
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         const fetchAllData = async () => {
             setLoading(true);
             try {
+                // Para el filtro del lado del cliente, necesitamos el DTO de detalle con las combinaciones.
+                // Modificamos la petición para que traiga todos los productos con sus detalles.
+                // NOTA: Para producción con muchos productos, se preferiría filtrado en backend.
                 const [productsRes, categoriesRes, colorsRes, sizesRes] = await Promise.all([
-                    fetch('http://localhost:8085/api/productos?include=combinacionesDisponibles'),
+                    fetch('http://localhost:8085/api/productos?size=100'), // Asumimos que 100 es suficiente para traer todo
                     fetch('http://localhost:8085/api/categorias'),
                     fetch('http://localhost:8085/api/colores'),
                     fetch('http://localhost:8085/api/tallas'),
@@ -59,10 +64,19 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
                 const categoriesData = await categoriesRes.json();
                 const colorsData = await colorsRes.json();
                 const sizesData = await sizesRes.json();
-                setAllProducts(productsData.content || productsData);
+
+                // Para que el filtro funcione, necesitamos los detalles de CADA producto.
+                // Vamos a buscar los detalles completos de todos los productos.
+                const detailedProductsPromises = (productsData.content || []).map(p => 
+                    fetch(`http://localhost:8085/api/productos/${p.id}`).then(res => res.json())
+                );
+                const detailedProducts = await Promise.all(detailedProductsPromises);
+
+                setAllProducts(detailedProducts);
                 setCategories(categoriesData);
                 setColors(colorsData);
                 setSizes(sizesData);
+
             } catch (err) {
                 setError(err.message);
                 console.error("Error al obtener datos:", err);
@@ -73,12 +87,30 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
         fetchAllData();
     }, []);
 
+    useEffect(() => {
+        const categoriaIdFromUrl = searchParams.get('categoria');
+        if (categoriaIdFromUrl) {
+            const categoriaIdNum = parseInt(categoriaIdFromUrl, 10);
+            if (!filters.selectedCategories.includes(categoriaIdNum)) {
+                dispatch({ type: 'CLEAR_FILTERS' });
+                dispatch({ type: 'TOGGLE_CATEGORY', payload: { categoryId: categoriaIdNum } });
+            }
+        }
+    }, [searchParams, dispatch]);
+
     const filteredProducts = useMemo(() => {
         if (!allProducts.length) return [];
         return allProducts.filter(product => {
             const { selectedCategories, selectedColors, selectedSizes, onlyOnSale } = filters;
-            if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoria?.id)) return false;
+            
+            // ### LA CORRECCIÓN CLAVE ESTÁ AQUÍ ###
+            // Usamos product.categoria.id porque ahora tenemos el DTO de detalle.
+            if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoria?.id)) {
+                 return false;
+            }
+
             if (onlyOnSale && !(product.precioOferta && product.precioOferta < product.precio)) return false;
+
             if (selectedColors.length > 0 || selectedSizes.length > 0) {
                 return product.combinacionesDisponibles?.some(combo => {
                     const colorMatch = selectedColors.length === 0 || selectedColors.includes(combo.color?.id);
@@ -90,6 +122,9 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
         });
     }, [allProducts, filters]);
 
+    // El resto de tu componente (optionCounts, handleOpenModal, etc.) no necesita cambios
+    // y debería funcionar correctamente con esta corrección.
+    // ... (el resto del código que ya tenías) ...
     const optionCounts = useMemo(() => {
         const counts = { categories: {}, colors: {}, sizes: {} };
         if (!allProducts.length) return counts;
@@ -142,12 +177,7 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
                 });
             });
 
-        const finalCounts = { categories: categoryCounts, colors: finalColorCounts, sizes: finalSizeCounts };
-        
-        // --- CONSOLE.LOG PARA DEBUG ---
-        console.log('%c[DEBUG] Contadores de opciones recalculados:', 'color: blue; font-weight: bold;', finalCounts);
-        
-        return finalCounts;
+        return { categories: categoryCounts, colors: finalColorCounts, sizes: finalSizeCounts };
     }, [allProducts, filters, categories, colors, sizes]);
 
     const handleOpenModal = async (producto) => {
