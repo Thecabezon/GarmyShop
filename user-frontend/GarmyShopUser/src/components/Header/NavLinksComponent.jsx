@@ -48,7 +48,7 @@ const NavLinksComponent = ({ onNavLinkHover, activeDropdown }) => {
 
       {/* Item CONTACTO */}
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
-        <NavLink to="/contacto" className="nav-link-item" onClick={handleLinkClick}>Contacto</NavLink>
+        <NavLink to="/contacto" className="nav-link-item" onClick={handleLinkClick}>🌸Contacto</NavLink>
       </div>
 
     </nav>

@@ -44,11 +44,7 @@ const Footer = () => {
                     Productos
                   </a>
                 </li>
-                <li className="mb-2">
-                  <a href="/ofertas" className="text-white text-decoration-none">
-                    Ofertas
-                  </a>
-                </li>
+               
                  <li className="mb-2">
                   <a href="/nosotros" className="text-white text-decoration-none">
                     Sobre Nosotros

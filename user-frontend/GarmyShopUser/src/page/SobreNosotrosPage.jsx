@@ -1,157 +1,140 @@
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-
 import '../styles/SobreNosotrosPage.css';
 
+// Importar iconos de react-icons
+// Los de Bootstrap (bs)
+import { BsBullseye, BsEye, BsGem, BsLightbulb, BsBuilding, BsGenderFemale } from 'react-icons/bs';
+// Los de Font Awesome (fa) - Incluye FaRobot y FaHandsHelping
+import { FaRobot, FaHandsHelping } from 'react-icons/fa';
+
+
 const SobreNosotrosPage = () => {
+  const sectionRefs = useRef([]);
 
-    const heroRef = useRef(null);
-    const missionRef = useRef(null);
-    const whyPeruRef = useRef(null);
-    const solutionRef = useRef(null);
-    const impactRef = useRef(null);
-    const ctaRef = useRef(null);
+  useEffect(() => {
+    window.scrollTo(0, 0);
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible'); 
-                    } else {
-                    }
-                });
-            },
-            {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.2 
-            }
-        );
-
-        const sectionsToObserve = [
-            heroRef.current,
-            missionRef.current,
-            whyPeruRef.current,
-            solutionRef.current,
-            impactRef.current,
-            ctaRef.current
-        ].filter(Boolean);
-
-
-        sectionsToObserve.forEach(section => {
-            if (section) {
-                observer.observe(section);
-            }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
         });
-
-        return () => {
-            sectionsToObserve.forEach(section => {
-                 if (section) {
-                    observer.unobserve(section);
-                 }
-            });
-        };
-    }, []);
-
-
-    return (
-        <div className="about-us-container">
-            <section className="about-hero fade-in" ref={heroRef}>
-                <div className="hero-content">
-                    <h1>Sobre GarmyShop</h1>
-                    <p>Impulsando marcas peruanas con estilo, tecnología y propósito.</p>
-                </div>
-            </section>
-            <section className="about-section mission-vision-section fade-in" ref={missionRef}>
-                <div className="section-content">
-                    <h2>Nuestra Misión y Visión</h2>
-                    <div className="mission-vision-grid">
-                        <div className="vision-block">
-                            <h3>Nuestra Visión</h3>
-                            <p>Ser el principal punto de encuentro online para la moda femenina peruana, conectando marcas talentosas con compradoras que buscan calidad y diseño local.</p>
-                        </div>
-                         <div className="mission-block">
-                            <h3>Nuestra Misión</h3>
-                            <p>Facilitar la digitalización de emprendimientos de moda peruanos y mejorar la experiencia de compra online para las consumidoras, apoyando el crecimiento económico y social.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section className="about-section why-peru-section fade-in" ref={whyPeruRef}>
-                <div className="section-content">
-                    <h2>Por Qué Nos Enfocamos en la Moda Femenina Peruana</h2>
-                    <div className="why-peru-content">
-                        <div className="why-peru-text">
-                            <p>Nuestra elección estratégica tiene un profundo impacto social y económico en Perú.</p>
-                            <p>El sector de ropa femenina es uno de los más dinámicos en el e-commerce de moda, asegurando un mercado activo. Pero, más importante aún, un gran porcentaje de los emprendimientos en este rubro son liderados por mujeres.</p>
-                             <p>Al crear GarmyShop, les ofrecemos una herramienta poderosa y accesible para superar barreras como el alto costo del e-commerce propio, profesionalizar sus ventas más allá de las redes sociales y ganar visibilidad en un mercado centralizado. Buscamos ser un motor de crecimiento para estas mujeres empresarias.</p>
-                        </div>
-                         <div className="why-peru-image">
-                             <img src="https://m.media-amazon.com/images/I/41Dp-h3NWhL.jpg" alt="Moda peruana" />
-                         </div>
-                    </div>
-                </div>
-            </section>
-
-
-            <section className="about-section solution-section fade-in" ref={solutionRef}>
-                <div className="section-content">
-                    <h2>Nuestra Solución</h2>
-                    <p>GarmyShop ofrece una propuesta integral para abordar estos desafíos, brindando:</p>
-                    <ul>
-                        <li><strong>Plataforma Accesible y de Bajo Costo:</strong> Las marcas venden en un marketplace profesional sin la inversión inicial de una web propia.</li>
-                        <li><strong>Operación Simplificada:</strong> Nos encargamos de la gestión técnica y publicación, liberando a las marcas para enfocarse en la creación.</li>
-                        <li><strong>Experiencia de Compra Asistida:</strong> Un chatbot en la web simula la atención de tienda física, guiando a las compradoras.</li>
-                        <li><strong>Visibilidad Especializada:</strong> Agrupamos talento peruano, creando un destino fácil de usar para encontrar moda local.</li>
-                        <li><strong>Transparencia y Datos:</strong> Proveemos reportes de venta confiables para análisis y toma de decisiones informadas.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section className="about-section impact-section fade-in" ref={impactRef}>
-                 <div className="section-content">
-                      <h2>Nuestro Impacto</h2>
-                      <p>Al unirte a GarmyShop, ya sea como marca o compradora, contribuyes a:</p>
-                      <div className="impact-items-container">
-                          <div className="impact-item">
-                              <i className="bi bi-gem"></i>
-                              <h3>Empoderamiento</h3>
-                              <p>Brindamos herramientas digitales a emprendedoras, ahorrándoles costos significativos y abriendo nuevos mercados.</p>
-                          </div>
-                           <div className="impact-item">
-                              <i className="bi bi-shop"></i>
-                              <h3>Economía Local</h3>
-                              <p>Fomentamos la producción y el consumo de moda "Hecho en Perú", fortaleciendo la industria nacional.</p>
-                          </div>
-                           <div className="impact-item">
-                              <i className="bi bi-graph-up"></i>
-                              <h3>Profesionalización</h3>
-                              <p>Ayudamos a las PYMES a formalizar y escalar sus operaciones de venta online con datos confiables.</p>
-                          </div>
-                           <div className="impact-item">
-                              <i className="bi bi-heart"></i>
-                              <h3>Conexión</h3>
-                              <p>Facilitamos a los consumidores encontrar y apoyar directamente el talento y diseño peruano.</p>
-                          </div>
-                      </div>
-                 </div>
-            </section>
-
-            <section className="about-section cta-section fade-in" ref={ctaRef}>
-                 <div className="section-content text-center">
-                     <h2>¿Eres una Marca Peruana?</h2>
-                     <p>Únete a nuestra plataforma y lleva tus creaciones al siguiente nivel.</p>
-                     <Link to="/vende-con-nosotros" className="cta-button">Descubre Cómo</Link>
-                 </div>
-            </section>
-
-
-        </div>
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.2,
+      }
     );
-};
 
+    sectionRefs.current.forEach(section => {
+      if (section) observer.observe(section);
+    });
+
+    return () => {
+      sectionRefs.current.forEach(section => {
+        if (section) observer.unobserve(section);
+      });
+    };
+  }, []);
+
+  const addSectionRef = (el) => {
+    if (el && !sectionRefs.current.includes(el)) {
+      sectionRefs.current.push(el);
+    }
+  };
+
+  return (
+    <div className="about-us-container">
+
+      <section className="about-section animatable-section" ref={addSectionRef}>
+        <div className="section-content intro-content">
+          <h2 className="titulo-sobre-nosotros">Sobre nosostros</h2>
+          <div className="linea-decorativa"></div>
+
+          <p>
+            GarmyShop es una plataforma de e-commerce peruana dedicada exclusivamente a la venta de ropa para mujer. Reunimos las mejores marcas nacionales e internacionales en un solo lugar para ofrecer estilo, calidad y autenticidad a nuestras clientas.
+          </p>
+          <p>
+            Nos enfocamos en el público femenino porque, según diversas estadísticas, las mujeres lideran el consumo de moda en el comercio electrónico. Nuestro objetivo es brindar una experiencia especializada, personalizada y cercana.
+          </p>
+          <p>
+            Una de nuestras principales innovaciones es el <FaRobot className="icon-inline" /> <strong>chatbot inteligente</strong> que actúa como un asistente de tienda, acompañándote durante todo el proceso de compra para resolver dudas, recomendar productos y ayudarte a encontrar lo que necesitas.
+          </p>
+        </div>
+      </section>
+
+      <section className="about-section animatable-section alternate-background" ref={addSectionRef}>
+        <div className="section-content mission-vision-grid">
+            <div>
+                <h3 className="subtitulo"><BsBullseye className="icon-heading" /> Nuestra Misión</h3>
+                <p>
+                  Empoderar a las mujeres a través de la moda, ofreciendo una plataforma segura, moderna y accesible donde puedan encontrar prendas que reflejen su identidad y personalidad.
+                </p>
+            </div>
+             <div>
+                <h3 className="subtitulo"><BsEye className="icon-heading" /> Nuestra Visión</h3>
+                <p>
+                  Ser el marketplace líder en moda femenina del Perú, reconocida por su compromiso con la calidad, la innovación y el impulso de marcas emergentes y consolidadas.
+                </p>
+            </div>
+        </div>
+      </section>
+
+      <section className="about-section animatable-section" ref={addSectionRef}>
+        <div className="section-content">
+          <h3 className="subtitulo text-center"><BsGem className="icon-heading" /> Nuestros Valores</h3>
+          <div className="values-grid">
+              <div className="value-item">
+                  <BsGem className="icon-value" />
+                  <h4>Calidad</h4>
+                  <p>Seleccionamos marcas que priorizan materiales y confección de alto nivel.</p>
+              </div>
+               <div className="value-item">
+                  <FaHandsHelping className="icon-value" /> {/* Corregido: FaHandsHelping de /fa */}
+                  <h4>Empatía</h4>
+                  <p>Pensamos como nuestras clientas y diseñamos experiencias que respondan a sus verdaderas necesidades.</p>
+              </div>
+               <div className="value-item">
+                  <BsLightbulb className="icon-value" />
+                  <h4>Innovación</h4>
+                  <p>Integramos tecnología como el chatbot para mejorar la experiencia de compra.</p>
+              </div>
+               <div className="value-item">
+                  <BsBuilding className="icon-value" />
+                  <h4>Apoyo local</h4>
+                  <p>Impulsamos marcas peruanas para fomentar el talento y el empleo en el país.</p>
+              </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="about-section animatable-section alternate-background" ref={addSectionRef}>
+        <div className="section-content why-women-content">
+            <div className="why-women-text">
+                <h3 className="subtitulo"><BsGenderFemale className="icon-heading" /> ¿Por qué solo para mujeres?</h3>
+                <p>
+                  Porque creemos en ofrecer una experiencia de compra especializada. Sabemos que las mujeres tienen un estilo único y necesidades particulares al comprar moda. Nuestra plataforma está diseñada exclusivamente para ellas, desde el catálogo hasta la atención personalizada con tecnología.
+                </p>
+            </div>
+             <div className="why-women-icon-large">
+                 <BsGenderFemale className="large-icon" />
+             </div>
+        </div>
+      </section>
+
+      <section className="about-section animatable-section" ref={addSectionRef}>
+        <div className="section-content text-center">
+          <p className="conclusion-text">
+            En GarmyShop, no solo compras ropa. Descubres estilo, inspiración y una comunidad de mujeres empoderadas que confían en su identidad. ¡Gracias por ser parte de nuestra historia!
+          </p>
+        </div>
+      </section>
+
+    </div>
+  );
+};
 
 export default SobreNosotrosPage;

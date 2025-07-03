@@ -119,7 +119,7 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
     };
 
     if (loading) {
-        return <div className="tienda-page-container"><h2 className="productos-titulo">Cargando datos de la tienda...</h2></div>;
+        return <div className="tienda-page-container"><h2 className="productos-titulo">Cargando...</h2></div>;
     }
     if (error) {
         return <div className="tienda-page-container"><h2 className="productos-titulo" style={{color: 'red'}}>Error: {error}</h2></div>;
