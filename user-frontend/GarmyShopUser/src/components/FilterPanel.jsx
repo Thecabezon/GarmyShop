@@ -14,7 +14,7 @@ export function FilterPanel({ isOpen, categories, colors, sizes, counts }) {
   return (
     <aside className={panelClasses}>
       <div className="filter-panel-header">
-        <h3>Filtrar Por</h3>
+        <h3>🌸Filtrar Por:</h3>
       </div>
 
       <div className="filter-panel-body">

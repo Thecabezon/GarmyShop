@@ -1,8 +1,18 @@
 /* src/styles/FilterPanel.css */
 
+
+/* Asegúrate que el contenedor padre tenga altura suficiente para sticky */
 .filter-panel-static {
-  width: 280px;
-  flex-shrink: 0;
+  position: sticky;
+  top: 90px; /* Ajusta según la altura de tu navbar */
+  align-self: flex-start;
+  height: fit-content;
+  max-height: calc(100vh - 100px); /* Evita que se salga del viewport */
+  
+  background-color: white; /* Asegura fondo si es sticky */
+  z-index: 2; /* Para que no quede detrás de nada */
+  padding-right: 10px;
+  width: 280px;flex-shrink: 0;
   background-color: #fff;
   border-right: 1px solid #e9e9e9;
   display: flex;
@@ -11,6 +21,8 @@
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
 }
+
+
 
 .filter-panel-static.closed {
   width: 0;

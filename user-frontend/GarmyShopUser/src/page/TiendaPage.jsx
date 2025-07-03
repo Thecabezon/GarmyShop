@@ -6,7 +6,7 @@ import { ProductModal } from '../components/ProductModal';
 import { RopaComponente } from '../components/RopaComponente';
 import { FilterPanel } from '../components/FilterPanel';
 import { FilterProvider, useFilters } from '../context/FilterContext';
-import { useData } from '../context/DataContext'; // 1. Importamos nuestro nuevo hook
+import { useData } from '../context/DataContext';
 import '../styles/Tienda.css';
 import '../styles/FilterPanel.css';
 
@@ -29,14 +29,13 @@ export function TiendaPage({ handleAddToCart, favoriteItems, handleToggleFavorit
 }
 
 function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite }) {
-    // 2. Tomamos TODOS los datos y el estado de carga desde nuestro almacén central
-    const { 
-        products: allProducts, 
-        categories, 
-        colors, 
-        sizes, 
-        loading, 
-        error 
+    const {
+        products: allProducts,
+        categories,
+        colors,
+        sizes,
+        loading,
+        error
     } = useData();
 
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(window.innerWidth > 768);
@@ -47,8 +46,23 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
     const { filters, dispatch } = useFilters();
     const [searchParams] = useSearchParams();
 
-    // 3. ELIMINAMOS el useEffect que hacía el fetch. ¡Ya no es necesario!
-    // La carga de datos ahora es manejada por DataProvider.
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    // 🟢 FUNCIONES AÑADIDAS:
+    const handleOpenModal = (producto) => {
+        setSelectedProduct(producto);
+        setModalLoading(true);
+        setTimeout(() => {
+            setModalLoading(false);
+            setIsModalOpen(true);
+        }, 500); // Simula carga
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedProduct(null);
+    };
 
     useEffect(() => {
         const categoriaIdFromUrl = searchParams.get('categoria');
@@ -57,80 +71,104 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
             if (!filters.selectedCategories.includes(categoriaIdNum)) {
                 dispatch({ type: 'CLEAR_FILTERS' });
                 dispatch({ type: 'TOGGLE_CATEGORY', payload: { categoryId: categoriaIdNum } });
+                setCurrentPage(1);
             }
         }
-    }, [searchParams, dispatch]);
+    }, [searchParams, dispatch, filters]);
 
-    // La lógica de filtrado y conteo no necesita cambios, ya funciona con los datos del almacén.
     const filteredProducts = useMemo(() => {
         if (loading || !allProducts.length) return [];
-        return allProducts.filter(product => {
-            const { selectedCategories, selectedColors, selectedSizes, onlyOnSale } = filters;
-            
-            if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoriaId)) {
-                 return false;
-            }
 
+        if (allProducts.length > 0 && filters.selectedCategories.length > 0 && !allProducts.some(p => filters.selectedCategories.includes(p.categoriaId))) {
+            if (currentPage !== 1) setCurrentPage(1);
+            return [];
+        }
+
+        const result = allProducts.filter(product => {
+            const { selectedCategories, selectedColors, selectedSizes, onlyOnSale } = filters;
+
+            if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoriaId)) return false;
             if (onlyOnSale && !(product.precioOferta && product.precioOferta < product.precio)) return false;
 
-            // Para talla y color, necesitaríamos el producto detallado.
-            // Por ahora, este filtro no funcionará con los datos de lista. Lo dejaremos para una mejora futura.
-            
+            // Para usar colores y tallas, descomenta y asegúrate de que existan en la data
+            // if (selectedColors.length > 0 && !(product.colores?.some(c => selectedColors.includes(c.id)))) return false;
+            // if (selectedSizes.length > 0 && !(product.tallas?.some(t => selectedSizes.includes(t.id)))) return false;
+
             return true;
         });
-    }, [allProducts, filters, loading]);
+
+        const totalPagesAfterFilter = Math.ceil(result.length / itemsPerPage);
+        if (currentPage > totalPagesAfterFilter && totalPagesAfterFilter > 0) {
+            setCurrentPage(totalPagesAfterFilter);
+        } else if (result.length > 0 && currentPage === 0) {
+            setCurrentPage(1);
+        } else if (result.length === 0 && currentPage !== 1) {
+            setCurrentPage(1);
+        }
+
+        return result;
+    }, [allProducts, filters, loading, currentPage, itemsPerPage]);
 
     const optionCounts = useMemo(() => {
-        // Esta lógica necesitaría una revisión si quisiéramos que los contadores fueran perfectos.
-        // Por ahora, la dejamos funcional pero simple.
         const counts = { categories: {}, colors: {}, sizes: {} };
         if (loading || !allProducts.length) return counts;
 
-        filteredProducts.forEach(p => {
-            if(p.categoriaId) {
+        allProducts.forEach(p => {
+            if (p.categoriaId) {
                 counts.categories[p.categoriaId] = (counts.categories[p.categoriaId] || 0) + 1;
             }
         });
+
         return counts;
+    }, [allProducts, loading]);
 
-    }, [filteredProducts, loading]);
+    const totalPages = useMemo(() => {
+        return Math.ceil(filteredProducts.length / itemsPerPage);
+    }, [filteredProducts.length, itemsPerPage]);
 
-    const handleOpenModal = async (producto) => {
-        setModalLoading(true);
-        setIsModalOpen(true);
-        setSelectedProduct({ nombre: "Cargando..." });
-        try {
-            const response = await fetch(`http://localhost:8085/api/productos/${producto.id}`);
-            if (!response.ok) throw new Error('No se pudieron cargar los detalles.');
-            const productoCompleto = await response.json();
-            setSelectedProduct(productoCompleto);
-        } catch (err) {
-            alert('Hubo un error al cargar el producto.');
-            handleCloseModal();
-        } finally {
-            setModalLoading(false);
+    const productsForPage = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return filteredProducts.slice(startIndex, endIndex);
+    }, [filteredProducts, currentPage, itemsPerPage]);
+
+    const handlePageChange = (pageNumber) => {
+        if (pageNumber > 0 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);
+            window.scrollTo(0, 0);
         }
     };
-    
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setSelectedProduct(null);
-        setModalLoading(false);
-    };
+
+    const pageNumbers = useMemo(() => {
+        const pages = [];
+        const maxPagesToShow = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+        if (endPage - startPage + 1 < maxPagesToShow) {
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return pages;
+    }, [totalPages, currentPage, itemsPerPage]);
 
     if (loading) {
         return <div className="tienda-page-container"><h2 className="productos-titulo">Cargando...</h2></div>;
     }
     if (error) {
-        return <div className="tienda-page-container"><h2 className="productos-titulo" style={{color: 'red'}}>Error: {error}</h2></div>;
+        return <div className="tienda-page-container"><h2 className="productos-titulo" style={{ color: 'red' }}>Error: {error.message || 'Error al cargar productos.'}</h2></div>;
     }
 
     return (
         <div className="tienda-page-container">
             <div className="tienda-header-section">
                 <h2 className="productos-titulo">Nuestros Productos</h2>
-                <button 
-                    className="toggle-filter-btn" 
+                <button
+                    className="toggle-filter-btn"
                     onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
                     aria-label={isFilterPanelOpen ? "Cerrar filtros" : "Abrir filtros"}
                     aria-expanded={isFilterPanelOpen}
@@ -148,11 +186,11 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
                     sizes={sizes}
                     counts={optionCounts}
                 />
-                
+
                 <div className={`product-grid-container ${isFilterPanelOpen ? 'filters-open' : ''}`}>
-                    {filteredProducts.length > 0 ? (
+                    {productsForPage.length > 0 ? (
                         <div className="ropa-lista">
-                            {filteredProducts.map((producto) => (
+                            {productsForPage.map((producto) => (
                                 <RopaComponente
                                     key={producto.id}
                                     producto={producto}
@@ -163,9 +201,41 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
                             ))}
                         </div>
                     ) : (
-                        <div className="no-results-message">
-                            <h3>No hay resultados</h3>
-                            <p>No hay productos que coincidan con tu selección.</p>
+                        filteredProducts.length === 0 && (
+                            <div className="no-results-message">
+                                <h3>No hay resultados</h3>
+                                <p>No hay productos que coincidan con tu selección.</p>
+                            </div>
+                        )
+                    )}
+
+                    {totalPages > 1 && filteredProducts.length > 0 && (
+                        <div className="pagination-controls">
+                            <button
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="pagination-button"
+                            >
+                                Anterior
+                            </button>
+
+                            {pageNumbers.map(page => (
+                                <button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    className={`pagination-button ${currentPage === page ? 'active' : ''}`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="pagination-button"
+                            >
+                                Siguiente
+                            </button>
                         </div>
                     )}
                 </div>
