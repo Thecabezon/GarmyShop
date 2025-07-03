@@ -206,7 +206,7 @@ function Header({
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="¿Qué estás buscando?"
+                        placeholder="¿Qué producto estás buscando?"
                         className="search-input"
                     />
                     <button className="search-button" disabled>
