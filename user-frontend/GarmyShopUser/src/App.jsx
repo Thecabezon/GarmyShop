@@ -224,7 +224,18 @@ function App() {
 
       <Routes>
         {/* Inicio */}
-        <Route path="/" element={<MainLayout><InicioPage /></MainLayout>} />
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <InicioPage
+                handleAddToCart={handleAddToCart}
+                handleToggleFavorite={handleToggleFavorite}
+                favoriteItems={favoriteItems}
+              />
+            </MainLayout>
+          }
+        />
 
         {/* Tienda */}
         <Route

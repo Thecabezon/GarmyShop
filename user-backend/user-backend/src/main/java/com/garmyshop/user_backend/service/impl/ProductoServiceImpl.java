@@ -175,4 +175,16 @@ public class ProductoServiceImpl implements ProductoService {
         return productoRepository.buscarAvanzado(terminoProducto, nombreColor, pageable)
                .map(this::convertirAProductoListDTO);
     }
+
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductoListDTO> obtenerProductosDestacados() {
+        return productoRepository.findByEsDestacadoTrueAndActivoTrue()
+                .stream()
+                .map(this::convertirAProductoListDTO) // Reutilizamos el conversor que ya tenemos
+                .collect(Collectors.toList());
+    }
+
 }
