@@ -76,21 +76,22 @@ function Header({
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        if (!isSearchActive) return;
-
-        if (searchTerm && location.pathname !== '/buscar') {
-            navigate('/buscar');
+        if (!isSearchActive) {
+            return;
         }
-
+        if (searchTerm.trim() === '') {
+            if (location.pathname === '/buscar' && location.search !== '') {
+                 navigate('/buscar', { replace: true });
+            }
+            return;
+        }
         const handler = setTimeout(() => {
             navigate(`/buscar?query=${encodeURIComponent(searchTerm)}`);
         }, 400);
-
         return () => {
             clearTimeout(handler);
         };
-    }, [searchTerm, isSearchActive, navigate, location.pathname]);
-
+    }, [searchTerm, isSearchActive, navigate, location]); 
 
     const toggleSearch = () => {
         const newState = !isSearchActive;

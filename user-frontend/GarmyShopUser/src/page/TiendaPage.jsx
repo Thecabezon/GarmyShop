@@ -38,8 +38,8 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
         error
     } = useData();
 
-    const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(window.innerWidth > 768);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+ const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);    
+ const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
 
