@@ -272,7 +272,6 @@ function Header({
                     <div className="mobile-nav-links">
                         <Link to="/" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Inicio</Link>
                         <Link to="/tienda" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Tienda</Link>
-                        <Link to="/ofertas" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Ofertas</Link>
                         <Link to="/marcas" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Marcas</Link>
                         <Link to="/nosotros" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Sobre Nosotros</Link>
                         <Link to="/ayuda" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Ayuda</Link>

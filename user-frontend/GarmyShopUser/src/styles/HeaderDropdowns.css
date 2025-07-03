@@ -30,7 +30,7 @@
 .category-dropdown-title {
     font-size: 1.5rem; /* Tamaño del título, ajusta */
     font-weight: bold;
-    color: #333; /* Color del título */
+    color: #000000; /* Color del título */
     margin: 0; /* Elimina márgenes por defecto del h3 */
     font-family: 'League Spartan', sans-serif; /* Consistencia de fuente */
 }
@@ -38,7 +38,7 @@
 /* Estilo para el subtítulo si lo añades */
 .category-dropdown-subtitle {
     font-size: 1rem;
-    color: #555;
+    color: #0c0c0c;
     margin-top: 5px;
     font-family: 'League Spartan', sans-serif;
 }
@@ -63,7 +63,7 @@
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    color: #333;
+    color: #000000;
     padding: 8px;
     border-radius: 6px;
     transition: background-color 0.2s ease, color 0.2s ease;
@@ -71,8 +71,8 @@
 }
 
 .header-category-item:hover {
-    background-color: #f0f0f0;
-    color: #000;
+    background-color: #eae7e7;
+    color: #eb36ae;
 }
 
 /* Estilos para la imagen del ítem de categoría */
@@ -95,8 +95,7 @@
     font-family: 'League Spartan', sans-serif
 }
 
-/* Estilos para el MegaMenu (si lo usas para Ofertas, etc.) */
-/* El .mega-menu como contenedor principal: estilos de posicionamiento en header.css */
+
 
 .mega-menu-content {
     display: flex; justify-content: center; gap: 30px;
@@ -108,9 +107,9 @@
 .column-title { font-size: 1rem; font-weight: bold; text-transform: uppercase; color: #111; margin: 0 0 1.2rem 0; letter-spacing: 0.5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
 .dropdown-column ul { list-style: none; padding: 0; margin: 0; }
 .dropdown-column li { margin-bottom: 8px; }
-.dropdown-column ul li a { display: block; padding: 8px 0; text-decoration: none; color: #555; font-size: 0.95rem; font-family: 'League Spartan', sans-serif; transition: color 0.2s ease, padding-left 0.2s ease; }
+.dropdown-column ul li a { display: block; padding: 8px 0; text-decoration: none; color: #555555; font-size: 0.95rem; font-family: 'League Spartan', sans-serif; transition: color 0.2s ease, padding-left 0.2s ease; }
 .dropdown-column ul li a:hover { color: #f180bb; }
 
 /* Mensajes de estado dentro del dropdown */
-.category-dropdown p, .mega-menu p { text-align: center; margin: 0; padding: 10px; color: #777; font-style: italic; }
+.category-dropdown p, .mega-menu p { text-align: center; margin: 0; padding: 10px; color: #777777; font-style: italic; }
 .category-dropdown p.error-message { color: #d9534f; font-weight: bold; }

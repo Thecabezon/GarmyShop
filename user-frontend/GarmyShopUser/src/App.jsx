@@ -10,7 +10,7 @@ import { ProductoDetallePage } from './page/ProductoDetallePage';
 import FinalizarCompraPage from './page/FinalizarCompraPage';
 import { FavoritosPage } from './page/FavoritosPage';
 import MarcasPage from './page/MarcasPage';
-import { OfertasPage } from './page/OfertasPage';
+
 import SobreNosotrosPage from './page/SobreNosotrosPage';
 import MisPedidosPage from './page/MisPedidosPage';
 import PedidoDetallePage from './page/PedidoDetallePage';
@@ -250,7 +250,6 @@ function App() {
           />}
         />
         {/* Ofertas, Nosotros, Marcas */}
-        <Route path="/ofertas" element={<MainLayout><OfertasPage handleAddToCart={handleAddToCart} /></MainLayout>} />
         <Route path="/nosotros" element={<MainLayout><SobreNosotrosPage /></MainLayout>} />
         <Route path="/marcas" element={<MainLayout><MarcasPage /></MainLayout>} />
 
