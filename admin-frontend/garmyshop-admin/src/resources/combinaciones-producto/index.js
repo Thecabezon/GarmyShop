@@ -1,20 +1,20 @@
 // RUTA: frontend/src/resources/combinaciones-producto/index.js (CÓDIGO COMPLETO Y CORREGIDO)
 
 import React from 'react';
-import { 
-    List, 
-    Datagrid, 
-    TextField, 
-    NumberField, 
-    EditButton, 
-    Create, 
-    Edit, 
-    SimpleForm, 
-    ReferenceInput, 
-    SelectInput, 
-    NumberInput, 
-    TextInput, 
-    required, 
+import {
+    List,
+    Datagrid,
+    TextField,
+    NumberField,
+    EditButton,
+    Create,
+    Edit,
+    SimpleForm,
+    ReferenceInput,
+    SelectInput,
+    NumberInput,
+    TextInput,
+    required,
     ReferenceField,
     DeleteButton,
     TopToolbar,
@@ -30,9 +30,10 @@ const ListActions = () => (
     </TopToolbar>
 );
 
-// Filtros para la lista (CORREGIDO)
+// Filtros para la lista (CORREGIDO - Añado perPage a ReferenceInput)
 const combinacionFilters = [
-    <ReferenceInput source="producto" label="Filtrar por Producto" reference="productos" alwaysOn>
+    // Añadido perPage para cargar más productos en el filtro
+    <ReferenceInput source="producto" label="Filtrar por Producto" reference="productos" alwaysOn perPage={1000}>
         <SelectInput optionText="nombre" />
     </ReferenceInput>
 ];
@@ -42,7 +43,7 @@ export const CombinacionProductoList = () => (
     <List actions={<ListActions />} filters={combinacionFilters}>
         <Datagrid rowClick="edit">
             <TextField source="id" />
-            <TextField source="producto" label="ID Producto" /> 
+            {/* Elimino el TextField source="producto" ya que ReferenceField es mejor */}
             <ReferenceField source="producto" reference="productos" label="Producto">
                 <TextField source="nombre" />
             </ReferenceField>
@@ -59,7 +60,8 @@ export const CombinacionProductoList = () => (
 // FORMULARIO para Crear y Editar una combinación
 const CombinacionProductoForm = () => (
     <SimpleForm>
-        <ReferenceInput source="producto" reference="productos">
+        {/* Añadido perPage para cargar más productos en el formulario */}
+        <ReferenceInput source="producto" reference="productos" perPage={1000}>
             <SelectInput optionText="nombre" validate={required()} />
         </ReferenceInput>
         <ReferenceInput source="talla" reference="tallas">
