@@ -14,6 +14,15 @@ from .serializers import (
     CombinacionProductoSerializer, DireccionSerializer, OrdenSerializer,
     OrdenItemSerializer, ProductoDetalleSerializer
 )
+from rest_framework.pagination import PageNumberPagination # Importa la paginación
+
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 100 # Puedes poner un valor por defecto alto si quieres
+    page_size_query_param = 'page_size'
+    # Establece un máximo de ítems que el cliente puede pedir por página
+    # Debe ser igual o mayor que el perPage={1000} de react-admin
+    max_page_size = 1000
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
@@ -61,6 +70,9 @@ class ProductoViewSet(viewsets.ModelViewSet):
     filterset_fields = ['marca', 'categoria', 'activo', 'es_destacado']
     search_fields = ['nombre', 'descripcion', 'sku']
     ordering_fields = ['precio', 'nombre', 'creado']
+    
+    pagination_class = LargeResultsSetPagination
+
 
     def get_serializer_class(self):
         # Usamos ProductoDetalleSerializer solo para la vista de detalle (retrieve)
