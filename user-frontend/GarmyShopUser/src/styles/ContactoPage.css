@@ -195,3 +195,13 @@
         font-size: 2.5rem;
     }
 }
+
+.error-message-form {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}

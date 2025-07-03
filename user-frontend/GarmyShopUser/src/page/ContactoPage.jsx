@@ -1,18 +1,20 @@
 // src/page/ContactoPage.jsx
 
 import React, { useState, useEffect } from 'react';
-import '../styles/ContactoPage.css'; // Importaremos los estilos que crearemos a continuación
+import contactService from '../services/contactService'; // <-- Importamos nuestro nuevo servicio
+import '../styles/ContactoPage.css';
 
 const ContactoPage = () => {
-    // Estado para manejar los datos del formulario
     const [formData, setFormData] = useState({
         nombre: '',
         email: '',
-        asunto: 'problema-pedido', // Valor por defecto
+        asunto: 'problema-pedido',
         mensaje: '',
     });
 
-    // Estado para mostrar el mensaje de éxito
+    // Nuevos estados para manejar el envío real
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const handleChange = (e) => {
@@ -20,21 +22,32 @@ const ContactoPage = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    // La función de envío ahora es asíncrona
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // En un proyecto real, aquí harías la llamada a una API para enviar el email.
-        // Para este caso, simulamos el envío exitoso para dar una buena UX.
-        console.log('Datos del formulario enviados (simulación):', formData);
-        setIsSubmitted(true);
+        setIsSubmitting(true);
+        setSubmitError(null);
+
+        try {
+            // Llamamos al servicio para enviar el mensaje
+            await contactService.enviarMensaje(formData);
+            setIsSubmitted(true); // Si tiene éxito, mostramos el mensaje de gracias
+        } catch (error) {
+            // Si falla, guardamos el mensaje de error para mostrarlo
+            setSubmitError(error.toString() || 'Ocurrió un error al enviar el mensaje. Inténtelo más tarde.');
+            console.error('Error al enviar formulario de contacto:', error);
+        } finally {
+            setIsSubmitting(false); // Dejamos de mostrar el estado de "cargando"
+        }
     };
 
-    // Efecto para que la página siempre inicie desde arriba
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     return (
         <div className="contact-page-container">
+            {/* ... la sección <section className="contact-hero"> no cambia ... */}
             <section className="contact-hero">
                 <div className="contact-hero-content">
                     <h1>Estamos para Ayudarte</h1>
@@ -43,6 +56,7 @@ const ContactoPage = () => {
             </section>
 
             <section className="contact-main-content">
+                {/* ... la sección <div className="contact-info-section"> no cambia ... */}
                 <div className="contact-info-section">
                     <h2>Información de Contacto</h2>
                     <p className="contact-intro">
@@ -90,17 +104,20 @@ const ContactoPage = () => {
                     ) : (
                         <form onSubmit={handleSubmit}>
                             <h2>Envíanos un Mensaje Directo</h2>
+                            {/* Mostramos un mensaje de error si algo falla */}
+                            {submitError && <p className="error-message-form">{submitError}</p>}
+
                             <div className="form-group">
                                 <label htmlFor="nombre">Tu Nombre</label>
-                                <input type="text" id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} required />
+                                <input type="text" id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} required disabled={isSubmitting} />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="email">Tu Email</label>
-                                <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+                                <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required disabled={isSubmitting} />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="asunto">Asunto</label>
-                                <select id="asunto" name="asunto" value={formData.asunto} onChange={handleChange}>
+                                <select id="asunto" name="asunto" value={formData.asunto} onChange={handleChange} disabled={isSubmitting}>
                                     <option value="problema-pedido">Problema con un Pedido</option>
                                     <option value="duda-producto">Duda sobre un Producto</option>
                                     <option value="sugerencia">Sugerencia o Recomendación</option>
@@ -109,9 +126,11 @@ const ContactoPage = () => {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="mensaje">Mensaje</label>
-                                <textarea id="mensaje" name="mensaje" rows="5" value={formData.mensaje} onChange={handleChange} required></textarea>
+                                <textarea id="mensaje" name="mensaje" rows="5" value={formData.mensaje} onChange={handleChange} required disabled={isSubmitting}></textarea>
                             </div>
-                            <button type="submit" className="submit-contact-btn">Enviar Mensaje</button>
+                            <button type="submit" className="submit-contact-btn" disabled={isSubmitting}>
+                                {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
+                            </button>
                         </form>
                     )}
                 </div>
