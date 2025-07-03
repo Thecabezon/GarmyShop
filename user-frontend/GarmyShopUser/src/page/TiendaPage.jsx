@@ -49,15 +49,36 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // 🟢 FUNCIONES AÑADIDAS:
-    const handleOpenModal = (producto) => {
-        setSelectedProduct(producto);
+    // 👇 REEMPLAZA TU FUNCIÓN handleOpenModal CON ESTA 👇
+    const handleOpenModal = async (producto) => {
+        // 1. Inmediatamente abrimos el modal y mostramos que está cargando
+        setIsModalOpen(true);
         setModalLoading(true);
-        setTimeout(() => {
+        setSelectedProduct({ nombre: "Cargando..." }); // Mostramos un placeholder
+
+        try {
+            // 2. Hacemos el fetch para obtener los detalles COMPLETOS del producto
+            const response = await fetch(`http://localhost:8085/api/productos/${producto.id}`);
+            if (!response.ok) {
+                throw new Error('No se pudieron cargar los detalles del producto.');
+            }
+            const productoCompleto = await response.json();
+
+            // 3. Una vez que tenemos los datos, actualizamos el estado
+            setSelectedProduct(productoCompleto);
+
+        } catch (error) {
+            console.error("Error al obtener detalles del producto para el modal:", error);
+            alert('Hubo un error al cargar el producto. Por favor, inténtalo de nuevo.');
+            // Si hay un error, cerramos el modal
+            setIsModalOpen(false);
+            setSelectedProduct(null);
+        } finally {
+            // 4. Dejamos de mostrar el spinner de carga
             setModalLoading(false);
-            setIsModalOpen(true);
-        }, 500); // Simula carga
+        }
     };
+    // 👆 HASTA AQUÍ EL REEMPLAZO 👆
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -195,7 +216,7 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
                                     key={producto.id}
                                     producto={producto}
                                     isLiked={favoriteItems.some(item => item.id === producto.id)}
-                                    handleOpenModal={() => handleOpenModal(producto)}
+                                    handleOpenModal={handleOpenModal}
                                     handleToggleFavorite={handleToggleFavorite}
                                 />
                             ))}

@@ -1,58 +1,23 @@
+// src/components/RopaComponente.jsx (CORREGIDO Y SIMPLIFICADO)
 
 import { Link } from "react-router-dom";
-import React, { useState } from 'react';
+import React from 'react'; // Eliminamos useState
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 import PriceDisplay from './ofertas/PriceDisplay';
 
 export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggleFavorite }) {
-  const { id, nombre, precio, precioOferta, categoriaNombre } = producto;
+  const { id, nombre, imagenPrincipalUrl, precio, precioOferta, categoriaNombre } = producto;
  
-  const [isLoading, setIsLoading] = useState(false);
-
-  const getMainImagePath = (prod) => {
-    if (!prod) return null;
-
-    if (prod.imagenPrincipalUrl) {
-      return prod.imagenPrincipalUrl;
-    }
-
-    if (prod.imagenes && prod.imagenes.length > 0) {
-      const principalImage = prod.imagenes.find(img => img.esPrincipal === true);
-      if (principalImage) {
-        return principalImage.imagen;
-      }
-      return prod.imagenes[0].imagen;
-    }
-
-    return null;
+  // La lógica de fetch se ha movido a TiendaPage, este componente ahora es más simple.
+  // La prop 'handleOpenModal' ahora se encarga de todo.
+  const handleAddToCartClick = () => {
+    // Simplemente llamamos a la función que nos pasó el componente padre.
+    handleOpenModal(producto); 
   };
 
-  const imagePath = getMainImagePath(producto);
-  
-  const fullImageUrl = imagePath
-    ? `${CLOUDINARY_BASE_URL}/${imagePath}`
+  const fullImageUrl = imagenPrincipalUrl
+    ? `${CLOUDINARY_BASE_URL}/${imagenPrincipalUrl}`
     : 'https://dummyimage.com/400x500/f0f0f0/ccc&text=No+Imagen';
-
-  const handleAddToCartClick = async () => {
-    setIsLoading(true);
-    try {
-      if (!producto.combinacionesDisponibles) {
-        const response = await fetch(`http://localhost:8085/api/productos/${id}`);
-        if (!response.ok) {
-          throw new Error('No se pudieron cargar los detalles del producto.');
-        }
-        const productoCompleto = await response.json();
-        handleOpenModal(productoCompleto);
-      } else {
-        handleOpenModal(producto);
-      }
-    } catch (error) {
-      console.error("Error al obtener detalles del producto:", error);
-      alert('Hubo un error al cargar el producto. Por favor, inténtalo de nuevo.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="ropa-card">
@@ -73,7 +38,7 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
       </div>
      
       <div className="ropa-info">
-        <p className="producto-categoria">{categoriaNombre || producto.categoria?.nombre || 'Categoría'}</p>
+        <p className="producto-categoria">{categoriaNombre || 'Categoría'}</p>
         <Link to={`/producto/${id}`} className="producto-nombre-link">
           <h5>{nombre}</h5>
         </Link>
@@ -87,9 +52,9 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
         <button
           onClick={handleAddToCartClick}
           className="agregar-carrito-btn"
-          disabled={isLoading}
+          // Ya no necesitamos 'disabled' porque el loading se maneja en el modal
         >
-          {isLoading ? 'Cargando...' : 'Agregar al carrito'}
+          Agregar al carrito
         </button>
         <Link to={`/producto/${id}`} className="ver-detalle-btn" aria-label="Ver detalle" title="Ver detalle">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">

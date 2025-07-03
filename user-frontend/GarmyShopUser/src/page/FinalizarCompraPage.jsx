@@ -10,15 +10,15 @@ const STRIPE_PUBLIC_KEY = 'pk_test_51RcUTK040ycu73auxVqdGiH5CzGKmTFjiSUzoQP8O8Hn
 
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
 
-const TrashIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg> );
-const LockIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/></svg> );
+const TrashIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /><path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg>);
+const LockIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2" /></svg>);
 
 const StepIndicator = ({ currentStep, goToStep }) => (
     <div className="step-indicator">
         {[1, 2, 3].map((stepNumber, index) => (
             <React.Fragment key={stepNumber}>
-                <div 
-                    className={`step ${currentStep >= stepNumber ? 'completed' : ''}`} 
+                <div
+                    className={`step ${currentStep >= stepNumber ? 'completed' : ''}`}
                     onClick={() => goToStep(stepNumber)}
                 >
                     <div className="step-icon">{currentStep > stepNumber ? '✓' : stepNumber}</div>
@@ -36,7 +36,7 @@ const OrderSummary = ({ subtotal, total, envio }) => (
         <div className="total-row"><span>Subtotal</span><span>S/. {subtotal.toFixed(2)}</span></div>
         <div className="total-row"><span>Envío</span><span>{envio === 0 ? 'Gratis' : `S/. ${envio.toFixed(2)}`}</span></div>
         <div className="total-row grand-total"><span>Total</span><span>S/. {total.toFixed(2)}</span></div>
-        <p className="security-text"><LockIcon/> Transacción segura y encriptada</p>
+        <p className="security-text"><LockIcon /> Transacción segura y encriptada</p>
     </div>
 );
 
@@ -50,13 +50,19 @@ const QuantitySelector = ({ quantity, onDecrease, onIncrease }) => (
 
 const CartReviewStep = ({ items, onNext, onUpdateQuantity, onRemoveItem }) => {
 
+    // =====> ESTA FUNCIÓN SE HABÍA PERDIDO <=====
     const getImageUrl = (item) => {
         const imagePath = item.imagen;
         if (!imagePath) {
             return 'https://dummyimage.com/100x100/f0f0f0/ccc&text=No+Imagen';
         }
+        // Si la imagen ya es una URL completa (por si acaso), úsala. Si no, constrúyela.
+        if (imagePath.startsWith('http')) {
+            return imagePath;
+        }
         return `${CLOUDINARY_BASE_URL}/${imagePath}`;
     };
+    // ===============================================
 
     return (
         <div className="step-card">
@@ -69,7 +75,7 @@ const CartReviewStep = ({ items, onNext, onUpdateQuantity, onRemoveItem }) => {
                                 <img src={getImageUrl(item)} alt={item.nombre} />
                                 <div className="item-info-checkout">
                                     <p className="item-name">{item.nombre}</p>
-                                    <p className="item-attributes">Talla: {item.talla.nombre || item.talla} / Color: {item.color.nombre}</p>
+                                    <p className="item-attributes">Talla: {item.talla?.nombre || item.talla} / Color: {item.color?.nombre}</p>
                                     <p className="item-price">S/. {item.precio.toFixed(2)}</p>
                                 </div>
                                 <div className="item-actions">
@@ -125,7 +131,7 @@ const DeliveryStep = ({ onBack, onNext, deliveryInfo, setDeliveryInfo, errors })
                     <FormField id="provincia" name="provincia" label="Provincia" value={deliveryInfo.provincia} onChange={handleInputChange} error={errors.provincia} placeholder="Ej: Lima" required />
                     <FormField id="distrito" name="distrito" label="Distrito" value={deliveryInfo.distrito} onChange={handleInputChange} error={errors.distrito} placeholder="Ej: San Borja" required />
                 </div>
-                 <FormField id="codigoPostal" name="codigoPostal" label="Código Postal" value={deliveryInfo.codigoPostal} onChange={handleInputChange} error={errors.codigoPostal} placeholder="Ej: 15036" required />
+                <FormField id="codigoPostal" name="codigoPostal" label="Código Postal" value={deliveryInfo.codigoPostal} onChange={handleInputChange} error={errors.codigoPostal} placeholder="Ej: 15036" required />
             </form>
             <div className="navigation-buttons">
                 <button className="secondary-button" onClick={onBack}>Volver al Carrito</button>
@@ -138,7 +144,7 @@ const DeliveryStep = ({ onBack, onNext, deliveryInfo, setDeliveryInfo, errors })
 const PaymentStep = ({ onBack, onFinalizePayment, isProcessing, paymentError, total, metodoPago, setMetodoPago }) => {
     const metodosDisponibles = {
         'stripe_checkout': 'Tarjeta de Crédito / Débito',
-        'efectivo_contra_entrega': 'Efectivo Contra Entrega (Solo Lima)'
+        'efectivo_contra_entrega': 'Efectivo Contra Entrega'
     };
 
     return (
@@ -156,9 +162,8 @@ const PaymentStep = ({ onBack, onFinalizePayment, isProcessing, paymentError, to
                         />
                         <div className="payment-method-details">
                             <strong>{value}</strong>
-                            {key === 'stripe_checkout' && <p>Paga de forma segura con tus tarjetas. </p>}
-                            {key === 'transferencia_bancaria' && <p>Te mostraremos los datos de la cuenta al finalizar la compra.</p>}
-                            {key === 'efectivo_contra_entrega' && <p>Paga al recibir tu pedido. Disponible solo en algunas zonas.</p>}
+                            {key === 'stripe_checkout' && <p>Paga de forma segura con tus tarjetas a través de Stripe.</p>}
+                            {key === 'efectivo_contra_entrega' && <p>Paga el monto exacto en efectivo cuando recibas tu pedido.</p>}
                         </div>
                     </label>
                 ))}
@@ -215,11 +220,10 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
 
     const { subtotal, total, envio } = useMemo(() => {
         const subtotalCalc = cartItems.reduce((sum, item) => sum + item.precio * item.quantity, 0);
-        const envioCalc = subtotalCalc > 0 ? 0 : 0; 
+        const envioCalc = subtotalCalc > 0 ? 0 : 0;
         const totalCalc = subtotalCalc + envioCalc;
         return { subtotal: subtotalCalc, total: totalCalc, envio: envioCalc };
     }, [cartItems]);
-    
 
     const handleUpdateQuantity = (id, newQuantity) => {
         setCartItems(currentItems =>
@@ -257,71 +261,66 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
             setStep(stepNumber);
         }
     };
-    
+
+    const crearOrdenEnBackend = async (metodoPagoSeleccionado) => {
+        const direccionPayload = {
+            nombre: deliveryInfo.nombre,
+            apellido: deliveryInfo.apellido,
+            telefono: deliveryInfo.telefono,
+            calle: deliveryInfo.direccion,
+            departamento: deliveryInfo.departamento,
+            provincia: deliveryInfo.provincia,
+            distrito: deliveryInfo.distrito,
+            codigoPostal: deliveryInfo.codigoPostal,
+            referencia: deliveryInfo.referencia
+        };
+
+        const direccionResponse = await fetch(`${API_BASE_URL}/api/direcciones`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(direccionPayload)
+        });
+
+        if (!direccionResponse.ok) throw new Error('No se pudo guardar la dirección de envío.');
+        const direccionGuardada = await direccionResponse.json();
+
+        const ordenPayload = {
+            direccionEnvioId: direccionGuardada.id,
+            metodoPago: metodoPagoSeleccionado,
+            items: cartItems.map(item => ({
+                combinacionProductoId: item.combinacionProductoId,
+                cantidad: item.quantity
+            }))
+        };
+
+        const ordenResponse = await fetch(`${API_BASE_URL}/api/ordenes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(ordenPayload)
+        });
+
+        if (!ordenResponse.ok) {
+            const errorText = await ordenResponse.text();
+            throw new Error(`Error al crear la orden: ${errorText}`);
+        }
+
+        return await ordenResponse.json();
+    };
+
     const handleFinalizePayment = async () => {
         if (isProcessing || total === 0 || !currentUser || !token) return;
 
         setIsProcessing(true);
         setPaymentError(null);
 
-        if (metodoPago === 'stripe_checkout') {
-            try {
-                const direccionPayload = {
-                    nombre: deliveryInfo.nombre,
-                    apellido: deliveryInfo.apellido,
-                    telefono: deliveryInfo.telefono,
-                    calle: deliveryInfo.direccion,
-                    departamento: deliveryInfo.departamento,
-                    provincia: deliveryInfo.provincia,
-                    distrito: deliveryInfo.distrito,
-                    codigoPostal: deliveryInfo.codigoPostal,
-                    referencia: deliveryInfo.referencia
-                };
+        try {
+            if (metodoPago === 'stripe_checkout') {
+                const ordenCreada = await crearOrdenEnBackend('stripe_checkout');
 
-                const direccionResponse = await fetch(`${API_BASE_URL}/api/direcciones`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${token}` 
-                    },
-                    body: JSON.stringify(direccionPayload)
-                });
-
-                if (!direccionResponse.ok) {
-                    throw new Error('No se pudo guardar la dirección de envío.');
-                }
-                
-                const direccionGuardada = await direccionResponse.json();
-                const direccionEnvioId = direccionGuardada.id;
-
-                const ordenPayload = {
-                    direccionEnvioId: direccionEnvioId,
-                    metodoPago: "stripe_checkout",
-                    items: cartItems.map(item => ({
-                        combinacionProductoId: item.combinacionProductoId, 
-                        cantidad: item.quantity
-                    }))
-                };
-
-                const ordenResponse = await fetch(`${API_BASE_URL}/api/ordenes`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${token}` 
-                    },
-                    body: JSON.stringify(ordenPayload)
-                });
-
-                if (!ordenResponse.ok) {
-                    const errorText = await ordenResponse.text();
-                    throw new Error(`Error al crear la orden: ${errorText}`);
-                }
-                const ordenCreada = await ordenResponse.json();
-            
                 const stripePayload = {
                     items: cartItems.map(item => ({
                         nombreProducto: item.nombre,
-                        descripcionProducto: `Talla: ${item.talla.nombre || item.talla} / Color: ${item.color.nombre}`,
+                        descripcionProducto: `Talla: ${item.talla?.nombre || item.talla} / Color: ${item.color?.nombre}`,
                         imagenProductoUrl: `${CLOUDINARY_BASE_URL}/${item.imagen}`,
                         precioUnitario: item.precio,
                         cantidad: item.quantity,
@@ -332,13 +331,10 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
                     ordenIdLocal: ordenCreada.id,
                     emailCliente: currentUser.email
                 };
-            
+
                 const sessionResponse = await fetch(`${API_BASE_URL}/api/pagos/crear-checkout-session`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${token}` 
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify(stripePayload)
                 });
 
@@ -347,16 +343,16 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
 
                 const stripe = await stripePromise;
                 const { error } = await stripe.redirectToCheckout({ sessionId });
-
                 if (error) throw new Error(error.message);
 
-            } catch (error) {
-                console.error("Error en el proceso de pago:", error);
-                setPaymentError(error.message || "Ocurrió un error inesperado.");
-                setIsProcessing(false);
+            } else if (metodoPago === 'efectivo_contra_entrega') {
+                const ordenCreada = await crearOrdenEnBackend('efectivo_contra_entrega');
+                setCartItems([]);
+                navigate('/pago-confirmado-ce', { state: { orden: ordenCreada }, replace: true });
             }
-        } else {
-            alert(`Lógica para ${metodoPago} aún no implementada.`);
+        } catch (error) {
+            console.error("Error en el proceso de finalización de compra:", error);
+            setPaymentError(error.message || "Ocurrió un error inesperado.");
             setIsProcessing(false);
         }
     };
@@ -373,7 +369,7 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
                 return <div>Paso desconocido</div>;
         }
     };
-   
+
     return (
         <div className="checkout-page-container">
             <StepIndicator currentStep={step} goToStep={goToStep} />

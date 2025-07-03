@@ -22,6 +22,7 @@ import ForgotPasswordPage from './page/Auth/ForgotPasswordPage';
 import PagoExitosoPage from './page/PagoExitosoPage';
 import ResetPasswordForm from './components/Auth/ResetPasswordForm';
 import OAuth2RedirectHandler from './components/Auth/OAuth2RedirectHandler';
+import PagoConfirmadoCEPage from './page/PagoConfirmadoCEPage';
 
 import ContactoPage from './page/ContactoPage';
 import Header from './components/Header';
@@ -277,6 +278,16 @@ function App() {
               </MainLayout>
             }
           />
+
+          <Route
+            path="/pago-confirmado-ce"
+            element={
+              <MainLayout>
+                <PagoConfirmadoCEPage />
+              </MainLayout>
+            }
+          />
+
           <Route
             path="/mis-pedidos"
             element={
