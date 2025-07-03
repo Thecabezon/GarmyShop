@@ -25,6 +25,8 @@ import ResetPasswordForm from './components/Auth/ResetPasswordForm';
 import OAuth2RedirectHandler from './components/Auth/OAuth2RedirectHandler';
 import { DataProvider } from './context/DataContext';
 
+import ContactoPage from './page/ContactoPage';
+
 // Componentes globales
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -264,6 +266,7 @@ function App() {
           />
           {/* Ofertas, Nosotros, Marcas */}
           <Route path="/nosotros" element={<MainLayout><SobreNosotrosPage /></MainLayout>} />
+          <Route path="/contacto" element={<MainLayout><ContactoPage /></MainLayout>} />
           <Route path="/marcas" element={<MainLayout><MarcasPage /></MainLayout>} />
 
 

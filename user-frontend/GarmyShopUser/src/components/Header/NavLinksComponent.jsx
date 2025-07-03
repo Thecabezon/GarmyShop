@@ -1,38 +1,38 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom'; 
+import { NavLink } from 'react-router-dom';
 import DropdownIcon from './DropdownIcon';
 
-const NavLinksComponent = ({ onNavLinkHover, activeDropdown }) => { 
+const NavLinksComponent = ({ onNavLinkHover, activeDropdown }) => {
   const handleMouseEnter = (menuName) => {
-     onNavLinkHover(menuName); 
+    onNavLinkHover(menuName);
   };
 
-   // Función para cerrar dropdowns si haces clic en un Link
-   const handleLinkClick = () => {
-       
-       onNavLinkHover(null); 
-   };
+  // Función para cerrar dropdowns si haces clic en un Link
+  const handleLinkClick = () => {
+
+    onNavLinkHover(null);
+  };
 
   return (
     <nav className="nav-links">
 
       {/* Item Inicio */}
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
-         <NavLink to="/" className="nav-link-item" onClick={handleLinkClick}>🌸Inicio</NavLink>
+        <NavLink to="/" className="nav-link-item" onClick={handleLinkClick}>🌸Inicio</NavLink>
       </div>
 
       {/* Item TIENDA con Dropdown de Categorías */}
       <div className="nav-item-wrapper"
-           onMouseEnter={() => handleMouseEnter('productos')} // Esto activa el dropdown
-           
+        onMouseEnter={() => handleMouseEnter('productos')} // Esto activa el dropdown
+
       >
         {/* NavLink manejará la clase 'active' si la ruta es '/tienda' */}
         <NavLink to="/tienda" className={`nav-link-item`} onClick={handleLinkClick}>
-        🌸Tienda <DropdownIcon />
+          🌸Tienda <DropdownIcon />
         </NavLink>
       </div>
 
-    
+
 
       {/* Item MARCAS */}
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
@@ -40,16 +40,15 @@ const NavLinksComponent = ({ onNavLinkHover, activeDropdown }) => {
         <NavLink to="/marcas" className="nav-link-item" onClick={handleLinkClick}>🌸Marcas</NavLink>
       </div>
 
-       {/* Item SOBRE NOSOTROS  */}
+      {/* Item SOBRE NOSOTROS  */}
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
         {/* NavLink manejará la clase 'active' si la ruta es '/nosotros' */}
         <NavLink to="/nosotros" className="nav-link-item" onClick={handleLinkClick}>🌸Sobre Nosotros</NavLink>
       </div>
 
-      {/* Item AYUDA  */}
+      {/* Item CONTACTO */}
       <div className="nav-item-wrapper" onMouseEnter={() => handleMouseEnter(null)}>
-        {/* NavLink manejará la clase 'active' si la ruta es '/ayuda' */}
-        <NavLink to="/ayuda" className="nav-link-item" onClick={handleLinkClick}>🌸Contacto</NavLink>
+        <NavLink to="/contacto" className="nav-link-item" onClick={handleLinkClick}>Contacto</NavLink>
       </div>
 
     </nav>
