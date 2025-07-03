@@ -17,4 +17,5 @@ public class ProductoListDTO {
     private BigDecimal precioOferta;
     private String marcaNombre;
     private String categoriaNombre;
+    private Integer categoriaId;
 }

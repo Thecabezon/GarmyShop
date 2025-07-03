@@ -52,7 +52,8 @@ public class ProductoServiceImpl implements ProductoService {
                 producto.getPrecio(),
                 producto.getPrecioOferta(),
                 producto.getMarca() != null ? producto.getMarca().getNombre() : null,
-                producto.getCategoria() != null ? producto.getCategoria().getNombre() : null
+                producto.getCategoria() != null ? producto.getCategoria().getNombre() : null,
+                producto.getCategoria() != null ? producto.getCategoria().getId() : null
         );
     }
 

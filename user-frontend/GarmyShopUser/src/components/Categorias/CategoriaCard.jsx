@@ -1,3 +1,6 @@
+
+import { Link } from "react-router-dom";
+
 const CategoriaCard = ({ categoria }) => {
     return (
       <div className="categoria-card">
@@ -7,15 +10,16 @@ const CategoriaCard = ({ categoria }) => {
         <div className="categoria-contenido">
           <h3>{categoria.nombre}</h3>
           <p>{categoria.descripcion}</p>
-          <button 
-            onClick={() => window.location.href = `/productos?categoria=${categoria.id}`}
+          
+          <Link
+            to={`/tienda?categoria=${categoria.id}`}
             className="ver-productos-btn"
           >
             Ver Productos
-          </button>
+          </Link>
         </div>
       </div>
     );
   };
-  
-  export default CategoriaCard;
+ 
+export default CategoriaCard;
