@@ -1,9 +1,10 @@
 // src/components/ProductModal.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
-import '../styles/ProductModal.css';
+import '../styles/ProductModal.css'; // Asegúrate de añadir los estilos para ambos modales aquí
 import PriceDisplay from './ofertas/PriceDisplay';
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
+import { toast } from 'react-toastify'; // Importar toast
 
 const CheckIcon = () => (
   <svg
@@ -24,13 +25,17 @@ export const ProductModal = ({
   isOpen,
   onClose,
   producto,
-  onAddToCart,
+  onAddToCart, // Este es el handler de App.js que añade al carrito y muestra el toast de éxito
   isLoading
 }) => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
+
+  // *** Estados para el MODAL DE CONFIRMACIÓN dentro de ProductModal ***
+  const [showQuickConfirmationModal, setShowQuickConfirmationModal] = useState(false);
+  const [itemToConfirmInModal, setItemToConfirmInModal] = useState(null); // Para guardar temporalmente el item
 
   const { fullMainImageUrl, displayPrice } = useMemo(() => {
     if (isLoading || !producto?.id) {
@@ -51,44 +56,45 @@ export const ProductModal = ({
   }, [producto, isLoading]);
 
   useEffect(() => {
-    if (!isLoading && producto && producto.id) {
-      setSelectedImage(fullMainImageUrl);
-      setSelectedSize(null);
-      setSelectedColor(null);
-      setQuantity(1);
+    // Resetea estados cuando el modal principal se abre con un nuevo producto
+    if (isOpen && producto?.id) {
+        setSelectedImage(fullMainImageUrl);
+        setSelectedSize(null);
+        setSelectedColor(null);
+        setQuantity(1);
+        // También cierra cualquier modal de confirmación abierto previamente
+        setShowQuickConfirmationModal(false);
+        setItemToConfirmInModal(null);
     } else if (!isOpen) {
+      // Resetea estados cuando el modal principal se cierra
       setSelectedSize(null);
       setSelectedColor(null);
       setSelectedImage(null);
       setQuantity(1);
+      // Cierra el modal de confirmación si estaba abierto al cerrar el modal principal
+      setShowQuickConfirmationModal(false);
+      setItemToConfirmInModal(null);
     }
   }, [producto, isLoading, fullMainImageUrl, isOpen]);
 
-  // ====================== CORRECCIÓN #1 AQUÍ ======================
   const todasLasTallas = useMemo(() => {
-    // Si no hay producto O no hay combinaciones, devuelve un array vacío.
-    if (!producto || !producto.combinacionesDisponibles) return []; 
+    if (!producto || !producto.combinacionesDisponibles) return [];
     return [...new Set(producto.combinacionesDisponibles.map(c => c.talla.nombre))];
   }, [producto]);
-  // ================================================================
 
-  // ====================== CORRECCIÓN #2 AQUÍ ======================
   const todosLosColores = useMemo(() => {
-    // Si no hay producto O no hay combinaciones, devuelve un array vacío.
-    if (!producto || !producto.combinacionesDisponibles) return []; 
+    if (!producto || !producto.combinacionesDisponibles) return [];
     return producto.combinacionesDisponibles
       .map(c => c.color)
       .filter((color, index, self) => index === self.findIndex(c => c.id === color.id));
   }, [producto]);
-  // ================================================================
-  
+
   const coloresFiltrados = useMemo(() => {
     if (!selectedSize) {
       return todosLosColores.map(color => ({ ...color, disponible: true }));
     }
-    // Si no hay producto, devuelve un array vacío
     if (!producto || !producto.combinacionesDisponibles) return [];
-    
+
     const idsColoresValidosParaTalla = producto.combinacionesDisponibles
       .filter(c => c.talla.nombre === selectedSize)
       .map(c => c.color.id);
@@ -99,6 +105,7 @@ export const ProductModal = ({
   }, [selectedSize, todosLosColores, producto]);
 
   useEffect(() => {
+    // Si el color seleccionado deja de estar disponible para la talla seleccionada
     if (selectedColor) {
       const esColorValido = coloresFiltrados.find(
         color => color.id === selectedColor.id && color.disponible
@@ -108,18 +115,31 @@ export const ProductModal = ({
       }
     }
   }, [coloresFiltrados, selectedColor]);
-  
-  if (!isOpen) return null;
 
-  const handleAddToCartClick = () => { // Renombrado para evitar conflicto con prop
-    if (!selectedSize || !selectedColor) { return; }
+  if (!isOpen) return null; // No renderiza nada si el modal principal está cerrado
 
-    const combinacionSeleccionada = producto.combinacionesDisponibles.find(
+  // *** MODIFICAMOS handleAddToCartClick para mostrar el modal de confirmación ***
+  const handleAddToCartClick = () => {
+    if (!selectedSize) {
+      toast.warning("Por favor, selecciona una talla.");
+      return;
+    }
+    if (!selectedColor) {
+      toast.warning("Por favor, selecciona un color.");
+      return;
+    }
+
+    const combinacionSeleccionada = producto.combinacionesDisponibles?.find( // Optional chaining por seguridad
       c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id
     );
-    if (!combinacionSeleccionada) { return; }
 
-    const itemToAdd = {
+    if (!combinacionSeleccionada) {
+       toast.warning("La combinación seleccionada no está disponible.");
+       return;
+    }
+
+    // Si las validaciones pasan, preparamos el item y MOSTRAMOS EL MODAL DE CONFIRMACIÓN
+    const item = {
       ...producto,
       talla: selectedSize,
       color: selectedColor,
@@ -129,14 +149,35 @@ export const ProductModal = ({
       idUnicoCarrito: `${producto.id}-${combinacionSeleccionada.id}`,
       combinacionProductoId: combinacionSeleccionada.id
     };
-    onAddToCart(itemToAdd);
-    onClose();
+
+    setItemToConfirmInModal(item); // Guardamos el item en el estado temporal
+    setShowQuickConfirmationModal(true); // Mostramos el modal de confirmación
+    // NO cerramos el modal principal ni añadimos al carrito todavía
   };
+
+  // *** Función para CONFIRMAR la adición desde el modal de confirmación ***
+  const handleConfirmAddToCartInModal = () => {
+    if (itemToConfirmInModal) {
+      onAddToCart(itemToConfirmInModal); // Llama a la función del padre (App.js)
+      // La notificación de éxito la maneja handleAddToCart en App.js
+    }
+    setItemToConfirmInModal(null); // Limpiamos el estado temporal
+    setShowQuickConfirmationModal(false); // Cerramos el modal de confirmación
+    onClose(); // *** Cerramos el modal principal de vista rápida ***
+  };
+
+  // *** Función para CANCELAR la adición desde el modal de confirmación ***
+  const handleCancelAddToCartInModal = () => {
+    setItemToConfirmInModal(null); // Limpiamos el estado temporal
+    setShowQuickConfirmationModal(false); // Cerramos solo el modal de confirmación
+  };
+
 
   // Usamos optional chaining por seguridad
   const fullThumbnailUrls = producto?.imagenes?.map(
     imgObj => `${CLOUDINARY_BASE_URL}/${imgObj.imagen}`
   ) || [];
+
 
   const handleColorClick = (color) => {
     if (selectedColor?.id === color.id) {
@@ -158,8 +199,7 @@ export const ProductModal = ({
     if (isLoading) {
       return <div className="modal-loading"><div className="spinner"></div><p>Cargando...</p></div>;
     }
-    
-    // Comprobación adicional por si el producto no se carga
+
     if (!producto?.id) {
         return <div className="modal-error">No se pudo cargar la información del producto.</div>;
     }
@@ -188,9 +228,9 @@ export const ProductModal = ({
         <div className="modal-info">
           <h2>{producto.nombre}</h2>
           <div className="modal-price">
-            <PriceDisplay 
-                regularPrice={producto.precio} 
-                offerPrice={producto.precioOferta} 
+            <PriceDisplay
+                regularPrice={producto.precio}
+                offerPrice={producto.precioOferta}
             />
           </div>
 
@@ -210,7 +250,7 @@ export const ProductModal = ({
               ))}
             </div>
           </div>
-          
+
           <div className="modal-option">
             <label>Talla:</label>
             <div className="size-options">
@@ -225,7 +265,7 @@ export const ProductModal = ({
               ))}
             </div>
           </div>
-          
+
           <div className="modal-option">
             <label>Cantidad:</label>
             <div className="quantity-selector">
@@ -244,11 +284,32 @@ export const ProductModal = ({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    // *** Modal Principal (Vista Rápida) ***
+    <div className="modal-overlay product-modal-overlay" onClick={onClose}> {/* Clase específica para el overlay del modal principal */}
+      <div className="modal-content product-modal-content" onClick={(e) => e.stopPropagation()}> {/* Clase específica para el contenido del modal principal */}
         <button className="modal-close" onClick={onClose}>×</button>
         {renderModalContent()}
       </div>
+
+      {/* *** Modal de Confirmación (Condicional, DENTRO del Modal Principal) *** */}
+      {showQuickConfirmationModal && itemToConfirmInModal && (
+        <div className="modal-overlay confirmation-modal-overlay" onClick={handleCancelAddToCartInModal}> {/* Este overlay está encima del overlay del modal principal */}
+          <div className="modal-content confirmation-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>🌸CONFIRMANOS🌸</h2>
+            <p>¿Estás segura de que quieres agregar:</p>
+            <p><strong>{itemToConfirmInModal.nombre}</strong></p>
+             {itemToConfirmInModal.talla && itemToConfirmInModal.color && (
+                 <p>Talla: {itemToConfirmInModal.talla}, Color: {itemToConfirmInModal.color.nombre}</p>
+             )}
+             <p>Cantidad: {itemToConfirmInModal.cantidad}</p>
+            <p>a la bolsa?</p>
+            <div className="modal-actions">
+              <button className="modal-btn confirm-btn" onClick={handleConfirmAddToCartInModal}>Confirmar</button>
+              <button className="modal-btn cancel-btn" onClick={handleCancelAddToCartInModal}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

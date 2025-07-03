@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import RecomendacionesCarousel from '../components/RecomendacionesCarousel';
 import PriceDisplay from '../components/ofertas/PriceDisplay';
-import '../styles/ProductoDetalle.css';
+import '../styles/ProductoDetalle.css'; // Asegúrate de añadir los estilos del modal aquí
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 
-export const ProductoDetallePage = ({ handleAddToCart }) => {
+import { toast } from 'react-toastify';
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+
+export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, favoriteItems }) => {
   const { cod } = useParams();
   const [productoActual, setProductoActual] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,6 +21,10 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
   const [combinacionesDisponibles, setCombinacionesDisponibles] = useState([]);
   const [tallasDisponibles, setTallasDisponibles] = useState([]);
   const [coloresDisponibles, setColoresDisponibles] = useState([]);
+
+  // *** Estado para el modal de confirmación ***
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [itemToConfirm, setItemToConfirm] = useState(null); // Para guardar temporalmente el item antes de confirmarlo
 
   useEffect(() => {
     const fetchProductoDetalle = async () => {
@@ -42,7 +48,7 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
 
         if (apiData.combinacionesDisponibles && apiData.combinacionesDisponibles.length > 0) {
           setCombinacionesDisponibles(apiData.combinacionesDisponibles);
-          
+
           const tallas = [...new Set(apiData.combinacionesDisponibles
             .map(c => c.talla.nombre))]
             .map(nombreTalla => ({
@@ -50,10 +56,10 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
               disponible: true
             }));
           setTallasDisponibles(tallas);
-          
+
           const colores = apiData.combinacionesDisponibles
             .map(c => c.color)
-            .filter((color, index, self) => 
+            .filter((color, index, self) =>
               index === self.findIndex((c) => c.id === color.id)
             );
           setColoresDisponibles(colores);
@@ -80,6 +86,7 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
 
       } catch (err) {
         setError(err.message);
+        toast.error(`Error al cargar el producto: ${err.message}`);
       } finally {
         setLoading(false);
         window.scrollTo(0, 0);
@@ -87,29 +94,30 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
     };
 
     fetchProductoDetalle();
-  }, [cod]);
+  }, [cod]); // Dependencia en cod
 
-  
+  // *** MODIFICAMOS handleAddToCartClick para mostrar el modal ***
   const handleAddToCartClick = () => {
     if (!selectedSize) {
-      alert("Por favor, selecciona una talla.");
+      toast.warning("Por favor, selecciona una talla.");
       return;
     }
     if (!selectedColor) {
-      alert("Por favor, selecciona un color.");
+      toast.warning("Por favor, selecciona un color.");
       return;
     }
-  
+
     const combinacionSeleccionada = combinacionesDisponibles.find(
       c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id
     );
-  
+
     if (!combinacionSeleccionada) {
-      alert("La combinación seleccionada no está disponible.");
+      toast.warning("La combinación seleccionada no está disponible.");
       return;
     }
-  
-    const itemToAdd = {
+
+    // Si las validaciones pasan, preparamos el item y mostramos el modal
+    const item = {
       ...productoActual,
       id: productoActual.id,
       nombre: productoActual.nombre,
@@ -124,10 +132,35 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
       idUnicoCarrito: `${productoActual.id}-${combinacionSeleccionada.id}`,
       combinacionProductoId: combinacionSeleccionada.id
     };
-  
-    handleAddToCart(itemToAdd);
-    alert(`${productoActual.nombre} ha sido añadido al carrito.`);
+
+    setItemToConfirm(item); // Guardamos el item en el estado temporal
+    setShowConfirmationModal(true); // Mostramos el modal
   };
+
+  // *** Función para CONFIRMAR la adición al carrito desde el modal ***
+  const handleConfirmAddToCart = () => {
+    if (itemToConfirm) {
+      handleAddToCart(itemToConfirm); // Llamamos a la función del padre para añadir
+    }
+    setItemToConfirm(null); // Limpiamos el estado temporal
+    setShowConfirmationModal(false); // Cerramos el modal
+  };
+
+  // *** Función para CANCELAR la adición al carrito desde el modal ***
+  const handleCancelAddToCart = () => {
+    setItemToConfirm(null); // Limpiamos el estado temporal
+    setShowConfirmationModal(false); // Cerramos el modal
+  };
+
+
+  const handleToggleFavoriteClick = () => {
+    if (productoActual) {
+       handleToggleFavorite(productoActual);
+    }
+  };
+
+  const isFavorite = favoriteItems?.some(item => item.id === productoActual?.id) || false;
+
 
   if (loading) return <div className="page-status"><h1>Cargando...</h1></div>;
   if (error) return <div className="page-status"><h1>Error: {error}</h1></div>;
@@ -156,9 +189,9 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
         <div className="product-info-layout">
           <h1>{productoActual.nombre}</h1>
           <div className="price-section">
-            <PriceDisplay 
-                regularPrice={productoActual.precio} 
-                offerPrice={productoActual.precioOferta} 
+            <PriceDisplay
+                regularPrice={productoActual.precio}
+                offerPrice={productoActual.precioOferta}
             />
           </div>
           <p className="product-short-description">
@@ -207,9 +240,29 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
               <button onClick={() => setQuantity(q => q + 1)}>+</button>
             </div>
 
+            {/* Botón que ahora abre el modal */}
             <button className="add-to-cart-btn" onClick={handleAddToCartClick} disabled={!selectedSize || !selectedColor}>
-              AGREGAR AL CARRITO
+              AÑADIR A LA BOLSA
             </button>
+
+             <button
+                className={`favorite-btn ${isFavorite ? 'favorited' : ''}`}
+                onClick={handleToggleFavoriteClick}
+                aria-label={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+              >
+                {isFavorite ? (
+                  <>
+                    <FaHeart className="icon favorite-icon" />
+                    <span> En Favoritos</span>
+                  </>
+                ) : (
+                  <>
+                    <FaRegHeart className="icon" />
+                    <span> Añadir a Favoritos</span>
+                  </>
+                )}
+              </button>
+
           </div>
 
           <p className="sku-info">SKU: {productoActual.sku}</p>
@@ -229,11 +282,33 @@ export const ProductoDetallePage = ({ handleAddToCart }) => {
         </div>
       </div>
 
-      {recomendaciones && recomendaciones.length > 0 && (
-           <div className="recommendations-section">
-               <h2>TAMBIÉN TE PODRÍA INTERESAR</h2>
-               <RecomendacionesCarousel productos={recomendaciones} />
-           </div>
+      {/* Recomendaciones Carousel (si lo usas) */}
+       {/* recomendaciones && recomendaciones.length > 0 && (
+            <div className="recommendations-section">
+                <h2>TAMBIÉN TE PODRÍA INTERESAR</h2>
+                <RecomendacionesCarousel productos={recomendaciones} />
+            </div>
+       ) */}
+
+
+      {/* *** Modal de Confirmación (Condicional) *** */}
+      {showConfirmationModal && itemToConfirm && (
+        <div className="modal-overlay confirmation-modal-overlay" onClick={handleCancelAddToCart}> {/* Añadimos clase específica */}
+          <div className="modal-content confirmation-modal-content" onClick={(e) => e.stopPropagation()}> {/* Añadimos clase específica */}
+            <h2>🌸CONFIRMANOS🌸</h2> {/* Texto adaptado */}
+            <p>¿Estás segura de que quieres agregar:</p>
+            <p><strong>{itemToConfirm.nombre}</strong></p>
+             {itemToConfirm.talla && itemToConfirm.color && (
+                 <p>Talla: {itemToConfirm.talla}, Color: {itemToConfirm.color.nombre}</p>
+             )}
+             <p>Cantidad: {itemToConfirm.cantidad}</p>
+            <p>a la bolsa?</p> {/* Texto adaptado */}
+            <div className="modal-actions">
+              <button className="modal-btn confirm-btn" onClick={handleConfirmAddToCart}>Confirmar</button>
+              <button className="modal-btn cancel-btn" onClick={handleCancelAddToCart}>Cancelar</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

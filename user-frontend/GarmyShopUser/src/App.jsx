@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import authService from './components/Auth/authService'; // Asegúrate de que la ruta sea correcta
+import authService from './components/Auth/authService';
 
-// Páginas y Layouts
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { InicioPage } from './page/InicioPage';
 import MainLayout from './layout/MainLayout';
 import { TiendaPage } from './page/TiendaPage';
@@ -15,97 +17,66 @@ import SobreNosotrosPage from './page/SobreNosotrosPage';
 import MisPedidosPage from './page/MisPedidosPage';
 import PedidoDetallePage from './page/PedidoDetallePage';
 import { BusquedaPage } from './page/BusquedaPage';
-// Autenticación
+
 import LoginPage from './page/Auth/LoginPage';
 import RegisterPage from './page/Auth/RegisterPage';
 import ForgotPasswordPage from './page/Auth/ForgotPasswordPage';
 import PagoExitosoPage from './page/PagoExitosoPage';
 import ResetPasswordForm from './components/Auth/ResetPasswordForm';
-
 import OAuth2RedirectHandler from './components/Auth/OAuth2RedirectHandler';
 
-// Componentes globales
 import Header from './components/Header';
 import Footer from './components/Footer';
 
 function App() {
-  // Estados globales para carrito y favoritos
   const [cartItems, setCartItems] = useState([]);
   const [favoriteItems, setFavoriteItems] = useState([]);
-
-  // ESTADOS: Para manejo de autenticación
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Función para cargar datos del usuario actual
   const loadUserData = async () => {
     setAuthLoading(true);
-
     const token = localStorage.getItem('token');
     const storedUser = authService.getCurrentUser();
 
-    console.log("App loadUserData: token?", !!token, "storedUser?", !!storedUser);
-
     if (token) {
       setIsAuthenticated(true);
-
       if (storedUser && storedUser.id) {
         setCurrentUser(storedUser);
-        console.log("App loadUserData: Token y usuario local encontrados.");
-
-        // Cargar carrito y favoritos específicos del usuario
         const userCartKey = `cartItems_${storedUser.id}`;
         const userFavoritesKey = `favoriteItems_${storedUser.id}`;
-
         const storedCart = localStorage.getItem(userCartKey);
         const storedFavorites = localStorage.getItem(userFavoritesKey);
-
         setCartItems(storedCart ? JSON.parse(storedCart) : []);
         setFavoriteItems(storedFavorites ? JSON.parse(storedFavorites) : []);
-        console.log(`App loadUserData: Items específicos cargados para user ${storedUser.id}.`);
 
-        // Si el objeto de usuario está incompleto (ej: falta firstName), intentar obtener el perfil completo
         if (!storedUser.firstName || !storedUser.lastName) {
-          console.log("App loadUserData: Usuario local incompleto, intentando obtener perfil completo...");
           try {
-            const profile = await authService.fetchUserProfile(); // Asumiendo que usa el token
+            const profile = await authService.fetchUserProfile();
             const completeUser = { ...storedUser, ...profile };
             localStorage.setItem('user', JSON.stringify(completeUser));
             setCurrentUser(completeUser);
-            console.log("App loadUserData: Perfil completo obtenido y actualizado.");
           } catch (error) {
-            console.warn('App loadUserData: No se pudo obtener el perfil completo (token quizás inválido o error del backend):', error);
+             toast.error("Error al cargar tu perfil.");
           }
-        } else {
-          console.log("App loadUserData: Usuario local ya completo.");
         }
-
       } else {
-        console.warn("App loadUserData: Token encontrado, pero sin datos de usuario válidos. Intentando obtener perfil desde el backend.");
         try {
           const profile = await authService.fetchUserProfile();
           const completeUser = {
-            id: profile.id,
-            username: profile.username,
-            email: profile.email,
-            firstName: profile.firstName,
-            lastName: profile.lastName
+            id: profile.id, username: profile.username, email: profile.email, firstName: profile.firstName, lastName: profile.lastName
           };
           localStorage.setItem('user', JSON.stringify(completeUser));
           setCurrentUser(completeUser);
           setIsAuthenticated(true);
-
           const userCartKey = `cartItems_${completeUser.id}`;
           const userFavoritesKey = `favoriteItems_${completeUser.id}`;
           const storedCart = localStorage.getItem(userCartKey);
           const storedFavorites = localStorage.getItem(userFavoritesKey);
           setCartItems(storedCart ? JSON.parse(storedCart) : []);
           setFavoriteItems(storedFavorites ? JSON.parse(storedFavorites) : []);
-          console.log(`App loadUserData: Items específicos cargados tras obtener perfil para user ${completeUser.id}.`);
-
         } catch (error) {
-          console.error('App loadUserData: Falló obtener perfil con token. Limpiando datos de auth.', error);
           authService.clearAuthData();
           setCurrentUser(null);
           setIsAuthenticated(false);
@@ -113,25 +84,21 @@ function App() {
           const storedFavorites = localStorage.getItem('favoriteItems');
           setCartItems(storedCart ? JSON.parse(storedCart) : []);
           setFavoriteItems(storedFavorites ? JSON.parse(storedFavorites) : []);
-          console.log("App loadUserData: Items de invitado cargados.");
+          toast.warning("Tu sesión ha expirado o es inválida. Por favor, inicia sesión de nuevo.");
         }
       }
     } else {
-      console.log("App loadUserData: No se encontró token. Usuario no autenticado.");
       setCurrentUser(null);
       setIsAuthenticated(false);
       const storedCart = localStorage.getItem('cartItems');
       const storedFavorites = localStorage.getItem('favoriteItems');
       setCartItems(storedCart ? JSON.parse(storedCart) : []);
       setFavoriteItems(storedFavorites ? JSON.parse(storedFavorites) : []);
-      console.log("App loadUserData: Items de invitado cargados.");
     }
-
     setAuthLoading(false);
   };
 
   useEffect(() => {
-    console.log("App useEffect: Montando, llamando a loadUserData...");
     loadUserData();
   }, []);
 
@@ -152,27 +119,21 @@ function App() {
   }, [favoriteItems, currentUser, isAuthenticated]);
 
   const handleAuthChange = () => {
-    console.log("App handleAuthChange: Se detectó un cambio de autenticación, recargando datos de usuario...");
     loadUserData();
   };
 
   const handleAddToCart = (producto) => {
+    let itemAddedMessage = '';
+
     setCartItems((prevItems) => {
       const itemIdentifier = producto.idUnicoCarrito || producto.id;
-
-      const existingItem = prevItems.find(item =>
-        (item.idUnicoCarrito || item.id) === itemIdentifier
-      );
+      const existingItem = prevItems.find(item => (item.idUnicoCarrito || item.id) === itemIdentifier);
 
       if (existingItem) {
+        itemAddedMessage = `Cantidad de ${producto.nombre} actualizada en el carrito.`;
         return prevItems.map(item =>
           (item.idUnicoCarrito || item.id) === itemIdentifier
-            ? {
-              ...item,
-              quantity: (item.quantity || 0) + (producto.cantidad || 1)
-            }
-
-
+            ? { ...item, quantity: (item.quantity || 0) + (producto.cantidad || 1) }
             : item
         );
       } else {
@@ -186,31 +147,46 @@ function App() {
           color: producto.color,
           cantidad: producto.cantidad || 1,
           quantity: producto.cantidad || 1,
-          idUnicoCarrito: itemIdentifier
+          idUnicoCarrito: itemIdentifier,
+          combinacionProductoId: producto.combinacionProductoId
         };
-
+        itemAddedMessage = `${producto.nombre} añadido al carrito.`;
         return [...prevItems, newItem];
       }
     });
-
-    console.log("App handleAddToCart: Producto añadido al carrito:", producto);
+    toast.success(itemAddedMessage);
   };
 
   const handleToggleFavorite = (producto) => {
+    let notificationMessage = '';
     setFavoriteItems((prevFavorites) => {
       const isFavorite = prevFavorites.some(item => item.id === producto.id);
       if (isFavorite) {
-        console.log("App handleToggleFavorite: Removido de favoritos:", producto);
+        notificationMessage = `${producto.nombre} removido de favoritos.`;
         return prevFavorites.filter(item => item.id !== producto.id);
       } else {
-        console.log("App handleToggleFavorite: Añadido a favoritos:", producto);
+        notificationMessage = `${producto.nombre} añadido a favoritos.`;
         return [...prevFavorites, producto];
       }
     });
+    toast.info(notificationMessage);
   };
 
   return (
     <BrowserRouter>
+       <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+
       <Header
         cartItems={cartItems}
         setCartItems={setCartItems}
@@ -223,10 +199,7 @@ function App() {
       />
 
       <Routes>
-        {/* Inicio */}
         <Route path="/" element={<MainLayout><InicioPage /></MainLayout>} />
-
-        {/* Tienda */}
         <Route
           path="/tienda"
           element={
@@ -235,8 +208,6 @@ function App() {
                 handleAddToCart={handleAddToCart}
                 handleToggleFavorite={handleToggleFavorite}
                 favoriteItems={favoriteItems}
-
-
               />
             </MainLayout>
           }
@@ -249,12 +220,8 @@ function App() {
             handleToggleFavorite={handleToggleFavorite}
           />}
         />
-        {/* Ofertas, Nosotros, Marcas */}
         <Route path="/nosotros" element={<MainLayout><SobreNosotrosPage /></MainLayout>} />
         <Route path="/marcas" element={<MainLayout><MarcasPage /></MainLayout>} />
-
-
-        {/* Detalle de producto */}
         <Route
           path="/producto/:cod"
           element={
@@ -267,8 +234,6 @@ function App() {
             </MainLayout>
           }
         />
-
-        {/* Favoritos */}
         <Route
           path="/favoritos"
           element={
@@ -280,8 +245,6 @@ function App() {
             </MainLayout>
           }
         />
-
-        {/* Finalizar compra */}
         <Route
           path="/finalizar_compra"
           element={
@@ -290,8 +253,6 @@ function App() {
             </MainLayout>
           }
         />
-
-
         <Route
           path="/pago-exitoso"
           element={
@@ -300,7 +261,6 @@ function App() {
             </MainLayout>
           }
         />
-
         <Route
           path="/mis-pedidos"
           element={
@@ -309,8 +269,6 @@ function App() {
             </MainLayout>
           }
         />
-
-        {/* --- AÑADE ESTA NUEVA RUTA --- */}
         <Route
           path="/mis-pedidos/:ordenId"
           element={
@@ -319,8 +277,6 @@ function App() {
             </MainLayout>
           }
         />
-
-        {/* Rutas de autenticación - Pasan onAuthChange */}
         <Route path="/login" element={<LoginPage onAuthChange={handleAuthChange} />} />
         <Route path="/registro" element={<RegisterPage />} />
         <Route path="/recuperar-password" element={<ForgotPasswordPage />} />

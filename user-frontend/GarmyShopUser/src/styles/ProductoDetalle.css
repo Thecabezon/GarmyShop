@@ -153,3 +153,172 @@
   .actions-group { grid-template-columns: 1fr; }
   .product-info-layout h1 { font-size: 2rem; }
 }
+.modal-overlay.confirmation-modal-overlay { /* Clase específica que añadimos en ProductModal.jsx */
+  position: absolute; /* IMPORTANT: Debe ser absolute para estar contenido dentro del modal principal (que tiene position: relative) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Z-index debe ser mayor que el del modal principal para que aparezca encima */
+  /* Si tu modal principal tiene z-index: 1000, este debe ser 1001 o más. */
+  /* Ajusta el z-index del modal principal si es necesario */
+  z-index: 1005; /* Un valor alto para asegurar que esté encima */
+  animation: fadeIn 0.3s ease-out; /* Reutiliza o define la animación si no existe */
+}
+
+.modal-content.confirmation-modal-content { /* Clase específica que añadimos en ProductModal.jsx */
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 400px; /* Ancho típico para un modal de confirmación */
+  width: 90%;
+  text-align: center;
+  animation: slideInFromTop 0.3s ease-out; /* Reutiliza o define la animación */
+  position: relative; /* Necesario para que el z-index dentro funcione bien si añades elementos posicionados */
+  z-index: 1; /* Está dentro de .confirmation-modal-overlay */
+}
+
+/* Estilos para el contenido del modal de confirmación */
+.confirmation-modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.5rem; /* Ajustar tamaño del título */
+}
+
+.confirmation-modal-content p {
+    margin-bottom: 8px; /* Espacio entre párrafos */
+    color: #555;
+    line-height: 1.4;
+    font-size: 1rem; /* Ajustar tamaño del texto */
+}
+
+.confirmation-modal-content strong {
+    color: #000;
+    font-weight: 600; /* Hacer el nombre más prominente */
+}
+
+/* Estilos para los botones de acción del modal de confirmación */
+.modal-actions { /* Puedes usar esta clase si es genérica */
+  margin-top: 25px;
+  display: flex;
+  justify-content: center; /* Centra los botones */
+  gap: 15px; /* Espacio entre botones */
+}
+
+.modal-btn { /* Puedes usar esta clase si es genérica */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  min-width: 100px; /* Asegurar un ancho mínimo para los botones */
+  text-align: center;
+}
+
+.confirm-btn { /* Puedes usar esta clase si es genérica */
+  background-color: #4CAF50; /* Verde */
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #45a049;
+}
+
+.cancel-btn { /* Puedes usar esta clase si es genérica */
+  background-color: #f44336; /* Rojo */
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #d32f2f;
+}
+
+
+/* --- Animaciones (si no están ya definidas en tu ProductModal.css) --- */
+/* Si ya tienes estas animaciones para el modal principal, no necesitas repetirlas */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromTop {
+    from { transform: translateY(-50px); opacity: 0;}
+    to { transform: translateY(0); opacity: 1;}
+}
+
+
+
+
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.5rem; /* Ajustar tamaño del título */
+}
+
+.modal-content p {
+    margin-bottom: 8px; /* Espacio entre párrafos */
+    color: #555;
+    line-height: 1.4;
+    font-size: 1rem; /* Ajustar tamaño del texto */
+}
+
+.modal-content strong {
+    color: #000;
+    font-weight: 600; /* Hacer el nombre más prominente */
+}
+
+.modal-actions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center; /* Centra los botones */
+  gap: 15px; /* Espacio entre botones */
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  min-width: 100px; /* Asegurar un ancho mínimo para los botones */
+  text-align: center;
+}
+
+.confirm-btn {
+  background-color: #f533a7; /* Verde */
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #4CAF50;
+}
+
+.cancel-btn {
+  background-color: #000000; /* Rojo */
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* --- Animaciones (si no están ya definidas) --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromTop {
+    from { transform: translateY(-50px); opacity: 0;}
+    to { transform: translateY(0); opacity: 1;}
+}
