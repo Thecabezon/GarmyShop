@@ -22,10 +22,14 @@
 .productos-titulo {
   font-family: 'League Spartan', sans-serif;
   font-size: 2.5rem;
-  color: #1a1a1a;
+
   margin: 0;
+
+  text-align: center;
+  
+  color: #111;
+  
   position: relative;
-  padding-bottom: 0.5rem;
 }
 
 .productos-titulo::after {
@@ -35,8 +39,9 @@
   left: 0;
   width: 80px;
   height: 4px;
-  background: linear-gradient(90deg, #fd2892, #ff71b9);
+ /* background: linear-gradient(90deg, #fd2892, #ff71b9);
   border-radius: 2px;
+  width: 320px;*/
 }
 
 /* Botón para abrir/cerrar filtros */

@@ -8,7 +8,7 @@ import '../styles/Favoritos.css';
 export const FavoritosPage = ({ favoriteItems, handleToggleFavorite }) => {
   return (
     <div className="productos-container">
-      <h2 className="productos-titulo">Mis Favoritos</h2>
+      <h2 className="productos-titulo">Mis Favoritos: </h2>
       
       {favoriteItems && favoriteItems.length > 0 ? (
         <div className="ropa-lista">

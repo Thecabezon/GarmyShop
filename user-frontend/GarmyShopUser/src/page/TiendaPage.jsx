@@ -1,4 +1,4 @@
-// src/page/TiendaPage.jsx
+
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -187,7 +187,7 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite })
     return (
         <div className="tienda-page-container">
             <div className="tienda-header-section">
-                <h2 className="productos-titulo">Nuestros Productos</h2>
+                <h2 className="productos-titulo"> 🌸Nuestros Productos:</h2>
                 <button
                     className="toggle-filter-btn"
                     onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}

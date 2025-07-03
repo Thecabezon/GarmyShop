@@ -32,7 +32,7 @@ const CategoryDropdown = ({ categories, loading, error, className, onMouseEnter,
     return (
         <div className={`category-dropdown ${className || ''}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <div className="category-dropdown-header">
-                <h3 className="category-dropdown-title"> 🌷Categorías:🌷</h3>
+                <h3 className="category-dropdown-title">Nuestras Categorias:</h3>
             </div>
 
             <div className="category-list-grid"> 

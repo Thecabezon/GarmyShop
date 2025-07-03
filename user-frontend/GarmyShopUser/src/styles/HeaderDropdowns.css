@@ -28,8 +28,8 @@
 
 /* NUEVO: Estilos para el título H3 dentro del dropdown */
 .category-dropdown-title {
-    font-size: 1.5rem; /* Tamaño del título, ajusta */
-    font-weight: bold;
+    font-size: 2rem; /* Tamaño del título, ajusta */
+    
     color: #000000; /* Color del título */
     margin: 0; /* Elimina márgenes por defecto del h3 */
     font-family: 'League Spartan', sans-serif; /* Consistencia de fuente */
