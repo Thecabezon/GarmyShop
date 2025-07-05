@@ -9,6 +9,7 @@ import { FilterProvider, useFilters } from '../context/FilterContext';
 import { useData } from '../context/DataContext';
 import '../styles/Tienda.css';
 import '../styles/FilterPanel.css';
+import { API_BASE_URL } from '../config/apiConfig';
 
 const FilterIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="0">
@@ -59,7 +60,7 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
 
         try {
             // 2. Hacemos el fetch para obtener los detalles COMPLETOS del producto
-            const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/${producto.id}`);
+            const response = await fetch(`${API_BASE_URL}/api/productos/${producto.id}`);
             if (!response.ok) {
                 throw new Error('No se pudieron cargar los detalles del producto.');
             }

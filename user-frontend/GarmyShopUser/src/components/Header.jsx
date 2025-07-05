@@ -6,6 +6,7 @@ import IconsComponent from './Header/IconsComponent';
 import TopBarComponent from './Header/TopBarComponent';
 import CategoryDropdown from './Header/CategoryDropdown';
 import MegaMenu from './Header/MegaMenu';
+import { API_BASE_URL } from '../config/apiConfig';
 
 import { menuData } from '../data/menuData';
 
@@ -16,7 +17,7 @@ import '../styles/mobileMenu.css';
 import authService from './Auth/authService';
 
 
-const API_CATEGORIAS_URL = 'https://garmyshop-user-backend.onrender.com/api/categorias';
+const API_CATEGORIAS_URL = `${API_BASE_URL}/api/categorias`;
 
 
 function Header({

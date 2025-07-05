@@ -1,12 +1,11 @@
-// src/page/PedidoDetallePage.jsx
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import authService from '../components/Auth/authService';
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
-import '../styles/PedidoDetalle.css'; // Crearemos este archivo
+import '../styles/PedidoDetalle.css';
+import { API_BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'https://garmyshop-user-backend.onrender.com';
 
 const PedidoDetallePage = () => {
     const { ordenId } = useParams();

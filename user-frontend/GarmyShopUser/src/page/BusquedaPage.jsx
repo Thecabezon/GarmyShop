@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { RopaComponente } from '../components/RopaComponente';
 import { ProductModal } from '../components/ProductModal';
 import '../styles/BusquedaPage.css'; // Crearemos este archivo de estilos
+import { API_BASE_URL } from '../config/apiConfig';
 
 export function BusquedaPage({ handleAddToCart, favoriteItems, handleToggleFavorite }) {
   const [searchResults, setSearchResults] = useState([]);
@@ -32,7 +33,7 @@ export function BusquedaPage({ handleAddToCart, favoriteItems, handleToggleFavor
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/buscar?termino=${encodeURIComponent(query)}`);
+        const response = await fetch(`${API_BASE_URL}/api/productos/buscar?termino=${encodeURIComponent(query)}`);
         if (!response.ok) {
           throw new Error('Error al buscar los productos.');
         }
@@ -55,7 +56,7 @@ export function BusquedaPage({ handleAddToCart, favoriteItems, handleToggleFavor
     setIsModalOpen(true);
     setSelectedProduct({ nombre: "Cargando..." });
     try {
-        const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/${producto.id}`);
+        const response = await fetch(`${API_BASE_URL}/api/productos/${producto.id}`);
         if (!response.ok) throw new Error('No se pudieron cargar los detalles.');
         const productoCompleto = await response.json();
         setSelectedProduct(productoCompleto);

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import PriceDisplay from '../components/ofertas/PriceDisplay';
 import '../styles/ProductoDetalle.css'; // Asegúrate de añadir los estilos del modal aquí
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
+import { API_BASE_URL } from '../config/apiConfig';
 
 import { toast } from 'react-toastify';
 import { FaHeart, FaRegHeart } from "react-icons/fa";
@@ -31,7 +32,7 @@ export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, fav
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/${cod}`);
+        const response = await fetch(`${API_BASE_URL}/api/productos/${cod}`);
         if (!response.ok) throw new Error('Producto no encontrado.');
         const apiData = await response.json();
 

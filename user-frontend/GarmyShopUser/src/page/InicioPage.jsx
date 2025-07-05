@@ -5,6 +5,7 @@ import '../styles/Inicio.css';
 import { RopaComponente } from '../components/RopaComponente';
 import { useData } from '../context/DataContext';
 import { ProductModal } from '../components/ProductModal';
+import { API_BASE_URL } from '../config/apiConfig';
 
 export function InicioPage({ handleAddToCart, handleToggleFavorite, favoriteItems }) {
   const { products, loading, error } = useData();
@@ -23,7 +24,7 @@ export function InicioPage({ handleAddToCart, handleToggleFavorite, favoriteItem
       setIsModalOpen(true);
       setSelectedProduct({...producto, nombre: "Cargando..."});
       try {
-          const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/${producto.id}`);
+          const response = await fetch(`${API_BASE_URL}/api/productos/${producto.id}`);
           if (!response.ok) {
                const errorBody = await response.text();
                console.error(`Error fetching product details for modal (HTTP ${response.status}): ${errorBody}`);

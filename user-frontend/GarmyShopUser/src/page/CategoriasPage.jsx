@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import CategoriaList from '../components/Categorias/CategoriasList';
 import '../styles/Categorias.css';
+import { API_BASE_URL } from '../config/apiConfig';
 
 function CategoriasPage() {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_URL = 'https://garmyshop-user-backend.onrender.com/api/categorias';
+  const API_URL = `${API_BASE_URL}/api/categorias`;
 
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
         setLoading(true);
-        const response = await fetch(API_URL);  
+        const response = await fetch(API_URL);
 
         if (response.status === 204) {
           setCategorias([]);

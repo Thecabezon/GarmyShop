@@ -1,8 +1,8 @@
 // src/context/DataContext.jsx (MEJORADO)
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'https://garmyshop-user-backend.onrender.com/api';
 
 const DataContext = createContext();
 
@@ -22,11 +22,11 @@ export function DataProvider({ children }) {
             setLoading(true);
             try {
                 const [productsRes, categoriesRes, marcasRes, colorsRes, sizesRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/productos?size=200`),
-                    fetch(`${API_BASE_URL}/categorias`),
-                    fetch(`${API_BASE_URL}/marcas`),
-                    fetch(`${API_BASE_URL}/colores`),
-                    fetch(`${API_BASE_URL}/tallas`),
+                    fetch(`${API_BASE_URL}/api/productos?size=200`),
+                    fetch(`${API_BASE_URL}/api/categorias`),
+                    fetch(`${API_BASE_URL}/api/marcas`),
+                    fetch(`${API_BASE_URL}/api/colores`),
+                    fetch(`${API_BASE_URL}/api/tallas`),
                 ]);
 
                 if (!productsRes.ok || !categoriesRes.ok || !marcasRes.ok || !colorsRes.ok || !sizesRes.ok) {
@@ -66,11 +66,11 @@ export function DataProvider({ children }) {
         console.log(`⏳ Buscando productos en el backend para la marca: ${slug}`);
         
         try {
-            const marcaResponse = await fetch(`${API_BASE_URL}/marcas/slug/${slug}`);
+            const marcaResponse = await fetch(`${API_BASE_URL}/api/marcas/slug/${slug}`);
             if (!marcaResponse.ok) throw new Error(`Marca no encontrada: ${slug}`);
             const marcaData = await marcaResponse.json();
 
-            const productosResponse = await fetch(`${API_BASE_URL}/productos/marca/${marcaData.id}?size=20`);
+            const productosResponse = await fetch(`${API_BASE_URL}/api/productos/marca/${marcaData.id}?size=20`);
             if (!productosResponse.ok) throw new Error('Error al cargar productos de la marca.');
             const productosData = await productosResponse.json();
             const fetchedProductos = productosData.content || [];

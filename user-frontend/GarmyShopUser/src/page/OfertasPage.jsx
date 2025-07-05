@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { RopaComponente } from '../components/RopaComponente';
 import '../styles/OfertasPage.css';
-const API_OFERTAS_URL = 'https://garmyshop-user-backend.onrender.com/api/productos'; 
+import { API_BASE_URL } from '../config/apiConfig';
+
+
+const API_OFERTAS_URL = `${API_BASE_URL}/api/productos`; 
 
 export const OfertasPage = ({ handleAddToCart }) => {
     const [productosEnOferta, setProductosEnOferta] = useState([]);

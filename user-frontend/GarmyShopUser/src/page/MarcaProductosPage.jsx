@@ -7,8 +7,8 @@ import { RopaComponente } from '../components/RopaComponente';
 import { ProductModal } from '../components/ProductModal';
 import '../styles/Tienda.css';
 import '../styles/MarcasPage.css';
+import { API_BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'https://garmyshop-user-backend.onrender.com/api';
 
 const MarcaProductosPage = ({ handleAddToCart, favoriteItems, handleToggleFavorite }) => {
     const { slug } = useParams();

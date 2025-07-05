@@ -1,5 +1,6 @@
+import { API_BASE_URL } from '../config/apiConfig';
 
-const API_URL = 'https://garmyshop-user-backend.onrender.com/api/contacto';
+const API_URL = `${API_BASE_URL}/api/contacto`;
 
 const handleResponse = async (response) => {
     const responseBody = await response.text();

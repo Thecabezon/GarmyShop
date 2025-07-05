@@ -1,5 +1,6 @@
+import { API_BASE_URL } from '../../config/apiConfig';
 
-const API_URL = 'https://garmyshop-user-backend.onrender.com/api/auth';
+const API_URL = `${API_BASE_URL}/api/auth`;
 
 // Función para manejar errores de respuesta
 const handleResponse = async (response) => {
@@ -21,19 +22,19 @@ const handleResponse = async (response) => {
         return Promise.reject(responseBody || response.statusText);
       }
     } else {
-       return Promise.reject(responseBody || response.statusText);
+      return Promise.reject(responseBody || response.statusText);
     }
   }
 
-   if (responseBody) {
-     try {
-       return JSON.parse(responseBody);
-     } catch (err) {
-        return responseBody;
-     }
-   } else {
-     return null;
-   }
+  if (responseBody) {
+    try {
+      return JSON.parse(responseBody);
+    } catch (err) {
+      return responseBody;
+    }
+  } else {
+    return null;
+  }
 };
 
 
@@ -79,7 +80,7 @@ const authService = {
         password
       })
     });
-     console.log("authService: Intentando registrar usuario...");
+    console.log("authService: Intentando registrar usuario...");
     return handleResponse(response);
   },
 
@@ -97,11 +98,11 @@ const authService = {
   getCurrentUser: () => {
     const user = localStorage.getItem('user');
     try {
-        return user ? JSON.parse(user) : null;
+      return user ? JSON.parse(user) : null;
     } catch (e) {
-        console.error("authService: Error parsing user from localStorage", e);
-        authService.clearAuthData();
-        return null;
+      console.error("authService: Error parsing user from localStorage", e);
+      authService.clearAuthData();
+      return null;
     }
   },
 
@@ -117,7 +118,7 @@ const authService = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
-     console.log("authService: Solicitando reset de password...");
+    console.log("authService: Solicitando reset de password...");
     return handleResponse(response);
   },
 
@@ -127,7 +128,7 @@ const authService = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, nuevaPassword })
     });
-     console.log("authService: Intentando resetear password...");
+    console.log("authService: Intentando resetear password...");
     return handleResponse(response);
   },
 
@@ -152,7 +153,7 @@ const authService = {
   handleOAuth2Token: (token) => {
     if (token) {
       localStorage.setItem('token', token); // Usa la clave 'token'
-       console.log("authService: Token OAuth2 guardado.");
+      console.log("authService: Token OAuth2 guardado.");
       // Nota: No guardamos 'user' aquí porque el token OAuth2 no suele incluir toda la info
       // La lógica en App.js (loadUserData) se encargará de llamar a fetchUserProfile()
       // si hay token pero no hay datos de usuario guardados localmente.
