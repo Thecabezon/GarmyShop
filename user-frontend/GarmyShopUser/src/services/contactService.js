@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:8085/api/contacto';
+const API_URL = 'https://garmyshop-user-backend.onrender.com/api/contacto';
 
 const handleResponse = async (response) => {
     const responseBody = await response.text();

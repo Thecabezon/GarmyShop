@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
-import '../../styles/auth.css'; // Reutilizamos los estilos de autenticación
+import '../../styles/Auth.css'; // Reutilizamos los estilos de autenticación
 import authService from './authService';
 
 // Reutilizamos los iconos de ojo si los necesitas para ver la contraseña

@@ -4,7 +4,7 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import authService from '../components/Auth/authService';
 import '../styles/PagoExitoso.css'; // Crearemos este archivo CSS
 
-const API_BASE_URL = 'http://localhost:8085';
+const API_BASE_URL = 'https://garmyshop-user-backend.onrender.com';
 
 const PagoExitosoPage = ({ setCartItems }) => {
     const [searchParams] = useSearchParams();

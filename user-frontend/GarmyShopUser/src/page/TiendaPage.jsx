@@ -59,7 +59,7 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
 
         try {
             // 2. Hacemos el fetch para obtener los detalles COMPLETOS del producto
-            const response = await fetch(`http://localhost:8085/api/productos/${producto.id}`);
+            const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/${producto.id}`);
             if (!response.ok) {
                 throw new Error('No se pudieron cargar los detalles del producto.');
             }

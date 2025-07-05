@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
-import '../../styles/auth.css';
+import '../../styles/Auth.css';
 import authService from './authService';
 
 // Iconos (mantener los que ya tienes)

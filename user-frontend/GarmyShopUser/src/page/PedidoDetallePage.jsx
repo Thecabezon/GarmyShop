@@ -6,7 +6,7 @@ import authService from '../components/Auth/authService';
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 import '../styles/PedidoDetalle.css'; // Crearemos este archivo
 
-const API_BASE_URL = 'http://localhost:8085';
+const API_BASE_URL = 'https://garmyshop-user-backend.onrender.com';
 
 const PedidoDetallePage = () => {
     const { ordenId } = useParams();

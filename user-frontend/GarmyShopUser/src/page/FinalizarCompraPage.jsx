@@ -5,7 +5,7 @@ import '../styles/FinalizarCompra.css';
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 import authService from '../components/Auth/authService';
 
-const API_BASE_URL = 'http://localhost:8085';
+const API_BASE_URL = 'https://garmyshop-user-backend.onrender.com';
 const STRIPE_PUBLIC_KEY = 'pk_test_51RcUTK040ycu73auxVqdGiH5CzGKmTFjiSUzoQP8O8Hn45TI79oUnaZSq1hdAGiIXN91RQU0SzeZnvoUPF1Fiffe00VdrXUrtf';
 
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY);

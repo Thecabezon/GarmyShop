@@ -16,7 +16,7 @@ import '../styles/mobileMenu.css';
 import authService from './Auth/authService';
 
 
-const API_CATEGORIAS_URL = 'http://localhost:8085/api/categorias';
+const API_CATEGORIAS_URL = 'https://garmyshop-user-backend.onrender.com/api/categorias';
 
 
 function Header({

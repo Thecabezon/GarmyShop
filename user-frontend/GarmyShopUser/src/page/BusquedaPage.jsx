@@ -32,7 +32,7 @@ export function BusquedaPage({ handleAddToCart, favoriteItems, handleToggleFavor
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:8085/api/productos/buscar?termino=${encodeURIComponent(query)}`);
+        const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/buscar?termino=${encodeURIComponent(query)}`);
         if (!response.ok) {
           throw new Error('Error al buscar los productos.');
         }
@@ -55,7 +55,7 @@ export function BusquedaPage({ handleAddToCart, favoriteItems, handleToggleFavor
     setIsModalOpen(true);
     setSelectedProduct({ nombre: "Cargando..." });
     try {
-        const response = await fetch(`http://localhost:8085/api/productos/${producto.id}`);
+        const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/${producto.id}`);
         if (!response.ok) throw new Error('No se pudieron cargar los detalles.');
         const productoCompleto = await response.json();
         setSelectedProduct(productoCompleto);

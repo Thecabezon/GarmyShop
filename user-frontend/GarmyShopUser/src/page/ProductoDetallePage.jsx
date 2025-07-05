@@ -31,7 +31,7 @@ export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, fav
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:8085/api/productos/${cod}`);
+        const response = await fetch(`https://garmyshop-user-backend.onrender.com/api/productos/${cod}`);
         if (!response.ok) throw new Error('Producto no encontrado.');
         const apiData = await response.json();
 

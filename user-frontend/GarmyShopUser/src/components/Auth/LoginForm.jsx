@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'; // Importa useEffect
 import { Link, useNavigate, useLocation } from 'react-router-dom'; // Importa useLocation
 import AuthLayout from './AuthLayout';
-import '../../styles/auth.css';
+import '../../styles/Auth.css';
 import authService from './authService'; // Asegúrate de que esta ruta sea correcta
 
 // Iconos (mantén tus iconos)
@@ -72,7 +72,7 @@ const LoginForm = ({ onAuthChange }) => {
     // Redirige el navegador al endpoint de inicio de OAuth2 de Google en tu backend.
     // Este endpoint está configurado en tu SecurityConfig y escucha en el puerto 8085.
     // Al usar la URL completa, el navegador inicia una nueva navegación a ese origen y ruta.
-    window.location.href = 'http://localhost:8085/oauth2/authorization/google'; 
+    window.location.href = 'https://garmyshop-user-backend.onrender.com/oauth2/authorization/google'; 
     
     // Opcional: Deshabilitar el botón o mostrar un indicador de carga mientras se redirige
     // setIsLoading(true); // Puedes descomentar si quieres mostrar carga inmediatamente

@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/MisPedidos.css';
 import authService from '../components/Auth/authService';
 
-const API_BASE_URL = 'http://localhost:8085';
+const API_BASE_URL = 'https://garmyshop-user-backend.onrender.com';
 
 const MisPedidosPage = () => {
   const [pedidos, setPedidos] = useState([]);

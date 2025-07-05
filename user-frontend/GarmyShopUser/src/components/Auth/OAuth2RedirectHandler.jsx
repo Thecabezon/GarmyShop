@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import authService from './authService'; 
-import '../../styles/auth.css'; // Usa el archivo CSS que aplique a tus contenedores y spinner si tienes
+import '../../styles/Auth.css'; // Usa el archivo CSS que aplique a tus contenedores y spinner si tienes
 
 const OAuth2RedirectHandler = ({ onAuthChange }) => {
   const location = useLocation();

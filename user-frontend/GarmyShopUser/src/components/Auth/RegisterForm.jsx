@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'; // Importa useEffect si quieres manejar errores de OAuth2 como en Login
 import { Link, useNavigate, useLocation } from 'react-router-dom'; // Importa useLocation
 import AuthLayout from './AuthLayout';
-import '../../styles/auth.css';
+import '../../styles/Auth.css';
 import authService from './authService'; // Asegúrate de que la ruta a authService sea correcta
 
 // Iconos (mantén tus iconos)
@@ -101,7 +101,7 @@ const RegisterForm = () => {
      // Redirige el navegador al endpoint de inicio de OAuth2 de Google en tu backend.
      // Este es el mismo endpoint usado para iniciar sesión,
      // ya que el backend maneja si el usuario necesita ser registrado o no.
-     window.location.href = 'http://localhost:8085/oauth2/authorization/google'; 
+     window.location.href = 'https://garmyshop-user-backend.onrender.com/oauth2/authorization/google'; 
      // Opcional: setIsLoading(true); si quieres mostrar un spinner antes de la redirección.
   };
 

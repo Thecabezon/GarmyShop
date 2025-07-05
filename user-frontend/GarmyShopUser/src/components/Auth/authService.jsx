@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:8085/api/auth';
+const API_URL = 'https://garmyshop-user-backend.onrender.com/api/auth';
 
 // Función para manejar errores de respuesta
 const handleResponse = async (response) => {
