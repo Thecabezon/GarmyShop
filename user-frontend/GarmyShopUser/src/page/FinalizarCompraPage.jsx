@@ -326,8 +326,8 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
                         cantidad: item.quantity,
                         moneda: "pen"
                     })),
-                    successUrl: `http://localhost:5173/pago-exitoso?session_id={CHECKOUT_SESSION_ID}`,
-                    cancelUrl: `http://localhost:5173/finalizar-compra`,
+                    successUrl: `https://garmy-shop.vercel.app/pago-exitoso?session_id={CHECKOUT_SESSION_ID}`,
+                    cancelUrl: `https://garmy-shop.vercel.app/finalizar-compra`,
                     ordenIdLocal: ordenCreada.id,
                     emailCliente: currentUser.email
                 };
