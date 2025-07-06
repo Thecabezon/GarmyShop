@@ -1,4 +1,3 @@
-// src/components/RopaComponente.jsx (CÓDIGO COMPLETO Y FUNCIONAL)
 
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import React from 'react';
@@ -8,7 +7,7 @@ import PriceDisplay from './ofertas/PriceDisplay';
 
 export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggleFavorite, isAuthenticated }) {
   const { id, nombre, imagenPrincipalUrl, precio, precioOferta, categoriaNombre } = producto;
-  
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -32,23 +31,27 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
       handleToggleFavorite(producto);
     } else {
       toast.info('Debes iniciar sesión para guardar favoritos.');
-      navigate('/login', { state: { from: location, 
-          action: 'addFavorite', 
-          productId: producto.id  } });
+      navigate('/login', {
+        state: {
+          from: location,
+          action: 'addFavorite',
+          productId: producto.id
+        }
+      });
     }
   };
 
   const getImagenPrincipal = (producto) => {
-    // Si viene como imagenPrincipalUrl (caso lista)
-    if (producto.imagenPrincipalUrl) return producto.imagenPrincipalUrl;
-    // Si viene como array de imagenes (caso detalle)
+
+    if (producto.imagenPrincipalUrl) {
+      return `${CLOUDINARY_BASE_URL}/${producto.imagenPrincipalUrl}`;
+    }
     if (producto.imagenes && producto.imagenes.length > 0) {
       const principal = producto.imagenes.find(img => img.esPrincipal);
       return principal
         ? `${CLOUDINARY_BASE_URL}/${principal.imagen}`
         : `${CLOUDINARY_BASE_URL}/${producto.imagenes[0].imagen}`;
     }
-    // Fallback
     return 'https://dummyimage.com/600x600/f0f0f0/ccc&text=No+Imagen';
   };
 
@@ -65,28 +68,28 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
           />
         </Link>
         <button
-          onClick={handleFavoriteClick} 
+          onClick={handleFavoriteClick}
           className={`me-encanta-btn ${isLiked ? 'liked' : ''}`}
           aria-label="Añadir a favoritos"
           title="Añadir a favoritos"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="corazon-icono">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3A5.5 5.5 0 0 1 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3A5.5 5.5 0 0 1 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
         </button>
       </div>
-     
+
       <div className="ropa-info">
         <p className="producto-categoria">{categoriaNombre || 'Categoría'}</p>
         <Link to={`/producto/${id}`} className="producto-nombre-link">
           <h5>{nombre}</h5>
         </Link>
-       
+
         <div className="ropa-precio">
           <PriceDisplay regularPrice={precio} offerPrice={precioOferta} />
         </div>
       </div>
-     
+
       <div className="ropa-acciones">
         <button
           onClick={handleAddToCartClick}
@@ -96,8 +99,8 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
         </button>
         <Link to={`/producto/${id}`} className="ver-detalle-btn" aria-label="Ver detalle" title="Ver detalle">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
-            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="2" fill="none"/>
-            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" fill="none"/>
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="2" fill="none" />
+            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" fill="none" />
           </svg>
         </Link>
       </div>

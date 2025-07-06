@@ -49,36 +49,29 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // 👇 REEMPLAZA TU FUNCIÓN handleOpenModal CON ESTA 👇
     const handleOpenModal = async (producto) => {
-        // 1. Inmediatamente abrimos el modal y mostramos que está cargando
         setIsModalOpen(true);
         setModalLoading(true);
-        setSelectedProduct({ nombre: "Cargando..." }); // Mostramos un placeholder
+        setSelectedProduct({ nombre: "Cargando..." }); 
 
         try {
-            // 2. Hacemos el fetch para obtener los detalles COMPLETOS del producto
             const response = await fetch(`${API_BASE_URL}/api/productos/${producto.id}`);
             if (!response.ok) {
                 throw new Error('No se pudieron cargar los detalles del producto.');
             }
             const productoCompleto = await response.json();
 
-            // 3. Una vez que tenemos los datos, actualizamos el estado
             setSelectedProduct(productoCompleto);
 
         } catch (error) {
             console.error("Error al obtener detalles del producto para el modal:", error);
             alert('Hubo un error al cargar el producto. Por favor, inténtalo de nuevo.');
-            // Si hay un error, cerramos el modal
             setIsModalOpen(false);
             setSelectedProduct(null);
         } finally {
-            // 4. Dejamos de mostrar el spinner de carga
             setModalLoading(false);
         }
     };
-    // 👆 HASTA AQUÍ EL REEMPLAZO 👆
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -97,7 +90,6 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
         }
     }, [searchParams, dispatch, filters]);
 
-    // NUEVA LÓGICA DE CONTEO
     const optionCounts = useMemo(() => {
         const counts = { categories: {}, colors: {}, sizes: {} };
         if (loading || !allProducts.length) return counts;
@@ -105,13 +97,11 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
         const tempCounts = { colors: {}, sizes: {} };
 
         allProducts.forEach(p => {
-            // Categorías
             const categoriaId = p.categoriaId || (p.categoria && p.categoria.id);
             if (categoriaId) {
                 counts.categories[categoriaId] = (counts.categories[categoriaId] || 0) + 1;
             }
 
-            // Colores y tallas
             if (p.combinacionesDisponibles) {
                 const productColors = new Set();
                 const productSizes = new Set();
@@ -136,7 +126,6 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
         return counts;
     }, [allProducts, loading]);
 
-    // NUEVA LÓGICA DE FILTRADO
     const filteredProducts = useMemo(() => {
         if (loading || !allProducts.length) return [];
 
@@ -148,14 +137,12 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
 
             if (onlyOnSale && !(product.precioOferta && product.precioOferta < product.precio)) return false;
 
-            // Filtrar por color
             if (selectedColors.length > 0) {
                 const hasSelectedColor = product.combinacionesDisponibles?.some(c =>
                     selectedColors.includes(c.color.id)
                 );
                 if (!hasSelectedColor) return false;
             }
-            // Filtrar por talla
             if (selectedSizes.length > 0) {
                 const hasSelectedSize = product.combinacionesDisponibles?.some(c =>
                     selectedSizes.includes(c.talla.id)
