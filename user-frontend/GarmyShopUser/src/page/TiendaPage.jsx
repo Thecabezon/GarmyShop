@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ProductModal } from '../components/ProductModal';
@@ -99,23 +97,71 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
         }
     }, [searchParams, dispatch, filters]);
 
+    // NUEVA LÓGICA DE CONTEO
+    const optionCounts = useMemo(() => {
+        const counts = { categories: {}, colors: {}, sizes: {} };
+        if (loading || !allProducts.length) return counts;
+
+        const tempCounts = { colors: {}, sizes: {} };
+
+        allProducts.forEach(p => {
+            // Categorías
+            const categoriaId = p.categoriaId || (p.categoria && p.categoria.id);
+            if (categoriaId) {
+                counts.categories[categoriaId] = (counts.categories[categoriaId] || 0) + 1;
+            }
+
+            // Colores y tallas
+            if (p.combinacionesDisponibles) {
+                const productColors = new Set();
+                const productSizes = new Set();
+
+                p.combinacionesDisponibles.forEach(combinacion => {
+                    if (combinacion.color && combinacion.color.id) productColors.add(combinacion.color.id);
+                    if (combinacion.talla && combinacion.talla.id) productSizes.add(combinacion.talla.id);
+                });
+
+                productColors.forEach(colorId => {
+                    tempCounts.colors[colorId] = (tempCounts.colors[colorId] || 0) + 1;
+                });
+                productSizes.forEach(sizeId => {
+                    tempCounts.sizes[sizeId] = (tempCounts.sizes[sizeId] || 0) + 1;
+                });
+            }
+        });
+
+        counts.colors = tempCounts.colors;
+        counts.sizes = tempCounts.sizes;
+
+        return counts;
+    }, [allProducts, loading]);
+
+    // NUEVA LÓGICA DE FILTRADO
     const filteredProducts = useMemo(() => {
         if (loading || !allProducts.length) return [];
-
-        if (allProducts.length > 0 && filters.selectedCategories.length > 0 && !allProducts.some(p => filters.selectedCategories.includes(p.categoriaId))) {
-            if (currentPage !== 1) setCurrentPage(1);
-            return [];
-        }
 
         const result = allProducts.filter(product => {
             const { selectedCategories, selectedColors, selectedSizes, onlyOnSale } = filters;
 
-            if (selectedCategories.length > 0 && !selectedCategories.includes(product.categoriaId)) return false;
+            const categoriaId = product.categoriaId || (product.categoria && product.categoria.id);
+            if (selectedCategories.length > 0 && !selectedCategories.includes(categoriaId)) return false;
+
             if (onlyOnSale && !(product.precioOferta && product.precioOferta < product.precio)) return false;
 
-            // Para usar colores y tallas, descomenta y asegúrate de que existan en la data
-            // if (selectedColors.length > 0 && !(product.colores?.some(c => selectedColors.includes(c.id)))) return false;
-            // if (selectedSizes.length > 0 && !(product.tallas?.some(t => selectedSizes.includes(t.id)))) return false;
+            // Filtrar por color
+            if (selectedColors.length > 0) {
+                const hasSelectedColor = product.combinacionesDisponibles?.some(c =>
+                    selectedColors.includes(c.color.id)
+                );
+                if (!hasSelectedColor) return false;
+            }
+            // Filtrar por talla
+            if (selectedSizes.length > 0) {
+                const hasSelectedSize = product.combinacionesDisponibles?.some(c =>
+                    selectedSizes.includes(c.talla.id)
+                );
+                if (!hasSelectedSize) return false;
+            }
 
             return true;
         });
@@ -131,19 +177,6 @@ function TiendaContent({ handleAddToCart, favoriteItems, handleToggleFavorite, i
 
         return result;
     }, [allProducts, filters, loading, currentPage, itemsPerPage]);
-
-    const optionCounts = useMemo(() => {
-        const counts = { categories: {}, colors: {}, sizes: {} };
-        if (loading || !allProducts.length) return counts;
-
-        allProducts.forEach(p => {
-            if (p.categoriaId) {
-                counts.categories[p.categoriaId] = (counts.categories[p.categoriaId] || 0) + 1;
-            }
-        });
-
-        return counts;
-    }, [allProducts, loading]);
 
     const totalPages = useMemo(() => {
         return Math.ceil(filteredProducts.length / itemsPerPage);

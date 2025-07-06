@@ -1,6 +1,6 @@
 // src/components/Auth/LoginForm.jsx
 import React, { useState, useEffect } from 'react'; // Importa useEffect
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // Importa useLocation
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // Importa useLocation
 import AuthLayout from './AuthLayout';
 import '../../styles/Auth.css';
 import authService from './authService'; // Asegúrate de que esta ruta sea correcta
@@ -20,8 +20,8 @@ const LoginForm = ({ onAuthChange }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const location = useLocation();
   const navigate = useNavigate();
-  const location = useLocation(); // Hook para acceder al estado de navegación
 
   // Leer el posible error pasado por el OAuth2RedirectHandler
   const oauthError = location.state?.oauthError;
@@ -47,26 +47,28 @@ const LoginForm = ({ onAuthChange }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(''); // Limpiar errores anteriores (incluyendo posibles errores de OAuth2)
-    
+    setError('');
     try {
       await authService.login(formData.email, formData.password);
-      
-      if (onAuthChange) {
-        onAuthChange(); // Notificar a App.js
-      }
-      
-      navigate('/'); // Redirigir al éxito
-      
+      // Espera a que el estado global de autenticación se actualice
+      if (onAuthChange) onAuthChange(); // Si usas un callback para actualizar el estado global
     } catch (error) {
-      console.error('Error en login:', error);
-      // Intentar obtener un mensaje de error específico
-      const errorMessage = error.message || error.response?.data?.message || 'Error al iniciar sesión. Verifica tus credenciales.';
-      setError(errorMessage);
+      setError('Error al iniciar sesión');
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Redirige solo cuando la sesión ya está activa
+  useEffect(() => {
+    if (authService.isAuthenticated()) {
+      if (location.state?.from) {
+        navigate(location.state.from.pathname + (location.state.from.search || ''), { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
+    }
+  }, [authService.isAuthenticated()]); // O el estado global de autenticación
 
   const handleGoogleLogin = () => {
     // ** CORRECCIÓN AQUÍ: USAR LA URL COMPLETA DEL BACKEND **

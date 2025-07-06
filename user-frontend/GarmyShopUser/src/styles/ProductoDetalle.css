@@ -95,6 +95,44 @@
   font-size: 1rem; font-weight: bold;
 }
 
+/* --- ESTILOS PARA OPCIONES DESHABILITADAS --- */
+/* Asegúrate de que el contenedor del color tenga position: relative y overflow: hidden */
+.color-swatch {
+  position: relative; /* Necesario para la línea diagonal */
+  overflow: hidden;   /* Para que la línea no se salga del círculo */
+}
+
+/* Colores deshabilitados: opacos y con línea diagonal */
+.color-swatch.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border: 1px solid #e0e0e0;
+}
+
+.color-swatch.disabled:hover {
+  transform: none;
+}
+
+/* Línea diagonal sobre el color deshabilitado */
+.color-swatch.disabled::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  width: 120%;
+  height: 1.5px;
+  background-color: rgba(120, 120, 120, 0.7);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+/* El estilo para .size-btn:disabled ya lo tienes, pero lo incluyo para referencia */
+.size-btn:disabled {
+  opacity: 0.5;
+  color: #ccc;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+}
+
 .size-btn {
   min-width: 50px; padding: 10px 15px; border-radius: 5px;
   border: 1px solid #ccc; background-color: white; cursor: pointer;
@@ -126,6 +164,10 @@
   transition: background-color 0.3s ease;
 }
 .add-to-cart-btn:hover { background-color: #f180bb; }
+.add-to-cart-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 /* --- PESTAÑAS DE INFORMACIÓN --- */
 .info-tabs { border-top: 1px solid #eee; }

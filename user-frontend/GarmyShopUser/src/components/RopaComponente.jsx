@@ -13,7 +13,18 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
   const location = useLocation();
 
   const handleAddToCartClick = () => {
-    handleOpenModal(producto); 
+    if (isAuthenticated) {
+      handleOpenModal(producto);
+    } else {
+      toast.info('Debes iniciar sesión para agregar productos al carrito.');
+      navigate('/login', {
+        state: {
+          from: location,
+          action: 'addToCart',
+          productId: producto.id
+        }
+      });
+    }
   };
 
   const handleFavoriteClick = () => {
@@ -27,15 +38,31 @@ export function RopaComponente({ producto, isLiked, handleOpenModal, handleToggl
     }
   };
 
-  const fullImageUrl = imagenPrincipalUrl
-    ? `${CLOUDINARY_BASE_URL}/${imagenPrincipalUrl}`
-    : 'https://dummyimage.com/400x500/f0f0f0/ccc&text=No+Imagen';
+  const getImagenPrincipal = (producto) => {
+    // Si viene como imagenPrincipalUrl (caso lista)
+    if (producto.imagenPrincipalUrl) return producto.imagenPrincipalUrl;
+    // Si viene como array de imagenes (caso detalle)
+    if (producto.imagenes && producto.imagenes.length > 0) {
+      const principal = producto.imagenes.find(img => img.esPrincipal);
+      return principal
+        ? `${CLOUDINARY_BASE_URL}/${principal.imagen}`
+        : `${CLOUDINARY_BASE_URL}/${producto.imagenes[0].imagen}`;
+    }
+    // Fallback
+    return 'https://dummyimage.com/600x600/f0f0f0/ccc&text=No+Imagen';
+  };
+
+  const fullImageUrl = getImagenPrincipal(producto);
 
   return (
     <div className="ropa-card">
       <div className="ropa-imagen">
         <Link to={`/producto/${id}`} aria-label={`Ver detalles de ${nombre}`}>
-          <img src={fullImageUrl} alt={nombre} loading="lazy" />
+          <img
+            src={getImagenPrincipal(producto)}
+            alt={producto.nombre}
+            className="ropa-imagen"
+          />
         </Link>
         <button
           onClick={handleFavoriteClick} 

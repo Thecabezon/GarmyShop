@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import PriceDisplay from '../components/ofertas/PriceDisplay';
-import '../styles/ProductoDetalle.css'; // Asegúrate de añadir los estilos del modal aquí
+import '../styles/ProductoDetalle.css';
 import { CLOUDINARY_BASE_URL } from '../config/cloudinary';
 import { API_BASE_URL } from '../config/apiConfig';
-
 import { toast } from 'react-toastify';
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, favoriteItems }) => {
+export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, favoriteItems, isAuthenticated }) => {
   const { cod } = useParams();
   const [productoActual, setProductoActual] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,19 +17,23 @@ export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, fav
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('descripcion');
-  const [recomendaciones, setRecomendaciones] = useState([]);
   const [combinacionesDisponibles, setCombinacionesDisponibles] = useState([]);
-  const [tallasDisponibles, setTallasDisponibles] = useState([]);
-  const [coloresDisponibles, setColoresDisponibles] = useState([]);
 
-  // *** Estado para el modal de confirmación ***
+  // Modal de confirmación
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [itemToConfirm, setItemToConfirm] = useState(null); // Para guardar temporalmente el item antes de confirmarlo
+  const [itemToConfirm, setItemToConfirm] = useState(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchProductoDetalle = async () => {
       setLoading(true);
       setError(null);
+      setSelectedSize(null);
+      setSelectedColor(null);
+      setQuantity(1);
+
       try {
         const response = await fetch(`${API_BASE_URL}/api/productos/${cod}`);
         if (!response.ok) throw new Error('Producto no encontrado.');
@@ -40,31 +43,12 @@ export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, fav
         const fullImagenPrincipal = imagenPrincipalPath
           ? `${CLOUDINARY_BASE_URL}/${imagenPrincipalPath}`
           : 'https://dummyimage.com/600x600/f0f0f0/ccc&text=No+Imagen';
-
         const fullListaImagenes = apiData.imagenes.map(img => `${CLOUDINARY_BASE_URL}/${img.imagen}`);
-
         const hasOffer = apiData.precioOferta != null && apiData.precioOferta < apiData.precio;
         const displayPrice = hasOffer ? apiData.precioOferta : apiData.precio;
         const originalPrice = hasOffer ? apiData.precio : null;
 
-        if (apiData.combinacionesDisponibles && apiData.combinacionesDisponibles.length > 0) {
-          setCombinacionesDisponibles(apiData.combinacionesDisponibles);
-
-          const tallas = [...new Set(apiData.combinacionesDisponibles
-            .map(c => c.talla.nombre))]
-            .map(nombreTalla => ({
-              talla: nombreTalla,
-              disponible: true
-            }));
-          setTallasDisponibles(tallas);
-
-          const colores = apiData.combinacionesDisponibles
-            .map(c => c.color)
-            .filter((color, index, self) =>
-              index === self.findIndex((c) => c.id === color.id)
-            );
-          setColoresDisponibles(colores);
-        }
+        setCombinacionesDisponibles(apiData.combinacionesDisponibles || []);
 
         const productoFormateado = {
           id: apiData.id,
@@ -81,10 +65,27 @@ export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, fav
           detalles: "Fabricado con materiales de alta calidad para garantizar durabilidad y confort.",
           infoEnvio: "Envío estándar de 3-5 días hábiles. Devoluciones gratuitas dentro de los 30 días."
         };
-
         setProductoActual(productoFormateado);
         setSelectedImage(fullImagenPrincipal);
 
+        // Restaurar selección previa si existe
+        const preLoginSelection = sessionStorage.getItem('preLoginSelection');
+        if (preLoginSelection) {
+          const { cod: savedCod, selectedSize, selectedColorId, quantity } = JSON.parse(preLoginSelection);
+          if (savedCod === productoFormateado.cod) {
+            setSelectedSize(selectedSize);
+            // Espera a que combinacionesDisponibles esté lista
+            setTimeout(() => {
+              // Busca el objeto color correcto por ID
+              const colorObj = apiData.combinacionesDisponibles
+                ?.map(c => c.color)
+                .find(c => c.id === selectedColorId);
+              if (colorObj) setSelectedColor(colorObj);
+            }, 0);
+            setQuantity(quantity);
+          }
+          sessionStorage.removeItem('preLoginSelection');
+        }
       } catch (err) {
         setError(err.message);
         toast.error(`Error al cargar el producto: ${err.message}`);
@@ -95,73 +96,98 @@ export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, fav
     };
 
     fetchProductoDetalle();
-  }, [cod]); // Dependencia en cod
+  }, [cod]);
 
-  // *** MODIFICAMOS handleAddToCartClick para mostrar el modal ***
-  const handleAddToCartClick = () => {
+  // ================= LÓGICA DE FILTRADO DINÁMICO =================
+
+  // Todas las tallas únicas (siempre disponibles)
+  const allUniqueSizes = useMemo(() => {
+    if (!combinacionesDisponibles.length) return [];
+    return [...new Set(combinacionesDisponibles.map(c => c.talla.nombre))];
+  }, [combinacionesDisponibles]);
+
+  // Todos los colores únicos (siempre disponibles)
+  const allUniqueColors = useMemo(() => {
+    if (!combinacionesDisponibles.length) return [];
+    return combinacionesDisponibles
+      .map(c => c.color)
+      .filter((color, idx, self) =>
+        idx === self.findIndex(c2 => c2.id === color.id)
+      );
+  }, [combinacionesDisponibles]);
+
+  const enabledColorIds = useMemo(() => {
     if (!selectedSize) {
-      toast.warning("Por favor, selecciona una talla.");
+      return combinacionesDisponibles.map(c => c.color.id);
+    }
+    return combinacionesDisponibles
+      .filter(c => c.talla.nombre === selectedSize)
+      .map(c => c.color.id);
+  }, [selectedSize, combinacionesDisponibles]);
+
+  const handleSelectSize = (sizeName) => {
+    setSelectedSize(sizeName);
+    // Si el color seleccionado no está disponible para la talla, lo deseleccionamos
+    const colorIdsForSize = combinacionesDisponibles
+      .filter(c => c.talla.nombre === sizeName)
+      .map(c => c.color.id);
+    if (!colorIdsForSize.includes(selectedColor?.id)) {
+      setSelectedColor(null);
+    }
+  };
+
+  const handleSelectColor = (color) => {
+    setSelectedColor(color);
+    // No tocamos la talla seleccionada
+  };
+
+  // --- Lógica del carrito, favoritos y renderizado ---
+  const handleAddToCartClick = () => {
+    if (!selectedSize || !selectedColor) return;
+    if (!isAuthenticated) {
+      // Guarda la selección en sessionStorage
+      sessionStorage.setItem('preLoginSelection', JSON.stringify({
+        cod: productoActual.cod,
+        selectedSize,
+        selectedColorId: selectedColor.id,
+        quantity
+      }));
+      toast.info('Debes iniciar sesión para agregar productos al carrito.');
+      navigate('/login', {
+        state: {
+          from: location,
+          action: 'addToCart',
+          productId: productoActual.id
+        }
+      });
       return;
     }
-    if (!selectedColor) {
-      toast.warning("Por favor, selecciona un color.");
-      return;
-    }
-
-    const combinacionSeleccionada = combinacionesDisponibles.find(
-      c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id
-    );
-
+    const combinacionSeleccionada = combinacionesDisponibles.find(c => c.talla.nombre === selectedSize && c.color.id === selectedColor.id);
     if (!combinacionSeleccionada) {
-      toast.warning("La combinación seleccionada no está disponible.");
+      toast.error("La combinación seleccionada no está disponible.");
       return;
     }
-
-    // Si las validaciones pasan, preparamos el item y mostramos el modal
     const item = {
       ...productoActual,
-      id: productoActual.id,
-      nombre: productoActual.nombre,
       talla: selectedSize,
       color: selectedColor,
       cantidad: quantity,
-      quantity: quantity,
       price: productoActual.displayPrice,
-      displayPrice: productoActual.displayPrice,
-      precio: productoActual.precio,
       imagen: productoActual.imagenes?.[0] || '',
       idUnicoCarrito: `${productoActual.id}-${combinacionSeleccionada.id}`,
       combinacionProductoId: combinacionSeleccionada.id
     };
-
-    setItemToConfirm(item); // Guardamos el item en el estado temporal
-    setShowConfirmationModal(true); // Mostramos el modal
+    setItemToConfirm(item);
+    setShowConfirmationModal(true);
   };
 
-  // *** Función para CONFIRMAR la adición al carrito desde el modal ***
   const handleConfirmAddToCart = () => {
-    if (itemToConfirm) {
-      handleAddToCart(itemToConfirm); // Llamamos a la función del padre para añadir
-    }
-    setItemToConfirm(null); // Limpiamos el estado temporal
-    setShowConfirmationModal(false); // Cerramos el modal
+    if (itemToConfirm) handleAddToCart(itemToConfirm);
+    setShowConfirmationModal(false);
   };
-
-  // *** Función para CANCELAR la adición al carrito desde el modal ***
-  const handleCancelAddToCart = () => {
-    setItemToConfirm(null); // Limpiamos el estado temporal
-    setShowConfirmationModal(false); // Cerramos el modal
-  };
-
-
-  const handleToggleFavoriteClick = () => {
-    if (productoActual) {
-       handleToggleFavorite(productoActual);
-    }
-  };
-
+  const handleCancelAddToCart = () => setShowConfirmationModal(false);
+  const handleToggleFavoriteClick = () => { if (productoActual) handleToggleFavorite(productoActual) };
   const isFavorite = favoriteItems?.some(item => item.id === productoActual?.id) || false;
-
 
   if (loading) return <div className="page-status"><h1>Cargando...</h1></div>;
   if (error) return <div className="page-status"><h1>Error: {error}</h1></div>;
@@ -170,14 +196,11 @@ export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, fav
   return (
     <div className="detalle-page-container">
       <div className="product-layout">
+        {/* Galería de imágenes */}
         <div className="product-gallery-layout">
           <div className="thumbnail-list">
             {productoActual.imagenes.map((fullImgUrl, index) => (
-              <div
-                key={index}
-                className={`thumbnail-item ${selectedImage === fullImgUrl ? 'active' : ''}`}
-                onClick={() => setSelectedImage(fullImgUrl)}
-              >
+              <div key={index} className={`thumbnail-item ${selectedImage === fullImgUrl ? 'active' : ''}`} onClick={() => setSelectedImage(fullImgUrl)}>
                 <img src={fullImgUrl} alt={`Vista previa ${index + 1}`} />
               </div>
             ))}
@@ -189,121 +212,89 @@ export const ProductoDetallePage = ({ handleAddToCart, handleToggleFavorite, fav
 
         <div className="product-info-layout">
           <h1>{productoActual.nombre}</h1>
-          <div className="price-section">
-            <PriceDisplay
-                regularPrice={productoActual.precio}
-                offerPrice={productoActual.precioOferta}
-            />
-          </div>
-          <p className="product-short-description">
-              {productoActual.descripcion?.length > 150 ?
-                productoActual.descripcion.substring(0, 150) + '...' :
-                productoActual.descripcion
-              }
-          </p>
+          <div className="price-section"><PriceDisplay regularPrice={productoActual.precio} offerPrice={productoActual.precioOferta} /></div>
+          <p className="product-short-description">{productoActual.descripcion?.substring(0, 150)}...</p>
 
+          {/* Selectores de talla y color (con orden cambiado y lógica correcta) */}
           <div className="options-group">
             <div className="option-block">
               <label>Color</label>
               <div className="color-selector">
-                {coloresDisponibles.map(color => (
-                  <div
-                    key={color.id}
-                    title={color.nombre}
-                    className={`color-swatch ${selectedColor?.id === color.id ? 'active' : ''}`}
-                    style={{ backgroundColor: color.codigoHex }}
-                    onClick={() => setSelectedColor(color)}
-                  />
-                ))}
+                {allUniqueColors.map(color => {
+                  const isAvailable = enabledColorIds.includes(color.id);
+                  return (
+                    <div
+                      key={color.id}
+                      title={isAvailable ? color.nombre : `${color.nombre} (no disponible para esta talla)`}
+                      className={`color-swatch ${selectedColor?.id === color.id ? 'active' : ''} ${!isAvailable ? 'disabled' : ''}`}
+                      style={{ backgroundColor: color.codigoHex }}
+                      onClick={() => isAvailable && handleSelectColor(color)}
+                    />
+                  );
+                })}
               </div>
             </div>
             <div className="option-block">
               <label>Talla</label>
               <div className="size-selector">
-                {tallasDisponibles.map(talla => (
+                {allUniqueSizes.map(sizeName => (
                   <button
-                    key={talla.talla}
-                    onClick={() => setSelectedSize(talla.talla)}
-                    className={`size-btn ${selectedSize === talla.talla ? 'active' : ''}`}
-                    disabled={!talla.disponible}
+                    key={sizeName}
+                    onClick={() => handleSelectSize(sizeName)}
+                    className={`size-btn ${selectedSize === sizeName ? 'active' : ''}`}
                   >
-                    {talla.talla}
+                    {sizeName}
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
+          {/* Acciones */}
           <div className="actions-group">
             <div className="quantity-selector">
               <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
               <input type="text" value={quantity} readOnly />
               <button onClick={() => setQuantity(q => q + 1)}>+</button>
             </div>
-
-            {/* Botón que ahora abre el modal */}
-            <button className="add-to-cart-btn" onClick={handleAddToCartClick} disabled={!selectedSize || !selectedColor}>
+            <button
+              className="add-to-cart-btn"
+              onClick={handleAddToCartClick}
+              disabled={!selectedSize || !selectedColor}
+            >
               AÑADIR A LA BOLSA
             </button>
-
-             <button
-                className={`favorite-btn ${isFavorite ? 'favorited' : ''}`}
-                onClick={handleToggleFavoriteClick}
-                aria-label={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-              >
-                {isFavorite ? (
-                  <>
-                    <FaHeart className="icon favorite-icon" />
-                    <span> En Favoritos</span>
-                  </>
-                ) : (
-                  <>
-                    <FaRegHeart className="icon" />
-                    <span> Añadir a Favoritos</span>
-                  </>
-                )}
-              </button>
-
+            { /* 
+            <button className={`favorite-btn ${isFavorite ? 'favorited' : ''}`} onClick={handleToggleFavoriteClick}>
+              {isFavorite ? <FaHeart className="icon favorite-icon" /> : <FaRegHeart className="icon" />}
+              <span>{isFavorite ? 'En Favoritos' : 'Añadir a Favoritos'}</span>
+            </button> */}
           </div>
 
           <p className="sku-info">SKU: {productoActual.sku}</p>
-
           <div className="info-tabs">
             <div className="tab-headers">
               <button onClick={() => setActiveTab('descripcion')} className={activeTab === 'descripcion' ? 'active' : ''}>Descripción</button>
               <button onClick={() => setActiveTab('detalles')} className={activeTab === 'detalles' ? 'active' : ''}>Detalles</button>
-              <button onClick={() => setActiveTab('envio')} className={activeTab === 'envio' ? 'active' : ''}>Envío</button>
             </div>
             <div className="tab-content">
-              {activeTab === 'descripcion' && <p>{productoActual.descripcion || 'No hay descripción disponible.'}</p>}
-              {activeTab === 'detalles' && <p>{productoActual.detalles || 'No hay detalles adicionales disponibles.'}</p>}
-              {activeTab === 'envio' && <p>{productoActual.infoEnvio || 'Información de envío no disponible.'}</p>}
+              {activeTab === 'descripcion' && <p>{productoActual.descripcion}</p>}
+              {activeTab === 'detalles' && <p>{productoActual.detalles}</p>}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Recomendaciones Carousel (si lo usas) */}
-       {/* recomendaciones && recomendaciones.length > 0 && (
-            <div className="recommendations-section">
-                <h2>TAMBIÉN TE PODRÍA INTERESAR</h2>
-                <RecomendacionesCarousel productos={recomendaciones} />
-            </div>
-       ) */}
-
-
-      {/* *** Modal de Confirmación (Condicional) *** */}
+      {/* Modal de confirmación */}
       {showConfirmationModal && itemToConfirm && (
-        <div className="modal-overlay confirmation-modal-overlay" onClick={handleCancelAddToCart}> {/* Añadimos clase específica */}
-          <div className="modal-content confirmation-modal-content" onClick={(e) => e.stopPropagation()}> {/* Añadimos clase específica */}
-            <h2>🌸CONFIRMANOS🌸</h2> {/* Texto adaptado */}
+        <div className="modal-overlay confirmation-modal-overlay" onClick={handleCancelAddToCart}>
+          <div className="modal-content confirmation-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>🌸CONFIRMANOS🌸</h2>
             <p>¿Estás segura de que quieres agregar:</p>
             <p><strong>{itemToConfirm.nombre}</strong></p>
-             {itemToConfirm.talla && itemToConfirm.color && (
-                 <p>Talla: {itemToConfirm.talla}, Color: {itemToConfirm.color.nombre}</p>
-             )}
-             <p>Cantidad: {itemToConfirm.cantidad}</p>
-            <p>a la bolsa?</p> {/* Texto adaptado */}
+            {itemToConfirm.talla && itemToConfirm.color && (<p>Talla: {itemToConfirm.talla}, Color: {itemToConfirm.color.nombre}</p>)}
+            <p>Cantidad: {itemToConfirm.cantidad}</p>
+            <p>a la bolsa?</p>
             <div className="modal-actions">
               <button className="modal-btn confirm-btn" onClick={handleConfirmAddToCart}>Confirmar</button>
               <button className="modal-btn cancel-btn" onClick={handleCancelAddToCart}>Cancelar</button>
