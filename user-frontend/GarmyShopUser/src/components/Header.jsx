@@ -53,7 +53,6 @@ function Header({
 
                 if (response.status === 204) {
                     setCategories([]);
-                     console.log("Header: No content for categories.");
                     return;
                 }
 
@@ -62,7 +61,6 @@ function Header({
                 }
 
                 const data = await response.json();
-                 console.log("Header: Categories fetched successfully.");
                 setCategories(data);
             } catch (err) {
                 setErrorCategories(err);
@@ -92,7 +90,7 @@ function Header({
         return () => {
             clearTimeout(handler);
         };
-    }, [searchTerm, isSearchActive, navigate, location]); 
+    }, [searchTerm, isSearchActive, navigate, location]);
 
     const toggleSearch = () => {
         const newState = !isSearchActive;
@@ -103,11 +101,10 @@ function Header({
             setIsMobileMenuOpen(false);
             setTimeout(() => searchInputRef.current?.focus(), 100);
         } else {
-            setSearchTerm(''); 
+            setSearchTerm('');
         }
     };
-    
-    // Función para cerrar la búsqueda desde un componente hijo
+
     const closeSearch = () => {
         if(isSearchActive) {
             setIsSearchActive(false);
@@ -118,7 +115,6 @@ function Header({
     const toggleMobileMenu = (forceState = null) => {
         const newState = forceState !== null ? forceState : !isMobileMenuOpen;
         setIsMobileMenuOpen(newState);
-         console.log("Header: Toggling mobile menu to", newState);
 
         if (newState) {
             setActiveDropdown(null);
@@ -180,7 +176,6 @@ function Header({
     }, [activeDropdown, isSearchActive, isMobileMenuOpen]);
 
     const handleMobileLogout = () => {
-         console.log("Header: Mobile logout clicked.");
         authService.logout();
         if (onAuthChange) {
             onAuthChange();
@@ -196,7 +191,7 @@ function Header({
             <div className={`header-content-wrap ${isSearchActive ? 'search-active' : ''}`}>
                 <Link to="/" className="logo-link" onClick={() => {
                     setActiveDropdown(null);
-                    closeSearch(); // Cierra la búsqueda
+                    closeSearch();
                     toggleMobileMenu(false);
                 }}>
                     <LogoComponent />
@@ -234,7 +229,7 @@ function Header({
                     setFavoriteItems={setFavoriteItems}
                     handleToggleFavorite={handleToggleFavorite}
                     toggleSearch={toggleSearch}
-                    closeSearch={closeSearch} // Pasamos la función para cerrar
+                    closeSearch={closeSearch}
                     setActiveDropdown={setActiveDropdown}
                     toggleMobileMenu={toggleMobileMenu}
                     currentUser={currentUser}
@@ -272,11 +267,11 @@ function Header({
                         )}
                     </div>
                     <div className="mobile-nav-links">
-                        <Link to="/" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Inicio</Link>
-                        <Link to="/tienda" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Tienda</Link>
-                        <Link to="/marcas" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Marcas</Link>
-                        <Link to="/nosotros" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Sobre Nosotros</Link>
-                        <Link to="/ayuda" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>Ayuda</Link>
+                        <Link to="/" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>🌸Inicio</Link>
+                        <Link to="/tienda" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>🌸Tienda</Link>
+                        <Link to="/marcas" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>🌸Marcas</Link>
+                        <Link to="/nosotros" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>🌸Sobre Nosotros</Link>
+                        <Link to="/contacto" className="mobile-nav-link" onClick={() => toggleMobileMenu(false)}>🌸Contacto</Link>
                         {isAuthenticated && (
                             <>
                                 <div className="mobile-nav-divider"></div>
@@ -290,7 +285,7 @@ function Header({
                             <h3 className="mobile-section-title">Categorías</h3>
                             <div className="mobile-category-list">
                                 {categories.map((category) => (
-                                    <Link key={category.id} to={`/categoria/${category.id}`} className="mobile-category-link" onClick={() => toggleMobileMenu(false)}>{category.nombre}</Link>
+                                    <Link key={category.id} to={`/tienda?categoria=${category.id}`} className="mobile-category-link" onClick={() => toggleMobileMenu(false)}>{category.nombre}</Link>
                                 ))}
                             </div>
                         </div>
