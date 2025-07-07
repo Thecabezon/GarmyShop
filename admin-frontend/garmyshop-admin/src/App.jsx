@@ -68,6 +68,8 @@ function App() {
         <Resource name="ordenes" list={OrdenList} edit={OrdenEdit} show={OrdenShow} options={{ label: 'Órdenes' }} />
         <Resource name="tallas" list={TallaList} create={TallaCreate} edit={TallaEdit} />
         <Resource name="colores" list={ColorList} create={ColorCreate} edit={ColorEdit} />
+        <Resource name="usuarios" options={{ label: 'Usuarios (Conteo)' }} />
+
       </Admin>
     </ThemeProvider>
   );

@@ -1,13 +1,10 @@
-// authProvider.js
 
-// Incluye la función getCookie o impórtala si está en otro archivo
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
       const cookies = document.cookie.split(';');
       for (let i = 0; i < cookies.length; i++) {
           const cookie = cookies[i].trim();
-          // Does this cookie string begin with the name we want?
           if (cookie.substring(0, name.length + 1) === (name + '=')) {
               cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
               break;
@@ -47,18 +44,18 @@ const authProvider = {
   },
 
   logout: () => {
-    const csrfToken = getCookie('csrftoken'); // <-- OBTENER EL TOKEN
-    const headers = new Headers({}); // Empezar con cabeceras vacías o las necesarias
+    const csrfToken = getCookie('csrftoken'); 
+    const headers = new Headers({}); 
 
     if (csrfToken) {
-       headers.set('X-CSRFToken', csrfToken); // <-- AÑADIR LA CABECERA
+       headers.set('X-CSRFToken', csrfToken); 
     } else {
        console.warn('CSRF token not found. Logout might fail.');
     }
 
     return fetch('/api/auth/logout/', {
       method: 'POST',
-      headers: headers, // <-- USAR LAS CABECERAS CON EL TOKEN
+      headers: headers, 
       credentials: 'include',
     }).then(() => Promise.resolve());
   },
@@ -77,10 +74,8 @@ const authProvider = {
   },
 
   checkError: (error) => {
-    // ... (tu código actual está bien aquí)
     if (error.status === 401 || error.status === 403) {
-      // Nota: Después de arreglar el CSRF, un 403 aquí podría significar permisos.
-      // La lógica de React Admin para redirigir al login está bien.
+      
       return Promise.reject();
     }
     return Promise.resolve();
