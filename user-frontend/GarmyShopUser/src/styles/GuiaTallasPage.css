@@ -1,0 +1,116 @@
+/* src/styles/GuiaTallasPage.css */
+
+.guia-tallas-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.guia-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1.5rem;
+}
+
+.guia-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    font-weight: 700;
+}
+
+.guia-header .subtitulo {
+    font-size: 1.1rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0.5rem auto 0;
+}
+
+.como-medirte-seccion,
+.tabla-seccion,
+.notas-seccion {
+    margin-bottom: 2.5rem;
+}
+
+.como-medirte-seccion h2,
+.tabla-seccion h2,
+.notas-seccion h3 {
+    font-size: 1.8rem;
+    color: #d63384; /* Color rosa de acento */
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.como-medirte-seccion ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.como-medirte-seccion li {
+    padding: 0.5rem 0;
+    font-size: 1rem;
+}
+
+.como-medirte-seccion li strong {
+    color: #333;
+}
+
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+.tallas-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.tallas-tabla thead {
+    background-color: #f8f9fa;
+}
+
+.tallas-tabla th {
+    padding: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.tallas-tabla td {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.tallas-tabla tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.tallas-tabla tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.notas-seccion p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .guia-tallas-container {
+        padding: 1.5rem;
+    }
+    .guia-header h1 {
+        font-size: 2rem;
+    }
+    .como-medirte-seccion h2,
+    .tabla-seccion h2,
+    .notas-seccion h3 {
+        font-size: 1.5rem;
+    }
+}

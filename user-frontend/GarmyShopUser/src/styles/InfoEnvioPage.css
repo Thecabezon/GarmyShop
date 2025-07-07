@@ -1,0 +1,125 @@
+/* src/styles/InfoEnvioPage.css */
+
+.info-envio-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.info-envio-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1.5rem;
+}
+
+.info-envio-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    font-weight: 700;
+}
+
+.info-envio-header .subtitulo {
+    font-size: 1.1rem;
+    color: #666;
+    max-width: 600px;
+    margin: 0.5rem auto 0;
+}
+
+.envio-seccion {
+    margin-bottom: 2.5rem;
+}
+
+.envio-seccion h2 {
+    font-size: 1.8rem;
+    color: #d63384; /* Color rosa de acento */
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.envio-seccion p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #555;
+}
+
+.envio-seccion ul {
+    list-style-type: '🌷';
+    padding-left: 20px;
+}
+
+.envio-seccion li {
+    padding-left: 10px;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: #555;
+}
+
+.tiempos-costos .opciones-envio {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.opcion-card {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.opcion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.opcion-card .card-icon {
+    font-size: 2.5rem;
+    color: #d63384;
+    margin-bottom: 1rem;
+}
+
+.opcion-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.opcion-card p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.opcion-card .detalle {
+    font-size: 0.9rem;
+    color: #777;
+    margin-top: 1rem;
+}
+
+.opcion-card.promocion {
+    background-color: #fff5f8;
+    border-color: #f7d1e1;
+}
+
+.opcion-card.promocion h3 {
+    color: #c4276e;
+}
+
+.envio-seccion a {
+    color: #d63384;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.envio-seccion a:hover {
+    text-decoration: underline;
+}

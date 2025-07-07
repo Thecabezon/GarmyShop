@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Footer.css';
 
 const Footer = () => {
@@ -35,25 +35,25 @@ const Footer = () => {
               <h6 className="fw-bold mb-3 text-pink">Enlaces Útiles</h6>
               <ul className="list-unstyled">
                 <li className="mb-2">
-                  <a href="/" className="text-white text-decoration-none">
+                  <Link to="/" className="text-white text-decoration-none">
                     Inicio
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-2">
-                  <a href="/tienda" className="text-white text-decoration-none">
+                  <Link to="/tienda" className="text-white text-decoration-none">
                     Productos
-                  </a>
+                  </Link>
                 </li>
                
                  <li className="mb-2">
-                  <a href="/nosotros" className="text-white text-decoration-none">
+                  <Link to="/nosotros" className="text-white text-decoration-none">
                     Sobre Nosotros
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-2">
-                  <a href="/contacto" className="text-white text-decoration-none">
+                  <Link to="/contacto" className="text-white text-decoration-none">
                     Contacto
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -63,60 +63,19 @@ const Footer = () => {
               <h6 className="fw-bold mb-3 text-pink">Ayuda y Servicios</h6>
               <ul className="list-unstyled">
                 <li className="mb-2">
-                  <a href="/como-comprar" className="text-white text-decoration-none">
-                    <i className="bi bi-cart3 me-2 text-pink"></i> 
-                    Cómo Comprar
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a href="/envios" className="text-white text-decoration-none">
+                  <Link to="/envios" className="text-white text-decoration-none">
                     <i className="bi bi-truck me-2 text-pink"></i> 
                     Información de Envío
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-2">
-                  <a href="/devoluciones" className="text-white text-decoration-none">
-                    <i className="bi bi-arrow-repeat me-2 text-pink"></i> 
-                    Devoluciones y Cambios
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a href="/guia-tallas" className="text-white text-decoration-none">
+                  <Link to="/guia-tallas" className="text-white text-decoration-none">
                     <i className="bi bi-rulers me-2 text-pink"></i> 
                     Guía de Tallas
-                  </a>
-                </li>
-                 <li className="mb-2">
-                  <a href="/soporte" className="text-white text-decoration-none">
-                    <i className="bi bi-chat-dots me-2 text-pink"></i> 
-                    Soporte (Chatbot disponible)
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
-  
-            <div className="col-md-3 mb-4">
-              <h6 className="fw-bold mb-3 text-pink">Suscríbete</h6>
-              <p className="text-light">
-                Sé la primera en enterarte de nuestras novedades, ofertas y 
-                promociones exclusivas.
-              </p>
-              <form>
-                <div className="mb-3">
-                  <input 
-                    type="email" 
-                    className="form-control" 
-                    id="newsletterEmail" 
-                    placeholder="Ingresa tu correo electrónico" 
-                    aria-label="Ingresa tu correo electrónico para suscribirte"
-                  />
-                </div>
-                <button type="submit" className="btn btn-pink w-100">
-                  Suscribirse
-                </button>
-              </form>
-            </div>
-
           </div>
   
           <hr className="my-4 border-light" /> 

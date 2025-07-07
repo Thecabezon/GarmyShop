@@ -1,6 +1,5 @@
-// src/context/DataContext.js
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'; // <-- AÑADIR useRef
 import { API_BASE_URL } from '../config/apiConfig';
 
 const DataContext = createContext();
@@ -23,9 +22,14 @@ export function DataProvider({ children }) {
     const [error, setError] = useState(null);
     const [productosPorMarca, setProductosPorMarca] = useState({});
 
+    const dataLoaded = useRef(false);
+
     useEffect(() => {
+        if (dataLoaded.current) {
+            return;
+        }
+
         const fetchAllData = async () => {
-            setLoading(true);
             setError(null);
             try {
                 const [productsRes, categoriesRes, marcasRes, colorsRes, sizesRes] = await Promise.all([
@@ -47,7 +51,7 @@ export function DataProvider({ children }) {
                 const sizesData = await sizesRes.json();
 
                 const initialProducts = productsData.content || [];
-                
+
                 setCategories(categoriesData || []);
                 setMarcas(marcasData || []);
                 setColors(colorsData || []);
@@ -58,9 +62,9 @@ export function DataProvider({ children }) {
                     setLoading(false);
                     return;
                 }
-                
+
                 console.log(`⏳ Enriqueciendo ${initialProducts.length} productos con sus detalles...`);
-                
+
                 const detailPromises = initialProducts.map(product =>
                     fetch(`${API_BASE_URL}/api/productos/${product.id}`)
                         .then(res => {
@@ -75,9 +79,7 @@ export function DataProvider({ children }) {
                 );
 
                 const enrichedProducts = await Promise.all(detailPromises);
-
                 setProducts(enrichedProducts);
-
                 console.log("✅ Datos iniciales y enriquecimiento completados.");
 
             } catch (err) {
@@ -85,10 +87,12 @@ export function DataProvider({ children }) {
                 console.error("❌ Error en DataProvider:", err);
             } finally {
                 setLoading(false);
+                dataLoaded.current = true;
             }
         };
 
         fetchAllData();
+
     }, []);
 
     const getProductsByMarcaSlug = useCallback(async (slug) => {
@@ -98,7 +102,7 @@ export function DataProvider({ children }) {
         }
 
         console.log(`⏳ Buscando productos en el backend para la marca: ${slug}`);
-        
+
         try {
             const marcaResponse = await fetch(`${API_BASE_URL}/api/marcas/slug/${slug}`);
             if (!marcaResponse.ok) throw new Error(`Marca no encontrada: ${slug}`);
@@ -113,13 +117,13 @@ export function DataProvider({ children }) {
                 ...prevState,
                 [slug]: fetchedProductos,
             }));
-            
+
             console.log(`✅ Productos para la marca "${slug}" cacheados.`);
             return { productos: fetchedProductos, marca: marcaData };
 
         } catch (err) {
             console.error(`Error en getProductsByMarcaSlug para "${slug}":`, err);
-            throw err; 
+            throw err;
         }
     }, [productosPorMarca, marcas]);
 

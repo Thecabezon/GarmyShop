@@ -220,7 +220,7 @@ export default function FinalizarCompraPage({ cartItems, setCartItems }) {
 
     const { subtotal, total, envio } = useMemo(() => {
         const subtotalCalc = cartItems.reduce((sum, item) => sum + item.precio * item.quantity, 0);
-        const envioCalc = subtotalCalc > 0 ? 0 : 0;
+        const envioCalc = 0;
         const totalCalc = subtotalCalc + envioCalc;
         return { subtotal: subtotalCalc, total: totalCalc, envio: envioCalc };
     }, [cartItems]);

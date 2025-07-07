@@ -24,6 +24,8 @@ import PagoExitosoPage from './page/PagoExitosoPage';
 import ResetPasswordForm from './components/Auth/ResetPasswordForm';
 import OAuth2RedirectHandler from './components/Auth/OAuth2RedirectHandler';
 import PagoConfirmadoCEPage from './page/PagoConfirmadoCEPage';
+import GuiaTallasPage from './page/GuiaTallasPage';
+import InfoEnvioPage from './page/InfoEnvioPage';
 
 import ContactoPage from './page/ContactoPage';
 import Header from './components/Header';
@@ -210,7 +212,7 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   handleToggleFavorite={handleToggleFavorite}
                   favoriteItems={favoriteItems}
-                          isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+                          isAuthenticated={isAuthenticated}
 
                 />
               </MainLayout>
@@ -237,13 +239,15 @@ function App() {
                 handleAddToCart={handleAddToCart}
                 handleToggleFavorite={handleToggleFavorite}
                 favoriteItems={favoriteItems}
-                        isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+                        isAuthenticated={isAuthenticated}
 
               />
             }
           />
           <Route path="/nosotros" element={<MainLayout><SobreNosotrosPage /></MainLayout>} />
           <Route path="/contacto" element={<MainLayout><ContactoPage /></MainLayout>} />
+          <Route path="/guia-tallas" element={<MainLayout><GuiaTallasPage /></MainLayout>} />
+          <Route path="/envios" element={<MainLayout><InfoEnvioPage /></MainLayout>} />
           <Route path="/marcas" element={<MainLayout><MarcasPage /></MainLayout>} />
           <Route
             path="/marcas/:slug"
@@ -253,7 +257,7 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   favoriteItems={favoriteItems}
                   handleToggleFavorite={handleToggleFavorite}
-                          isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+                          isAuthenticated={isAuthenticated}
 
                 />
               </MainLayout>
@@ -268,7 +272,7 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   handleToggleFavorite={handleToggleFavorite}
                   favoriteItems={favoriteItems}
-                          isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+                          isAuthenticated={isAuthenticated}
 
                 />
               </MainLayout>

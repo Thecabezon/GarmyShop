@@ -3,7 +3,7 @@
 export function TopBarComponent() {
     return (
         <div className="top-bar">
-            Envios gratis a todo el país
+            ¡Envíos gratis a todo el Perú!
         </div>
     )
 }
