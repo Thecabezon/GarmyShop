@@ -8,9 +8,11 @@
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  align-items: flex-start;
+  z-index: 1200;
   padding: 20px;
+  padding-top: 120px;
+  overflow-y: auto;
 }
 
 /* Contenedor principal del modal */

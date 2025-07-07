@@ -7,7 +7,7 @@ import { useData } from '../context/DataContext';
 import { ProductModal } from '../components/ProductModal';
 import { API_BASE_URL } from '../config/apiConfig';
 
-export function InicioPage({ handleAddToCart, handleToggleFavorite, favoriteItems }) {
+export function InicioPage({ handleAddToCart, handleToggleFavorite, favoriteItems, isAuthenticated }) {
   const { products, loading, error } = useData();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,36 +20,36 @@ export function InicioPage({ handleAddToCart, handleToggleFavorite, favoriteItem
   }, [products]);
 
   const handleOpenModal = async (producto) => {
-      setModalLoading(true);
-      setIsModalOpen(true);
-      setSelectedProduct({...producto, nombre: "Cargando..."});
-      try {
-          const response = await fetch(`${API_BASE_URL}/api/productos/${producto.id}`);
-          if (!response.ok) {
-               const errorBody = await response.text();
-               console.error(`Error fetching product details for modal (HTTP ${response.status}): ${errorBody}`);
-               throw new Error(`No se pudieron cargar los detalles. Código: ${response.status}`);
-           }
-          const productoCompleto = await response.json();
-
-          if (!productoCompleto || !productoCompleto.combinacionesDisponibles) {
-               throw new Error('Faltan datos de combinaciones en la respuesta del producto.');
-          }
-
-          setSelectedProduct(productoCompleto);
-      } catch (err) {
-          console.error("Error fetching product details for modal:", err);
-          alert('Hubo un error al cargar los detalles del producto: ' + err.message);
-          handleCloseModal();
-      } finally {
-          setModalLoading(false);
+    setModalLoading(true);
+    setIsModalOpen(true);
+    setSelectedProduct({ ...producto, nombre: "Cargando..." });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/productos/${producto.id}`);
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error(`Error fetching product details for modal (HTTP ${response.status}): ${errorBody}`);
+        throw new Error(`No se pudieron cargar los detalles. Código: ${response.status}`);
       }
+      const productoCompleto = await response.json();
+
+      if (!productoCompleto || !productoCompleto.combinacionesDisponibles) {
+        throw new Error('Faltan datos de combinaciones en la respuesta del producto.');
+      }
+
+      setSelectedProduct(productoCompleto);
+    } catch (err) {
+      console.error("Error fetching product details for modal:", err);
+      alert('Hubo un error al cargar los detalles del producto: ' + err.message);
+      handleCloseModal();
+    } finally {
+      setModalLoading(false);
+    }
   };
 
   const handleCloseModal = () => {
-      setIsModalOpen(false);
-      setSelectedProduct(null);
-      setModalLoading(false);
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+    setModalLoading(false);
   };
 
 
@@ -72,6 +72,7 @@ export function InicioPage({ handleAddToCart, handleToggleFavorite, favoriteItem
             isLiked={favoriteItems?.some(item => item.id === producto.id)}
             handleOpenModal={() => handleOpenModal(producto)}
             handleToggleFavorite={handleToggleFavorite}
+            isAuthenticated={isAuthenticated}
           />
         ))}
       </div>

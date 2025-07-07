@@ -212,7 +212,7 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   handleToggleFavorite={handleToggleFavorite}
                   favoriteItems={favoriteItems}
-                          isAuthenticated={isAuthenticated}
+                  isAuthenticated={isAuthenticated}
 
                 />
               </MainLayout>
@@ -226,7 +226,7 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   handleToggleFavorite={handleToggleFavorite}
                   favoriteItems={favoriteItems}
-                          isAuthenticated={isAuthenticated} // <-- AÑADE ESTA LÍNEA
+                  isAuthenticated={isAuthenticated}
 
                 />
               </MainLayout>
@@ -257,7 +257,7 @@ function App() {
                   handleAddToCart={handleAddToCart}
                   favoriteItems={favoriteItems}
                   handleToggleFavorite={handleToggleFavorite}
-                          isAuthenticated={isAuthenticated}
+                  isAuthenticated={isAuthenticated}
 
                 />
               </MainLayout>
