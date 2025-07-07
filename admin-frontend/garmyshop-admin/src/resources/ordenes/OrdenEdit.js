@@ -5,8 +5,7 @@ import {
   SimpleForm,
   TextInput,
   SelectInput,
-  // ✅ Eliminar Box de aquí, Box viene de @mui/material
-  // Box, // <--- ELIMINA O COMENTA ESTA LÍNEA
+
 } from 'react-admin';
 
 // Importaciones de MUI (donde sí está Box)
@@ -23,7 +22,6 @@ const estadosPago = [
 // Estados de orden (copiados)
 const estadosOrden = [
   { id: 'pendiente', name: 'Pendiente' },
-  { id: 'procesando', name: 'Procesando' },
   { id: 'enviado', name: 'Enviado' },
   { id: 'entregado', name: 'Entregado' },
   { id: 'cancelado', name: 'Cancelado' },
@@ -86,15 +84,5 @@ export const OrdenEdit = (props) => (
   </Edit>
 );
 
-// **Normalmente NO crearías órdenes desde el admin. Se crean en el flujo de compra del usuario.**
-// Si necesitas esta funcionalidad, requeriría un serializador de Orden que acepte escrituras anidadas para los items
-// y un formulario complejo en el frontend.
-// export const OrdenCreate = (props) => (
-//     <Create {...props}>
-//         <SimpleForm>
-//             {/* ... campos de la orden ... */}
-//             {/* ... un ArrayInput o lógica personalizada para añadir items ... */}
-//         </SimpleForm>
-//     </Create>
-// );
+
 export default OrdenEdit;

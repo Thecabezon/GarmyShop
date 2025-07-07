@@ -16,7 +16,6 @@ import {
 } from '@mui/icons-material';
 import { useGetList } from 'react-admin';
 
-// Componente de tarjeta de estadística
 const StatCard = ({ title, value, icon, color, subtitle }) => (
   <Card elevation={2}>
     <CardContent>
@@ -42,7 +41,6 @@ const StatCard = ({ title, value, icon, color, subtitle }) => (
   </Card>
 );
 
-// Componente de órdenes recientes
 const RecentOrders = () => {
   const { data: ordenes, isLoading } = useGetList(
     'ordenes',
@@ -59,10 +57,10 @@ const RecentOrders = () => {
       <CardHeader title="Órdenes Recientes" />
       <CardContent>
         {ordenes?.map((orden) => (
-          <Box 
-            key={orden.id} 
-            display="flex" 
-            justifyContent="space-between" 
+          <Box
+            key={orden.id}
+            display="flex"
+            justifyContent="space-between"
             alignItems="center"
             py={1}
             borderBottom="1px solid #eee"
@@ -72,7 +70,7 @@ const RecentOrders = () => {
                 Orden #{orden.id}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                {orden.usuario_nombre} - {new Date(orden.fecha_creacion).toLocaleDateString()}
+                {orden.usuario_nombre || 'Usuario Desconocido'} - {orden.fecha_creacion ? new Date(orden.fecha_creacion).toLocaleDateString() : 'Fecha desconocida'}
               </Typography>
             </Box>
             <Box display="flex" alignItems="center" gap={1}>
@@ -80,7 +78,7 @@ const RecentOrders = () => {
                 S/. {orden.total}
               </Typography>
               <Chip
-                label={orden.estado}
+                label={orden.estado || 'Desconocido'}
                 size="small"
                 color={
                   orden.estado === 'entregado' ? 'success' :
@@ -91,12 +89,16 @@ const RecentOrders = () => {
             </Box>
           </Box>
         ))}
+        {!ordenes || ordenes.length === 0 && (
+            <Typography variant="body2" color="textSecondary">
+                No hay órdenes recientes.
+            </Typography>
+        )}
       </CardContent>
     </Card>
   );
 };
 
-// Componente de productos con bajo stock
 const LowStockProducts = () => {
   const { data: combinaciones, isLoading } = useGetList(
     'combinaciones-producto',
@@ -114,60 +116,59 @@ const LowStockProducts = () => {
       <CardHeader title="Productos con Bajo Stock" />
       <CardContent>
         {combinaciones?.map((combinacion) => (
-          <Box 
-            key={combinacion.id} 
-            display="flex" 
-            justifyContent="space-between" 
+          <Box
+            key={combinacion.id}
+            display="flex"
+            justifyContent="space-between"
             alignItems="center"
             py={1}
             borderBottom="1px solid #eee"
           >
             <Box>
               <Typography variant="body1" fontWeight="medium">
-                {combinacion.producto_nombre || `Producto ${combinacion.producto}`}
+                {combinacion.producto_nombre || `Producto ${combinacion.producto_id || combinacion.producto}`}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                {combinacion.talla_nombre} - {combinacion.color_nombre}
+                {combinacion.talla_nombre || 'Talla Desconocida'} - {combinacion.color_nombre || 'Color Desconocido'}
               </Typography>
             </Box>
             <Chip
-              label={`${combinacion.stock} unidades`}
+              label={`${combinacion.stock || 0} unidades`}
               size="small"
               color={combinacion.stock === 0 ? 'error' : 'warning'}
             />
           </Box>
         ))}
+         {!combinaciones || combinaciones.length === 0 && (
+            <Typography variant="body2" color="textSecondary">
+                No hay productos con bajo stock.
+            </Typography>
+        )}
       </CardContent>
     </Card>
   );
 };
 
 export const Dashboard = () => {
-  // Obtener datos para las estadísticas
-  const { data: productos } = useGetList('productos', {
-    pagination: { page: 1, perPage: 1 },
-  });
-  
-  const { data: ordenes } = useGetList('ordenes', {
+  const { total: totalProductos } = useGetList('productos', {
     pagination: { page: 1, perPage: 1 },
   });
 
-  const { data: usuarios } = useGetList('usuarios', {
+  const { total: totalOrdenes } = useGetList('ordenes', {
     pagination: { page: 1, perPage: 1 },
   });
 
-  const totalProductos = productos?.length || 0;
-  const totalOrdenes = ordenes?.length || 0;
-  const totalUsuarios = usuarios?.length || 0;
+  const { total: totalUsuarios } = useGetList('usuarios', {
+    pagination: { page: 1, perPage: 1 },
+  });
 
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom fontWeight="bold" color="primary">
         Dashboard - GarmyShop
       </Typography>
-      
+
       <Grid container spacing={3}>
-        {/* Estadísticas principales */}
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Total Productos"
@@ -177,7 +178,7 @@ export const Dashboard = () => {
             subtitle="Productos activos"
           />
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Órdenes Totales"
@@ -187,7 +188,7 @@ export const Dashboard = () => {
             subtitle="Todas las órdenes"
           />
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Usuarios"
@@ -197,23 +198,21 @@ export const Dashboard = () => {
             subtitle="Usuarios registrados"
           />
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Ventas del Mes"
-            value="S/. 12,450"
+            value="S/. [CALCULAR DESDE ORDENES]"
             icon={<TrendingUpIcon />}
             color="warning.main"
             subtitle="Ingresos mensuales"
           />
         </Grid>
 
-        {/* Órdenes recientes */}
         <Grid item xs={12} md={6}>
           <RecentOrders />
         </Grid>
 
-        {/* Productos con bajo stock */}
         <Grid item xs={12} md={6}>
           <LowStockProducts />
         </Grid>
