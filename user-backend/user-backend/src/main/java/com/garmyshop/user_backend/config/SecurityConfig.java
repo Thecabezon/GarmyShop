@@ -76,7 +76,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/api/contacto").permitAll()
                     .requestMatchers("/login/oauth2/code/**").permitAll()
                     .requestMatchers("/oauth2/**").permitAll()
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/marcas/**").permitAll()
